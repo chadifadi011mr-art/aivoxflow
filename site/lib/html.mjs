@@ -58,12 +58,21 @@ const NAV = [
   { href: '/about/', label: 'About' },
 ];
 
-const FOOTER_LINKS = [
-  ['/articles/', 'All articles'], ['/tools/', 'AI tools index'],
-  ['/about/', 'About AIVOXFLOW'], ['/contact/', 'Contact'],
-  ['/editorial-policy/', 'Editorial policy'], ['/corrections/', 'Corrections'],
-  ['/privacy/', 'Privacy'], ['/affiliate-disclosure/', 'Affiliate disclosure'],
-  ['/terms/', 'Terms'],
+// Footer link groups (pre-deployment pass): same nine links, now in three
+// labeled groups so visitors can scan by intent. "About & Standards" is
+// written with an entity because labels are inserted into HTML unescaped.
+const FOOTER_GROUPS = [
+  ['Read', [
+    ['/articles/', 'All articles'], ['/tools/', 'AI tools index'],
+  ]],
+  ['About &amp; Standards', [
+    ['/about/', 'About AIVOXFLOW'], ['/contact/', 'Contact'],
+    ['/editorial-policy/', 'Editorial policy'], ['/corrections/', 'Corrections'],
+  ]],
+  ['Legal', [
+    ['/privacy/', 'Privacy'], ['/affiliate-disclosure/', 'Affiliate disclosure'],
+    ['/terms/', 'Terms'],
+  ]],
 ];
 
 function header(currentPath) {
@@ -88,14 +97,19 @@ function header(currentPath) {
 }
 
 function footer() {
-  const links = FOOTER_LINKS.map(([href, label]) => `<li><a href="${p(href)}">${label}</a></li>`).join('');
+  const groups = FOOTER_GROUPS.map(([label, links]) => `
+    <div class="footer-group">
+      <h2 class="footer-group-title">${label}</h2>
+      <ul class="footer-links">${links.map(([href, text]) => `<li><a href="${p(href)}">${text}</a></li>`).join('')}</ul>
+    </div>`).join('');
   return `<footer class="site-footer">
   <div class="wrap footer-inner">
     <div class="footer-brand">
       <a class="brand" href="${p('/')}">${iconMark(26)}<span class="brand-text">AIVO<span class="brand-x">X</span>FLOW</span></a>
       <p class="footer-tag">${esc(config.tagline)} ${esc(config.slogan)}</p>
     </div>
-    <nav aria-label="Footer"><ul class="footer-links">${links}</ul></nav>
+    <nav aria-label="Footer"><div class="footer-groups">${groups}
+    </div></nav>
   </div>
   <div class="wrap footer-meta">
     <p>&copy; 2026 AIVOXFLOW. Editorial content &mdash; ${esc(config.author)}.</p>
@@ -109,7 +123,7 @@ function jsonLdScript(blocks) {
   return `\n  <script type="application/ld+json">${json}</script>`;
 }
 
-export function layout({ title, description, currentPath, body, jsonLd = [], ogType = 'website', ogImage = '' }) {
+export function layout({ title, description, currentPath, body, jsonLd = [], ogType = 'website', ogImage = '', serifPreload = false }) {
   const fullTitle = currentPath === '/' ? `${config.name} — ${config.tagline}` : `${title} — ${config.name}`;
   const canonical = config.siteUrl ? `\n  <link rel="canonical" href="${absoluteUrl(currentPath)}">` : '';
   const ogUrl = config.siteUrl ? `\n  <meta property="og:url" content="${absoluteUrl(currentPath)}">` : '';
@@ -131,6 +145,8 @@ export function layout({ title, description, currentPath, body, jsonLd = [], ogT
   <link rel="icon" href="${p('/assets/favicon.svg')}" type="image/svg+xml">
   <link rel="apple-touch-icon" href="${p('/assets/icons/apple-touch-icon-180.png')}">
   <link rel="manifest" href="${p('/assets/site.webmanifest')}">
+  <link rel="preload" href="${p('/assets/fonts/inter-latin-400-normal.woff2')}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="${p('/assets/fonts/inter-latin-800-normal.woff2')}" as="font" type="font/woff2" crossorigin>${serifPreload ? `\n  <link rel="preload" href="${p('/assets/fonts/source-serif-4-latin-400-normal.woff2')}" as="font" type="font/woff2" crossorigin>` : ''}
   <link rel="stylesheet" href="${p('/assets/css/site.css')}">${jsonLdScript(jsonLd)}
 </head>
 <body>

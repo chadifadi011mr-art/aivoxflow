@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 339" role="img" aria-label="Cover proposal: source-shield motif for a verification article">
+  <!-- PROPOSAL ONLY — not wired into the site. Same identity as cover v2. -->
+  <rect width="100%" height="100%" fill="#08152F"/>
+  <g stroke="#4C8DFF" stroke-width="6" fill="#1E6BFF" stroke-linecap="round" stroke-linejoin="round">
+    <!-- offset shadow -->
+    <g transform="translate(10 10)" opacity="0.22">
+      <g transform="translate(96 45) scale(0.85)">
+        <path d="M320 30 L436 74 V168 C436 234 384 276 320 296 C256 276 204 234 204 168 V74 Z"/>
+        <path d="M120 150 H196" fill="none"/>
+        <circle cx="108" cy="150" r="14"/>
+      </g>
+    </g>
+    <!-- main -->
+    <g transform="translate(96 45) scale(0.85)">
+      <path d="M320 30 L436 74 V168 C436 234 384 276 320 296 C256 276 204 234 204 168 V74 Z"/>
+      <path d="M120 150 H196" fill="none"/>
+      <circle cx="108" cy="150" r="14"/>
+    </g>
+  </g>
+  <!-- verification check inside the shield, ground-colored -->
+  <g stroke="#08152F" stroke-width="16" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(96 45) scale(0.85)">
+      <path d="M268 158 l38 38 l82 -92"/>
+    </g>
+  </g>
+</svg>

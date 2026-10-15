@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 339" role="img" aria-label="Cover proposal: checklist motif for a tool-selection article">
+  <!-- PROPOSAL ONLY — not wired into the site. Same identity as cover v2:
+       navy-900 ground, electric-500 shapes with electric-400 outline,
+       offset shadow layer at 0.22, no text. -->
+  <rect width="100%" height="100%" fill="#08152F"/>
+  <g stroke="#4C8DFF" stroke-width="6" fill="#1E6BFF" stroke-linecap="round" stroke-linejoin="round">
+    <!-- offset shadow -->
+    <g transform="translate(10 10)" opacity="0.22">
+      <g transform="translate(96 45) scale(0.85)">
+        <rect x="72" y="38" width="56" height="56" rx="13"/>
+        <rect x="160" y="52" width="312" height="28" rx="14"/>
+        <rect x="72" y="122" width="56" height="56" rx="13"/>
+        <rect x="160" y="136" width="312" height="28" rx="14"/>
+        <rect x="72" y="206" width="56" height="56" rx="13" fill="none"/>
+        <rect x="160" y="220" width="196" height="28" rx="14"/>
+      </g>
+    </g>
+    <!-- main -->
+    <g transform="translate(96 45) scale(0.85)">
+      <rect x="72" y="38" width="56" height="56" rx="13"/>
+      <rect x="160" y="52" width="312" height="28" rx="14"/>
+      <rect x="72" y="122" width="56" height="56" rx="13"/>
+      <rect x="160" y="136" width="312" height="28" rx="14"/>
+      <rect x="72" y="206" width="56" height="56" rx="13" fill="none"/>
+      <rect x="160" y="220" width="196" height="28" rx="14"/>
+    </g>
+  </g>
+  <!-- checks sit on the filled boxes in the ground color (monogram style, inverted) -->
+  <g stroke="#08152F" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(96 45) scale(0.85)">
+      <path d="M85 66 l10 10 l22 -24"/>
+      <path d="M85 150 l10 10 l22 -24"/>
+    </g>
+  </g>
+</svg>

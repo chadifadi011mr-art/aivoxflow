@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 339" role="img" aria-label="Cover proposal: workflow-loop motif for an automation article">
+  <!-- PROPOSAL ONLY — not wired into the site. Same identity as cover v2. -->
+  <rect width="100%" height="100%" fill="#08152F"/>
+  <g stroke="#4C8DFF" stroke-width="6" fill="#1E6BFF" stroke-linecap="round" stroke-linejoin="round">
+    <!-- offset shadow -->
+    <g transform="translate(10 10)" opacity="0.22">
+      <g transform="translate(96 45) scale(0.85)">
+        <path d="M196 191 L294 117" fill="none"/>
+        <polygon points="300,115 284,138 273,120"/>
+        <path d="M346 117 L444 191" fill="none"/>
+        <polygon points="450,193 434,170 423,189"/>
+        <path d="M448 232 Q320 316 192 234" fill="none"/>
+        <polygon points="186,230 213,235 203,252"/>
+        <circle cx="170" cy="205" r="30"/>
+        <circle cx="320" cy="105" r="30"/>
+        <circle cx="470" cy="205" r="30"/>
+      </g>
+    </g>
+    <!-- main -->
+    <g transform="translate(96 45) scale(0.85)">
+      <path d="M196 191 L294 117" fill="none"/>
+      <polygon points="300,115 284,138 273,120"/>
+      <path d="M346 117 L444 191" fill="none"/>
+      <polygon points="450,193 434,170 423,189"/>
+      <path d="M448 232 Q320 316 192 234" fill="none"/>
+      <polygon points="186,230 213,235 203,252"/>
+      <circle cx="170" cy="205" r="30"/>
+      <circle cx="320" cy="105" r="30"/>
+      <circle cx="470" cy="205" r="30"/>
+    </g>
+  </g>
+</svg>

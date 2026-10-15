@@ -47,6 +47,11 @@ cpSync(path.join(repo, 'brand', 'site.webmanifest'), path.join(dist, 'assets', '
 for (const f of readdirSync(path.join(repo, 'brand', 'icons'))) {
   cpSync(path.join(repo, 'brand', 'icons', f), path.join(dist, 'assets', 'icons', f));
 }
+// Self-hosted OFL fonts (WOFF2 + license texts, which must ship with them).
+mkdirSync(path.join(dist, 'assets', 'fonts'), { recursive: true });
+for (const f of readdirSync(path.join(root, 'assets', 'fonts'))) {
+  cpSync(path.join(root, 'assets', 'fonts', f), path.join(dist, 'assets', 'fonts', f));
+}
 for (const c of categories) {
   writeFileSync(path.join(dist, 'assets', 'covers', `${c.slug}.svg`), coverSvg(c.slug), 'utf8');
 }
@@ -200,6 +205,7 @@ for (const a of articles) {
     currentPath: a.url,
     ogType: 'article',
     ogImage,
+    serifPreload: true,
     jsonLd: [
       {
         '@context': 'https://schema.org', '@type': 'Article',
@@ -325,6 +331,7 @@ for (const pg of pages) {
     description: pg.description,
     currentPath: `/${pg.slug}/`,
     ogImage,
+    serifPreload: true,
     body: `
 <section class="wrap section page-head">
   <h1>${esc(pg.title)}</h1>
