@@ -62,6 +62,11 @@ for (const a of articles) {
 }
 const newest = articles[0];
 
+// Tool-card spec rows (Phase 1.5 final review): label/value pairs so the
+// free-tier answer scans in one glance; state is carried by text, not color.
+const freeTierLabel = (v) => v === true ? 'Yes — per official page' : v === false ? 'No' : 'Not confirmed in our check';
+const freeTierClass = (v) => v === true ? 'spec-yes' : v === false ? 'spec-no' : 'spec-unknown';
+
 const breadcrumbsLd = (items) => ({
   '@context': 'https://schema.org', '@type': 'BreadcrumbList',
   itemListElement: items.map((it, i) => ({
@@ -143,8 +148,11 @@ emit('/', layout({
   <p class="section-note">Every entry links to the official source with the date we verified it. No affiliate links.</p>
   <ul class="tool-list">${toolsData.tools.filter((t) => t.verification.status === 'verified').map((t) => `
     <li class="tool">
-      <div class="tool-head"><span class="tool-mono" aria-hidden="true">${esc(t.name[0])}</span><h3>${esc(t.name)}</h3><span class="badge badge-ok">Free tier verified ${esc(t.verification.checkedOn)}</span></div>
-      <p>${esc(t.bestFor)}</p>
+      <div class="tool-head"><span class="tool-mono" aria-hidden="true">${esc(t.name[0])}</span><h3>${esc(t.name)}</h3><span class="badge badge-ok">Verified ${esc(t.verification.checkedOn)}</span></div>
+      <p class="tool-desc">${esc(t.bestFor)}</p>
+      <dl class="tool-spec">
+        <dt>Free tier</dt><dd class="${freeTierClass(t.freeTier)}">${freeTierLabel(t.freeTier)}</dd>
+      </dl>
       <p class="tool-meta"><a class="ext" href="${esc(t.url)}" rel="noopener noreferrer external">${esc(t.vendor)} — official site</a></p>
     </li>`).join('')}</ul>
 </section>`,
@@ -272,11 +280,12 @@ emit('/tools/', layout({
         ${t.verification.status === 'verified'
           ? `<span class="badge badge-ok">Verified ${esc(t.verification.checkedOn)}</span>`
           : `<span class="badge badge-warn">Verification partial — check the official site</span>`}</div>
-      <p>${esc(t.bestFor)}</p>
-      <p class="tool-meta">Free tier: ${t.freeTier === true ? 'yes (per official page)' : t.freeTier === false ? 'no' : 'not confirmed in our check'}<span class="meta-sep" aria-hidden="true"> · </span>
-        <a class="ext" href="${esc(t.url)}" rel="noopener noreferrer external">Official site</a><span class="meta-sep" aria-hidden="true"> · </span>
-        <a class="ext" href="${esc(t.verification.source)}" rel="noopener noreferrer external">Verification source</a></p>
-      <p class="tool-note">${esc(t.verification.note)}</p>
+      <p class="tool-desc">${esc(t.bestFor)}</p>
+      <dl class="tool-spec">
+        <dt>Free tier</dt><dd class="${freeTierClass(t.freeTier)}">${freeTierLabel(t.freeTier)}</dd>
+        <dt>Sources</dt><dd><a class="ext" href="${esc(t.url)}" rel="noopener noreferrer external">Official site</a><span class="meta-sep" aria-hidden="true"> · </span><a class="ext" href="${esc(t.verification.source)}" rel="noopener noreferrer external">Verification source</a></dd>
+      </dl>
+      <p class="tool-note"><span class="note-label">Verification note</span>${esc(t.verification.note)}</p>
     </li>`).join('')}</ul>
 </section>`,
 }));

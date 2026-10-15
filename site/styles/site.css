@@ -157,6 +157,15 @@ input[type="search"]:focus-visible { box-shadow: var(--ax-focus-ring); border-co
 .badge { font-size: var(--ax-text-xs); font-weight: 600; padding: 0.2em 0.7em; border-radius: var(--ax-radius-full); }
 .badge-ok { background: var(--ax-gray-100); color: var(--ax-electric-600); border: 1px solid var(--ax-electric-600); }
 .badge-warn { background: var(--ax-gray-100); color: var(--ax-gray-900); border: 1px dashed var(--ax-gray-400); }
+/* Tool spec rows: label/value pairs (state carried by text, color is extra). */
+.tool-desc { margin: 0 0 var(--ax-space-3); max-width: 72ch; }
+.tool-spec { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--ax-space-2) var(--ax-space-4); margin: 0 0 var(--ax-space-3); font-size: var(--ax-text-sm); max-width: 72ch; }
+.tool-spec dt { margin: 0; color: var(--ax-text-secondary); font-size: var(--ax-text-xs); font-weight: 600; letter-spacing: var(--ax-tracking-wide); text-transform: uppercase; align-self: center; }
+.tool-spec dd { margin: 0; color: var(--ax-text); }
+.spec-yes { color: var(--ax-electric-600); font-weight: 600; }
+.spec-no { color: var(--ax-gray-600); font-weight: 600; }
+.spec-unknown { color: var(--ax-gray-900); font-weight: 600; }
+.note-label { display: block; font-size: var(--ax-text-xs); font-weight: 600; letter-spacing: var(--ax-tracking-wide); text-transform: uppercase; color: var(--ax-text-secondary); margin-bottom: var(--ax-space-1); }
 
 /* ---------- page head / breadcrumb ---------- */
 .wrap-narrow { max-width: 800px; }
