@@ -17,27 +17,36 @@ export function iconMark(size = 28) {
 }
 
 // Deterministic, original geometric cover art per category (no stock images,
-// no external requests). Decorative by design → empty alt at call sites.
+// no external requests). Decorative by design → empty alt, aria-hidden img.
+// v2 (Phase 1.5): no corner badge (it read as a broken-image glyph), inset
+// extents, offset shadow copy for depth, seeded rotation/scale per category.
 const COVER_PATTERNS = {
   'ai-tools': (w, h) => `<path d="M${w * 0.1} ${h * 0.72} L${w * 0.32} ${h * 0.5} L${w * 0.5} ${h * 0.6} L${w * 0.72} ${h * 0.34} L${w * 0.9} ${h * 0.42}" />`,
-  'tutorials': (w, h) => `<path d="M${w * 0.12} ${h * 0.28} H${w * 0.55} M${w * 0.12} ${h * 0.5} H${w * 0.78} M${w * 0.12} ${h * 0.72} H${w * 0.42}" />`,
+  'tutorials': (w, h) => `<rect x="${w * 0.1}" y="${h * 0.58}" width="${w * 0.22}" height="${h * 0.26}" rx="${w * 0.03}"/><rect x="${w * 0.39}" y="${h * 0.4}" width="${w * 0.22}" height="${h * 0.44}" rx="${w * 0.03}"/><rect x="${w * 0.68}" y="${h * 0.2}" width="${w * 0.22}" height="${h * 0.64}" rx="${w * 0.03}"/>`,
   'software-web': (w, h) => `<rect x="${w * 0.12}" y="${h * 0.2}" width="${w * 0.3}" height="${h * 0.42}" rx="${w * 0.02}"/><rect x="${w * 0.54}" y="${h * 0.42}" width="${w * 0.3}" height="${h * 0.42}" rx="${w * 0.02}"/>`,
   'automation-agents': (w, h) => `<circle cx="${w * 0.16}" cy="${h * 0.62}" r="${w * 0.022}"/><circle cx="${w * 0.5}" cy="${h * 0.3}" r="${w * 0.022}"/><circle cx="${w * 0.84}" cy="${h * 0.58}" r="${w * 0.022}"/><path d="M${w * 0.16} ${h * 0.62} L${w * 0.5} ${h * 0.3} L${w * 0.84} ${h * 0.58}" fill="none"/>`,
   'ai-news': (w, h) => `<path d="M${w * 0.12} ${h * 0.55} q ${w * 0.08} ${-h * 0.3} ${w * 0.16} 0 t ${w * 0.16} 0 t ${w * 0.16} 0 t ${w * 0.16} 0" fill="none"/>`,
-  'comparisons': (w, h) => `<path d="M${w * 0.32} ${h * 0.18} V${h * 0.78} M${w * 0.68} ${h * 0.18} V${h * 0.78}" />`,
+  'comparisons': (w, h) => `<path d="M${w * 0.14} ${h * 0.26} L${w * 0.43} ${h * 0.5} L${w * 0.14} ${h * 0.74} M${w * 0.86} ${h * 0.26} L${w * 0.57} ${h * 0.5} L${w * 0.86} ${h * 0.74}" fill="none"/><circle cx="${w * 0.5}" cy="${h * 0.5}" r="${w * 0.02}" stroke="none"/>`,
 };
+
+const coverHash = (s) => { let h = 0; for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; };
 
 export function coverSvg(categorySlug, width = 640) {
   const height = Math.round(width * 0.53);
   const pattern = COVER_PATTERNS[categorySlug] || COVER_PATTERNS['ai-tools'];
+  // Inset the pattern to ~85% of the frame with ~8% padding, then apply a
+  // small seeded rotation (-4°…4°) and scale (0.92…1.08) from the slug so
+  // repeated-category covers are never pixel-identical.
+  const hash = coverHash(categorySlug);
+  const rot = (hash % 9) - 4;
+  const scl = (0.92 + ((hash >>> 4) % 17) / 100).toFixed(3);
+  const art = pattern(width, height);
+  const layer = (opacity) => `<g stroke="#4C8DFF" stroke-width="${Math.max(3, width * 0.008)}" fill="#1E6BFF" stroke-linecap="round" stroke-linejoin="round" opacity="${opacity}"><g transform="translate(${(width * 0.075).toFixed(1)}, ${(height * 0.08).toFixed(1)}) scale(0.85)">${art}</g></g>`;
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" role="img" aria-hidden="true" focusable="false">
   <rect width="100%" height="100%" fill="#08152F"/>
-  <g stroke="#4C8DFF" stroke-width="${Math.max(3, width * 0.008)}" fill="#1E6BFF" stroke-linecap="round" stroke-linejoin="round" opacity="0.9">${pattern(width, height)}</g>
-  <g transform="translate(${width * 0.045}, ${height - width * 0.045 - 32}) scale(1)">
-    <rect width="32" height="32" rx="7.5" fill="#FFFFFF"/>
-    <path d="M7 21.5 13 15 19 19 25 10" fill="none" stroke="#08152F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="7" cy="21.5" r="2.5" fill="#0B57D0"/>
-    <circle cx="25" cy="10" r="3" fill="#1E6BFF"/>
+  <g transform="translate(${width / 2} ${height / 2}) rotate(${rot}) scale(${scl}) translate(${-width / 2} ${-height / 2})">
+    <g transform="translate(10 10)">${layer(0.22)}</g>
+    ${layer(0.9)}
   </g>
 </svg>`;
 }
@@ -135,11 +144,14 @@ ${footer()}
 </html>`;
 }
 
-export function articleCard(a, { headingLevel = 'h3' } = {}) {
+export function articleCard(a, { headingLevel = 'h3', eager = false } = {}) {
   const cat = a.categoryName;
+  // Covers are decorative (empty alt, hidden from a11y tree): the adjacent
+  // category link and title carry the meaning — explicit editorial decision.
+  const load = eager ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
   return `<article class="card">
   <a class="card-cover" href="${p(a.url)}" tabindex="-1" aria-hidden="true">
-    <img src="${p(`/assets/covers/${a.category}.svg`)}" alt="" width="640" height="339" loading="lazy" decoding="async">
+    <img src="${p(`/assets/covers/${a.category}.svg`)}" alt="" width="640" height="339" ${load} decoding="async">
   </a>
   <div class="card-body">
     <p class="card-kicker"><a href="${p(`/category/${a.category}/`)}">${esc(cat)}</a></p>

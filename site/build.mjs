@@ -89,22 +89,35 @@ emit('/', layout({
   ],
   body: `
 <section class="hero">
-  <div class="wrap">
-    <h1>${esc(config.tagline)}</h1>
-    <p class="hero-copy">${esc(config.heroCopy)}</p>
-    <form class="hero-search" action="${p('/search/')}" method="get" role="search">
-      <label for="hero-q">Search AIVOXFLOW</label>
-      <div class="search-row">
-        <input id="hero-q" name="q" type="search" placeholder="e.g. choose an AI writing tool" autocomplete="off">
-        <button type="submit" class="btn">Search</button>
-      </div>
-    </form>
+  <div class="wrap hero-inner">
+    <div class="hero-text">
+      <h1>${esc(config.tagline)}</h1>
+      <p class="hero-copy">${esc(config.heroCopy)}</p>
+    </div>
+    <div class="hero-aside">
+      <svg class="hero-motif" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+        <g fill="none" stroke="#4C8DFF" stroke-width="3" stroke-linecap="round">
+          <path d="M-20 230 C 80 230, 130 150, 230 150 S 370 70, 470 70"/>
+          <path d="M-20 272 C 100 272, 150 192, 250 192 S 390 112, 490 112" opacity="0.65"/>
+          <path d="M-20 188 C 60 188, 110 108, 210 108 S 350 28, 450 28" opacity="0.4"/>
+        </g>
+        <circle cx="230" cy="150" r="6" fill="#4C8DFF"/>
+        <circle cx="250" cy="192" r="4.5" fill="#4C8DFF" opacity="0.65"/>
+      </svg>
+      <form class="hero-search" action="${p('/search/')}" method="get" role="search">
+        <label for="hero-q">Search AIVOXFLOW</label>
+        <div class="search-row">
+          <input id="hero-q" name="q" type="search" placeholder="e.g. choose an AI writing tool" autocomplete="off">
+          <button type="submit" class="btn">Search</button>
+        </div>
+      </form>
+    </div>
   </div>
 </section>
 
 <section class="wrap section" aria-labelledby="featured-h">
   <div class="section-head"><h2 id="featured-h">Featured</h2></div>
-  <div class="grid">${articles.filter((a) => a.featured).map((a) => articleCard(a)).join('')}</div>
+  <div class="grid grid-featured">${articles.filter((a) => a.featured).map((a, i) => articleCard(a, { eager: i === 0 })).join('')}</div>
 </section>
 
 <section class="wrap section" aria-labelledby="latest-h">
@@ -130,7 +143,7 @@ emit('/', layout({
   <p class="section-note">Every entry links to the official source with the date we verified it. No affiliate links.</p>
   <ul class="tool-list">${toolsData.tools.filter((t) => t.verification.status === 'verified').map((t) => `
     <li class="tool">
-      <div class="tool-head"><h3>${esc(t.name)}</h3><span class="badge badge-ok">Free tier verified ${esc(t.verification.checkedOn)}</span></div>
+      <div class="tool-head"><span class="tool-mono" aria-hidden="true">${esc(t.name[0])}</span><h3>${esc(t.name)}</h3><span class="badge badge-ok">Free tier verified ${esc(t.verification.checkedOn)}</span></div>
       <p>${esc(t.bestFor)}</p>
       <p class="tool-meta"><a class="ext" href="${esc(t.url)}" rel="noopener noreferrer external">${esc(t.vendor)} — official site</a></p>
     </li>`).join('')}</ul>
@@ -144,19 +157,20 @@ articlePages.forEach((pg, idx) => {
   const crumbs = [{ label: 'Home', href: '/' }, { label: 'Articles' }];
   emit(route, layout({
     title: idx === 0 ? 'Articles' : `Articles — page ${pg.page}`,
-    description: `All AIVOXFLOW articles on AI tools, tutorials, software, automation, AI news, and comparisons. Page ${pg.page} of ${pg.totalPages}.`,
+    description: 'All AIVOXFLOW articles on AI tools, tutorials, software, automation, AI news, and comparisons.',
     currentPath: route,
     ogType: 'website',
     ogImage,
     jsonLd: [breadcrumbsLd(crumbs)],
     body: `
-${breadcrumb(crumbs)}
+<div class="wrap">${breadcrumb(crumbs)}</div>
 <section class="wrap section page-head">
   <h1>Articles</h1>
-  <p class="page-desc">Practical, source-first writing about AI tools, tutorials, software, automation, AI news, and comparisons. Page ${pg.page} of ${pg.totalPages}.</p>
+  <p class="page-desc">Practical, source-first writing about AI tools, tutorials, software, automation, AI news, and comparisons.</p>
 </section>
 <section class="wrap section">
-  <div class="grid">${pg.items.map((a) => articleCard(a)).join('')}</div>
+  <div class="grid">${pg.items.map((a, i) => articleCard(a, { headingLevel: 'h2', eager: i === 0 })).join('')}</div>
+  <p class="section-note page-note">Showing ${pg.items.length} of ${articles.length} articles · Page ${pg.page} of ${pg.totalPages}</p>
   ${pagination({ page: pg.page, totalPages: pg.totalPages, basePath: '/articles/' })}
 </section>`,
   }));
@@ -173,7 +187,7 @@ for (const a of articles) {
   const related = relatedArticles(articles, a, 3);
   const toc = a.headings.filter((h) => h.level === 2);
   emit(a.url, layout({
-    title: a.title,
+    title: a.seoTitle || a.title,
     description: a.description,
     currentPath: a.url,
     ogType: 'article',
@@ -191,7 +205,7 @@ for (const a of articles) {
       breadcrumbsLd(crumbs),
     ],
     body: `
-${breadcrumb(crumbs)}
+<div class="wrap wrap-narrow">${breadcrumb(crumbs)}</div>
 <article class="wrap article">
   <header class="article-head">
     <p class="card-kicker"><a href="${p(`/category/${cat.slug}/`)}">${esc(cat.name)}</a></p>
@@ -201,12 +215,12 @@ ${breadcrumb(crumbs)}
   </header>
   ${a.disclosure ? `<aside class="callout" aria-label="Disclosure"><strong>Disclosure:</strong> ${esc(a.disclosure)}</aside>` : ''}
   ${toc.length >= 3 ? `<nav class="toc" aria-label="Table of contents">
-    <details open><summary>On this page</summary>
+    <details><summary>On this page</summary>
       <ul>${toc.map((h) => `<li><a href="#${h.id}">${esc(h.text)}</a></li>`).join('')}</ul>
     </details></nav>` : ''}
   <div class="prose">${a.html}</div>
 </article>
-<section class="wrap section related" aria-labelledby="related-h">
+<section class="wrap wrap-narrow section related" aria-labelledby="related-h">
   <div class="section-head"><h2 id="related-h">Keep reading</h2></div>
   <div class="grid">${related.map((r) => articleCard(r)).join('')}</div>
 </section>`,
@@ -224,13 +238,13 @@ for (const c of categories) {
     ogImage,
     jsonLd: [breadcrumbsLd(crumbs)],
     body: `
-${breadcrumb(crumbs)}
+<div class="wrap">${breadcrumb(crumbs)}</div>
 <section class="wrap section page-head">
   <h1>${esc(c.name)}</h1>
   <p class="page-desc">${esc(c.description)}</p>
 </section>
 <section class="wrap section">
-  ${list.length ? `<div class="grid">${list.map((a) => articleCard(a)).join('')}</div>`
+  ${list.length ? `<div class="grid">${list.map((a, i) => articleCard(a, { headingLevel: 'h2', eager: i === 0 })).join('')}</div>`
     : `<div class="empty"><p><strong>No articles in this category yet.</strong></p>
        <p>New categories are published only when there is real, reviewed content for them. Browse <a href="${p('/articles/') }">all articles</a> instead.</p></div>`}
 </section>`,
@@ -238,27 +252,29 @@ ${breadcrumb(crumbs)}
 }
 
 // ---------------------------------------------------------------- tools index
+const toolCrumbs = [{ label: 'Home', href: '/' }, { label: 'AI Tools Index' }];
 emit('/tools/', layout({
   title: 'AI Tools Index',
   description: 'Practical AI tool picks with dated, official-source verification notes — and honest gaps where verification was not possible.',
   currentPath: '/tools/',
   ogImage,
-  jsonLd: [orgLd],
+  jsonLd: [orgLd, breadcrumbsLd(toolCrumbs)],
   body: `
+<div class="wrap">${breadcrumb(toolCrumbs)}</div>
 <section class="wrap section page-head">
   <h1>AI tools index</h1>
-  <p class="page-desc">A short, honest index of AI tools worth starting with. Each entry shows <strong>when</strong> we checked it and <strong>against which official page</strong>. We link straight to the vendor — no affiliate parameters, ever. See our <a href="${p('/affiliate-disclosure/')}">affiliate disclosure</a>.</p>
+  <p class="page-desc">A short, honest index of AI tools worth starting with. Each entry shows <strong>when</strong> we checked it, and against which official page. We link straight to the vendor — no affiliate parameters, ever. See our <a href="${p('/affiliate-disclosure/')}">affiliate disclosure</a>.</p>
 </section>
 <section class="wrap section">
   <ul class="tool-list">${toolsData.tools.map((t) => `
     <li class="tool">
-      <div class="tool-head"><h2>${esc(t.name)}</h2>
+      <div class="tool-head"><span class="tool-mono" aria-hidden="true">${esc(t.name[0])}</span><h2>${esc(t.name)}</h2>
         ${t.verification.status === 'verified'
           ? `<span class="badge badge-ok">Verified ${esc(t.verification.checkedOn)}</span>`
           : `<span class="badge badge-warn">Verification partial — check the official site</span>`}</div>
       <p>${esc(t.bestFor)}</p>
-      <p class="tool-meta">Free tier: ${t.freeTier === true ? 'yes (per official page)' : t.freeTier === false ? 'no' : 'not confirmed in our check'} ·
-        <a class="ext" href="${esc(t.url)}" rel="noopener noreferrer external">Official site</a> ·
+      <p class="tool-meta">Free tier: ${t.freeTier === true ? 'yes (per official page)' : t.freeTier === false ? 'no' : 'not confirmed in our check'}<span class="meta-sep" aria-hidden="true"> · </span>
+        <a class="ext" href="${esc(t.url)}" rel="noopener noreferrer external">Official site</a><span class="meta-sep" aria-hidden="true"> · </span>
         <a class="ext" href="${esc(t.verification.source)}" rel="noopener noreferrer external">Verification source</a></p>
       <p class="tool-note">${esc(t.verification.note)}</p>
     </li>`).join('')}</ul>
