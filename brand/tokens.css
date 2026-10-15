@@ -1,0 +1,110 @@
+/* AIVOXFLOW design tokens — brand starter v1.
+   Single source of truth for color, typography, spacing, motion, focus.
+   Contrast ratios noted below are WCAG 2.1 results actually computed with
+   docs/contrast-check.ps1 (see brand/AIVOXFLOW_Brand_Guide.md for the table).
+   Rule from verification: electric-500 (3.97:1 on navy-900) is NOT allowed
+   for text/links on dark backgrounds — use electric-400 there (5.66:1). */
+
+:root {
+  /* ---------- Color: deep navy (primary background) ---------- */
+  --ax-navy-950: #050d22; /* deepest surface, hero/footer base */
+  --ax-navy-900: #08152f; /* primary deep navy (brand background) */
+  --ax-navy-800: #0e2049; /* cards/panels on navy-900 (white text: 15.89:1) */
+  --ax-navy-700: #163064; /* borders/dividers on dark */
+
+  /* ---------- Color: electric blue (accent) ---------- */
+  --ax-electric-600: #0b57d0; /* links & accent text on light (6.39:1) */
+  --ax-electric-500: #1e6bff; /* primary buttons/fills (white label: 4.56:1) */
+  --ax-electric-400: #4c8dff; /* links & accents ON NAVY (5.66:1) */
+
+  /* ---------- Color: base (white + restrained neutral gray) ---------- */
+  --ax-white:  #ffffff;
+  --ax-gray-50:  #f6f8fb; /* page subtle surface */
+  --ax-gray-100: #e9edf4; /* chips/surfaces */
+  --ax-gray-200: #d6dce7; /* borders on light */
+  --ax-gray-400: #98a1b3; /* muted text on dark (6.98:1) */
+  --ax-gray-600: #59627a; /* secondary text on light (6.08:1) */
+  --ax-gray-800: #232a3b; /* strong text on light surfaces */
+  --ax-gray-900: #111524; /* body text on white (18.16:1, AAA) */
+
+  /* ---------- Semantic aliases ---------- */
+  --ax-bg:              var(--ax-white);
+  --ax-bg-subtle:       var(--ax-gray-50);
+  --ax-bg-inverse:      var(--ax-navy-900);
+  --ax-bg-inverse-card: var(--ax-navy-800);
+  --ax-text:            var(--ax-gray-900);
+  --ax-text-secondary:  var(--ax-gray-600);
+  --ax-text-inverse:    var(--ax-white);
+  --ax-text-muted-inverse: var(--ax-gray-400);
+  --ax-link:            var(--ax-electric-600);
+  --ax-link-inverse:    var(--ax-electric-400);
+  --ax-accent:          var(--ax-electric-500);
+  --ax-border:          var(--ax-gray-200);
+  --ax-border-inverse:  var(--ax-navy-700);
+
+  /* ---------- Typography ----------
+     Broad Latin + Arabic coverage. Phase one ships Latin; the Arabic stack is
+     declared now so Arabic (later phase) needs no redesign. Fonts are SIL OFL
+     licensed and should be SELF-HOSTED (no third-party request) in production. */
+  --ax-font-sans: "Inter", "Noto Sans Arabic", -apple-system, BlinkMacSystemFont,
+                  "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --ax-font-serif: "Source Serif 4", "Noto Naskh Arabic", Georgia,
+                   "Times New Roman", serif; /* long-form article body option */
+
+  --ax-text-xs:   0.75rem;  /* 12px meta/captions */
+  --ax-text-sm:   0.875rem; /* 14px secondary UI */
+  --ax-text-base: 1rem;     /* 16px body (mobile minimum) */
+  --ax-text-lg:   1.125rem; /* 18px lead paragraphs */
+  --ax-text-xl:   1.375rem; /* H4 */
+  --ax-text-2xl:  1.75rem;  /* H3 */
+  --ax-text-3xl:  2.25rem;  /* H2 */
+  --ax-text-4xl:  3rem;     /* H1 / hero */
+
+  --ax-leading-tight: 1.2;
+  --ax-leading-snug:  1.35;
+  --ax-leading-body:  1.65;
+  --ax-tracking-tight: -0.02em;
+  --ax-tracking-wide:  0.06em; /* uppercase eyebrows/labels only */
+
+  /* ---------- Spacing (4px base, generous whitespace per brand direction) ---------- */
+  --ax-space-1:  0.25rem;
+  --ax-space-2:  0.5rem;
+  --ax-space-3:  0.75rem;
+  --ax-space-4:  1rem;
+  --ax-space-6:  1.5rem;
+  --ax-space-8:  2rem;
+  --ax-space-12: 3rem;
+  --ax-space-16: 4rem;
+  --ax-space-24: 6rem;
+
+  /* ---------- Radius & elevation (restrained) ---------- */
+  --ax-radius-sm:   6px;
+  --ax-radius-md:   10px;
+  --ax-radius-lg:   16px;
+  --ax-radius-full: 999px;
+  --ax-shadow-card: 0 1px 2px rgba(8, 21, 47, 0.08), 0 8px 24px rgba(8, 21, 47, 0.06);
+
+  /* ---------- Focus (WCAG-visible; never remove) ---------- */
+  --ax-focus-ring: 0 0 0 3px rgba(30, 107, 255, 0.45);
+  --ax-focus-ring-inverse: 0 0 0 3px rgba(76, 141, 255, 0.55);
+
+  /* ---------- Motion (restrained; brand direction avoids heavy animation) ---------- */
+  --ax-duration-fast: 120ms;
+  --ax-duration-base: 200ms;
+  --ax-ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+/* Respect users who ask for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ax-duration-fast: 0ms;
+    --ax-duration-base: 0ms;
+  }
+}
+
+/* WCAG-conscious default focus style built from the token above. */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--ax-focus-ring);
+  border-radius: var(--ax-radius-sm);
+}

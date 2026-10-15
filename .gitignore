@@ -1,0 +1,29 @@
+# Secrets — never commit
+.env
+*.pem
+*.key
+credentials*.json
+
+# Dependencies / build output (activate when the stack is chosen)
+node_modules/
+vendor/
+dist/
+build/
+.wp-env.json
+
+# WordPress-specific (if that stack is chosen)
+wp-config.php
+/wp-content/uploads/
+/wp-content/cache/
+
+# Backups & exports (free-phase rule 7: keep them local/private)
+backups/
+*.sql
+*.sql.gz
+
+# Logs & OS noise
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

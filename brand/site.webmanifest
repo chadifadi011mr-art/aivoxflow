@@ -1,0 +1,14 @@
+{
+  "name": "AIVOXFLOW",
+  "short_name": "AIVOXFLOW",
+  "description": "Intelligence in Motion. Discover AI. Master Tools. Automate More.",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ],
+  "theme_color": "#08152F",
+  "background_color": "#FFFFFF",
+  "display": "standalone",
+  "start_url": "./"
+}

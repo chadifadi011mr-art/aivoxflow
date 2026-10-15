@@ -1,0 +1,17 @@
+<!-- AIVOXFLOW horizontal wordmark lockup — for LIGHT backgrounds.
+     Starter lockup: text uses the Inter font stack. Once the typeface is
+     finalized for production, convert text to outlines (e.g. Inkscape:
+     Path > Object to Path) so the logo renders identically everywhere.
+     No domain/URL is embedded in this asset by design. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 232 48" role="img" aria-labelledby="ax-wm-light-title">
+  <title id="ax-wm-light-title">AIVOXFLOW — Intelligence in Motion</title>
+  <g transform="translate(0,8)">
+    <rect width="32" height="32" rx="7.5" fill="#08152F"/>
+    <path d="M7 21.5 13 15 19 19 25 10" fill="none" stroke="#FFFFFF" stroke-width="3"
+          stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="7" cy="21.5" r="2.5" fill="#4C8DFF"/>
+    <circle cx="25" cy="10" r="3" fill="#1E6BFF"/>
+  </g>
+  <text x="44" y="33.5" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif"
+        font-weight="800" font-size="27" letter-spacing="-0.6" fill="#111524">AIVO<tspan fill="#1E6BFF">X</tspan>FLOW</text>
+</svg>

@@ -1,0 +1,9 @@
+<!-- AIVOXFLOW favicon — same geometry as logo-icon.svg. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <title>AIVOXFLOW</title>
+  <rect width="32" height="32" rx="7.5" fill="#08152F"/>
+  <path d="M7 21.5 13 15 19 19 25 10" fill="none" stroke="#FFFFFF" stroke-width="3"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="7" cy="21.5" r="2.5" fill="#4C8DFF"/>
+  <circle cx="25" cy="10" r="3" fill="#1E6BFF"/>
+</svg>

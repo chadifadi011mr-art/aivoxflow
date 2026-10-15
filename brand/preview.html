@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>AIVOXFLOW — Brand Preview</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Noto+Sans+Arabic:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  body { font-family: var(--ax-font-sans); color: var(--ax-text); background: var(--ax-bg); margin: 0; line-height: var(--ax-leading-body); }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: var(--ax-space-8) var(--ax-space-6); }
+  h1, h2, h3 { line-height: var(--ax-leading-tight); letter-spacing: var(--ax-tracking-tight); }
+  h2 { font-size: var(--ax-text-2xl); margin-top: var(--ax-space-16); border-bottom: 2px solid var(--ax-border); padding-bottom: var(--ax-space-2); }
+  .eyebrow { font-size: var(--ax-text-xs); font-weight: 600; letter-spacing: var(--ax-tracking-wide); text-transform: uppercase; color: var(--ax-electric-600); }
+  .muted { color: var(--ax-text-secondary); font-size: var(--ax-text-sm); }
+
+  .masthead { background: var(--ax-bg-inverse); color: var(--ax-text-inverse); padding: var(--ax-space-16) 0; }
+  .masthead .wrap { padding-top: 0; padding-bottom: 0; }
+  .masthead h1 { font-size: var(--ax-text-4xl); font-weight: 800; margin: var(--ax-space-6) 0 var(--ax-space-2); }
+  .masthead .tagline { font-size: var(--ax-text-xl); color: var(--ax-electric-400); font-weight: 600; margin: 0; }
+  .masthead .support { color: var(--ax-gray-400); margin: var(--ax-space-2) 0 0; }
+
+  .band { display: flex; flex-wrap: wrap; gap: var(--ax-space-4); align-items: center; }
+  .panel { border: 1px solid var(--ax-border); border-radius: var(--ax-radius-lg); padding: var(--ax-space-6); }
+  .panel.dark { background: var(--ax-bg-inverse); border-color: var(--ax-border-inverse); color: var(--ax-text-inverse); }
+  .panel.subtle { background: var(--ax-bg-subtle); }
+
+  .ladder { display: flex; align-items: flex-end; gap: var(--ax-space-6); flex-wrap: wrap; }
+  .ladder figure { margin: 0; text-align: center; }
+  .ladder figcaption { font-size: var(--ax-text-xs); color: var(--ax-text-secondary); margin-top: var(--ax-space-2); }
+  .panel.dark .ladder figcaption { color: var(--ax-gray-400); }
+
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--ax-space-4); }
+  .swatch { border: 1px solid var(--ax-border); border-radius: var(--ax-radius-md); overflow: hidden; font-size: var(--ax-text-xs); }
+  .swatch .chip { height: 64px; display: flex; align-items: flex-end; padding: var(--ax-space-2); }
+  .swatch .meta { padding: var(--ax-space-2) var(--ax-space-3); background: var(--ax-white); }
+  .swatch .meta strong { display: block; font-size: var(--ax-text-sm); }
+
+  table { border-collapse: collapse; width: 100%; font-size: var(--ax-text-sm); margin-top: var(--ax-space-4); }
+  th, td { text-align: left; padding: var(--ax-space-2) var(--ax-space-3); border-bottom: 1px solid var(--ax-border); }
+  th { background: var(--ax-bg-subtle); }
+  .pass { color: #0f7a3d; font-weight: 600; }
+  .fail { color: #b3261e; font-weight: 600; }
+
+  .sample-serif { font-family: var(--ax-font-serif); font-size: var(--ax-text-lg); }
+  .sample-ar { font-family: "Noto Sans Arabic", var(--ax-font-sans); direction: rtl; text-align: right; font-size: var(--ax-text-lg); }
+
+  .btn { display: inline-block; background: var(--ax-accent); color: var(--ax-white); font-weight: 600;
+         padding: var(--ax-space-3) var(--ax-space-6); border-radius: var(--ax-radius-md); text-decoration: none;
+         border: 0; font-size: var(--ax-text-base); cursor: pointer; }
+  a { color: var(--ax-link); }
+  .dark a { color: var(--ax-link-inverse); }
+  .btn:focus-visible { box-shadow: var(--ax-focus-ring); }
+  .dark .btn:focus-visible { box-shadow: var(--ax-focus-ring-inverse); }
+  a:focus-visible { box-shadow: var(--ax-focus-ring); }
+
+  ul.rules { padding-left: 1.2rem; }
+  ul.rules li { margin-bottom: var(--ax-space-2); }
+  .tax { display: flex; flex-wrap: wrap; gap: var(--ax-space-2); padding: 0; list-style: none; }
+  .tax li { background: var(--ax-gray-100); color: var(--ax-gray-800); border-radius: var(--ax-radius-full);
+            padding: var(--ax-space-1) var(--ax-space-4); font-size: var(--ax-text-sm); font-weight: 600; }
+  code { background: var(--ax-bg-subtle); padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.9em; }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <img src="logo-wordmark-dark.svg" alt="AIVOXFLOW wordmark" height="48">
+    <h1>Intelligence in Motion.</h1>
+    <p class="tagline">Discover AI tools, learn practical workflows, and make technology work for you.</p>
+    <p class="support">Discover AI. Master Tools. Automate More. — Brand preview, Phase 0 (no domain is embedded in any asset).</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <h2>1 · Logo: wordmark lockups</h2>
+  <p class="muted">Horizontal lockup = compact icon + AIVO<strong style="color:var(--ax-electric-500)">X</strong>FLOW wordmark. The X is the accent hinge of the name.</p>
+  <div class="band">
+    <div class="panel" style="flex:1 1 320px"><img src="logo-wordmark-light.svg" alt="AIVOXFLOW wordmark on light background" height="44"></div>
+    <div class="panel subtle" style="flex:1 1 320px"><img src="logo-wordmark-light.svg" alt="AIVOXFLOW wordmark on gray background" height="44"></div>
+    <div class="panel dark" style="flex:1 1 320px"><img src="logo-wordmark-dark.svg" alt="AIVOXFLOW wordmark on dark background" height="44"></div>
+  </div>
+
+  <h2>2 · Compact icon: favicon-size test</h2>
+  <p class="muted">Same badge works on light and dark. Ladder: 128 → 64 → 32 → 24 → 16 px.</p>
+  <div class="band">
+    <div class="panel" style="flex:1 1 320px">
+      <div class="ladder">
+        <figure><img src="logo-icon.svg" width="128" height="128" alt="Icon at 128px"><figcaption>128</figcaption></figure>
+        <figure><img src="logo-icon.svg" width="64" height="64" alt="Icon at 64px"><figcaption>64</figcaption></figure>
+        <figure><img src="logo-icon.svg" width="32" height="32" alt="Icon at 32px"><figcaption>32</figcaption></figure>
+        <figure><img src="logo-icon.svg" width="24" height="24" alt="Icon at 24px"><figcaption>24</figcaption></figure>
+        <figure><img src="logo-icon.svg" width="16" height="16" alt="Icon at 16px"><figcaption>16</figcaption></figure>
+      </div>
+    </div>
+    <div class="panel dark" style="flex:1 1 320px">
+      <div class="ladder">
+        <figure><img src="logo-icon.svg" width="64" height="64" alt="Icon at 64px on navy"><figcaption>64</figcaption></figure>
+        <figure><img src="logo-icon.svg" width="32" height="32" alt="Icon at 32px on navy"><figcaption>32</figcaption></figure>
+        <figure><img src="logo-icon.svg" width="16" height="16" alt="Icon at 16px on navy"><figcaption>16</figcaption></figure>
+      </div>
+    </div>
+  </div>
+
+  <h2>3 · Color palette (verified contrast)</h2>
+  <div class="swatches">
+    <div class="swatch"><div class="chip" style="background:#08152F"><span style="color:#fff">bg</span></div><div class="meta"><strong>navy-900</strong>#08152F · primary bg</div></div>
+    <div class="swatch"><div class="chip" style="background:#0E2049"><span style="color:#fff">card</span></div><div class="meta"><strong>navy-800</strong>#0E2049 · dark card</div></div>
+    <div class="swatch"><div class="chip" style="background:#1E6BFF"><span style="color:#fff">accent</span></div><div class="meta"><strong>electric-500</strong>#1E6BFF · actions</div></div>
+    <div class="swatch"><div class="chip" style="background:#0B57D0"><span style="color:#fff">links</span></div><div class="meta"><strong>electric-600</strong>#0B57D0 · links on light</div></div>
+    <div class="swatch"><div class="chip" style="background:#4C8DFF"><span style="color:#08152F">links</span></div><div class="meta"><strong>electric-400</strong>#4C8DFF · links on navy</div></div>
+    <div class="swatch"><div class="chip" style="background:#111524"><span style="color:#fff">text</span></div><div class="meta"><strong>gray-900</strong>#111524 · body text</div></div>
+    <div class="swatch"><div class="chip" style="background:#59627A"><span style="color:#fff">2nd</span></div><div class="meta"><strong>gray-600</strong>#59627A · secondary</div></div>
+    <div class="swatch"><div class="chip" style="background:#F6F8FB"><span style="color:#59627A">surface</span></div><div class="meta"><strong>gray-50</strong>#F6F8FB · subtle bg</div></div>
+  </div>
+
+  <table>
+    <thead><tr><th>Pair (WCAG 2.1, computed with docs/contrast-check.ps1)</th><th>Ratio</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td>Body text: gray-900 on white</td><td>18.16:1</td><td class="pass">AA + AAA</td></tr>
+      <tr><td>Secondary: gray-600 on white</td><td>6.08:1</td><td class="pass">AA</td></tr>
+      <tr><td>Links on light: electric-600 on white</td><td>6.39:1</td><td class="pass">AA</td></tr>
+      <tr><td>Button label: white on electric-500</td><td>4.56:1</td><td class="pass">AA</td></tr>
+      <tr><td>Dark body: white on navy-900</td><td>18.12:1</td><td class="pass">AA + AAA</td></tr>
+      <tr><td>Dark card: white on navy-800</td><td>15.89:1</td><td class="pass">AA + AAA</td></tr>
+      <tr><td>Links on dark: electric-400 on navy-900</td><td>5.66:1</td><td class="pass">AA</td></tr>
+      <tr><td>Muted on dark: gray-400 on navy-900</td><td>6.98:1</td><td class="pass">AA</td></tr>
+      <tr><td>Accent text: <strong>electric-500 on navy-900</strong></td><td>3.97:1</td><td class="fail">FAIL — do not use for text on dark; use electric-400</td></tr>
+    </tbody>
+  </table>
+
+  <h2>4 · Typography</h2>
+  <div class="band">
+    <div class="panel" style="flex:2 1 420px">
+      <p class="eyebrow">Inter · sans (UI, headings)</p>
+      <h3 style="font-size:var(--ax-text-3xl);margin:var(--ax-space-2) 0">Practical AI, explained clearly</h3>
+      <p>Discover AI tools, learn practical workflows, and make technology work for you. Body text at 16–18px with 1.65 line height for comfortable reading on every screen.</p>
+      <p class="eyebrow" style="margin-top:var(--ax-space-6)">Source Serif 4 · serif (article body option)</p>
+      <p class="sample-serif">Every article should help the reader do one concrete thing: choose a tool, complete a task, or make a better-informed decision.</p>
+    </div>
+    <div class="panel" style="flex:1 1 260px">
+      <p class="eyebrow">Noto Sans Arabic · future /ar/ phase</p>
+      <p class="sample-ar">اكتشف أدوات الذكاء الاصطناعي وتعلّم سير العمل العملي.</p>
+      <p class="muted">Arabic stack declared now (RTL, broad coverage) so Phase /ar/ needs no redesign.</p>
+    </div>
+  </div>
+
+  <h2>5 · Focus states (keyboard accessibility)</h2>
+  <div class="band">
+    <button class="btn" type="button">Primary button</button>
+    <a href="#top">Suggested link style</a>
+    <p class="muted" style="margin:0">Tab to elements to see the <code>--ax-focus-ring</code> token in action. Focus rings are mandatory, never removed.</p>
+  </div>
+
+  <h2>6 · Content taxonomy &amp; voice</h2>
+  <ul class="tax">
+    <li>AI Tools</li><li>Tutorials</li><li>Software &amp; Web</li>
+    <li>Automation &amp; Agents</li><li>AI News</li><li>Comparisons</li>
+  </ul>
+  <div class="band" style="margin-top:var(--ax-space-6)">
+    <div class="panel" style="flex:1 1 300px">
+      <p class="eyebrow">Do</p>
+      <ul class="rules">
+        <li>Explain acronyms on first use</li>
+        <li>Disclose testing vs. desk research</li>
+        <li>Show evidence and practical examples</li>
+      </ul>
+    </div>
+    <div class="panel" style="flex:1 1 300px">
+      <p class="eyebrow">Don't</p>
+      <ul class="rules">
+        <li>Hype, guaranteed results, fake metrics</li>
+        <li>Heavy glow, gradients, robot-head clichés</li>
+        <li>Hardcode any temporary domain into assets</li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="muted" style="margin-top:var(--ax-space-16)">AIVOXFLOW brand preview — Phase 0. See <code>brand/AIVOXFLOW_Brand_Guide.md</code> for usage rules and <code>docs/IMPLEMENTATION_PLAN.md</code> for the staged build plan.</p>
+</div>
+
+</body>
+</html>
