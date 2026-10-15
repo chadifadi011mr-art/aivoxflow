@@ -1,0 +1,60 @@
+{
+  "tools": [
+    {
+      "name": "ChatGPT",
+      "vendor": "OpenAI",
+      "url": "https://chatgpt.com/",
+      "category": "ai-tools",
+      "bestFor": "General-purpose AI assistance: writing, analysis, images, voice, and everyday problem solving in one interface.",
+      "freeTier": true,
+      "verification": {
+        "status": "verified",
+        "checkedOn": "2026-10-15",
+        "source": "https://chatgpt.com/pricing",
+        "note": "Official pricing page states: \"The free version of ChatGPT is available to everyone.\" Limits on uploads, image creation, and voice are marked as limited on the free plan."
+      }
+    },
+    {
+      "name": "Claude",
+      "vendor": "Anthropic",
+      "url": "https://claude.ai/",
+      "category": "ai-tools",
+      "bestFor": "Long-form writing, document work, coding assistance, and structured thinking with artifacts you can iterate on.",
+      "freeTier": true,
+      "verification": {
+        "status": "verified",
+        "checkedOn": "2026-10-15",
+        "source": "https://www.anthropic.com/pricing",
+        "note": "Official pricing page lists a Free plan at $0 \"Free for everyone\" (web, desktop, mobile) with usage limits, and paid Pro/Max tiers above it."
+      }
+    },
+    {
+      "name": "Gemini",
+      "vendor": "Google",
+      "url": "https://gemini.google.com/",
+      "category": "ai-tools",
+      "bestFor": "People already living in Google's ecosystem — Gmail, Docs, Drive — plus research, study, and multimodal tasks.",
+      "freeTier": true,
+      "verification": {
+        "status": "verified",
+        "checkedOn": "2026-10-15",
+        "source": "https://gemini.google/subscriptions/",
+        "note": "Official subscriptions page lists a personal plan at zero cost with a Google account, with paid Google AI Plus/Pro/Ultra tiers above it. Availability and limits vary by country."
+      }
+    },
+    {
+      "name": "Perplexity",
+      "vendor": "Perplexity AI",
+      "url": "https://www.perplexity.ai/",
+      "category": "ai-tools",
+      "bestFor": "Answer-style research with citations — useful when you want sources attached to an answer instead of a blank chat box.",
+      "freeTier": null,
+      "verification": {
+        "status": "partial",
+        "checkedOn": "2026-10-15",
+        "source": "https://www.perplexity.ai/help-center",
+        "note": "Official help center confirms paid plans (Pro and above) and a subscription structure, but our check on 2026-10-15 could not confirm current free-tier limits from an official page that loads without JavaScript. Verify on the official site before relying on a free tier."
+      }
+    }
+  ]
+}

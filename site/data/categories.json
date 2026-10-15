@@ -1,0 +1,34 @@
+{
+  "categories": [
+    {
+      "slug": "ai-tools",
+      "name": "AI Tools",
+      "description": "Practical reviews, use cases, and honest checks of AI tools — what they do, where they fall short, and who they suit."
+    },
+    {
+      "slug": "tutorials",
+      "name": "Tutorials",
+      "description": "Step-by-step guides that get you to a working result: prompts, workflows, settings, and repeatable techniques."
+    },
+    {
+      "slug": "software-web",
+      "name": "Software & Web",
+      "description": "Software and online services beyond AI: how they work, how they compare, and how to pick with confidence."
+    },
+    {
+      "slug": "automation-agents",
+      "name": "Automation & Agents",
+      "description": "Turning repetitive work into reliable workflows — mapping tasks, choosing tools, and knowing when not to automate."
+    },
+    {
+      "slug": "ai-news",
+      "name": "AI News",
+      "description": "Material AI updates, verified against primary sources first, with the evidence shown — no hype, no unverified rumors."
+    },
+    {
+      "slug": "comparisons",
+      "name": "Comparisons",
+      "description": "Transparent side-by-side criteria: real differences, practical trade-offs, and who should choose what."
+    }
+  ]
+}
