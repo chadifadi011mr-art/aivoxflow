@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 339" role="img" aria-label="Cover: AI assistant chat bubble versus traditional software grid">
+  <!-- FINAL PROPOSAL 4/6 — article 04 (Comparisons). -->
+  <rect width="100%" height="100%" fill="#08152F"/>
+  <g stroke="#4C8DFF" stroke-width="6" fill="#1E6BFF" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(10 10)" opacity="0.22">
+      <g transform="translate(96 45) scale(0.85)">
+        <rect x="70" y="90" width="200" height="150" rx="24"/>
+        <polygon points="110,240 110,278 155,240"/>
+        <circle cx="315" cy="140" r="7" stroke="none"/>
+        <circle cx="315" cy="172" r="7" stroke="none"/>
+        <circle cx="315" cy="204" r="7" stroke="none"/>
+        <rect x="360" y="90" width="210" height="160" rx="16" fill="none"/>
+        <path d="M360 130 h210" fill="none"/>
+        <circle cx="382" cy="110" r="7" stroke="none"/>
+        <circle cx="406" cy="110" r="7" stroke="none"/>
+        <circle cx="430" cy="110" r="7" stroke="none"/>
+        <rect x="380" y="150" width="72" height="38" rx="8"/>
+        <rect x="478" y="150" width="72" height="38" rx="8"/>
+        <rect x="380" y="200" width="72" height="38" rx="8"/>
+        <rect x="478" y="200" width="72" height="38" rx="8"/>
+      </g>
+    </g>
+    <g transform="translate(96 45) scale(0.85)">
+      <rect x="70" y="90" width="200" height="150" rx="24"/>
+      <polygon points="110,240 110,278 155,240"/>
+      <circle cx="315" cy="140" r="7" stroke="none"/>
+      <circle cx="315" cy="172" r="7" stroke="none"/>
+      <circle cx="315" cy="204" r="7" stroke="none"/>
+      <rect x="360" y="90" width="210" height="160" rx="16" fill="none"/>
+      <path d="M360 130 h210" fill="none"/>
+      <circle cx="382" cy="110" r="7" stroke="none"/>
+      <circle cx="406" cy="110" r="7" stroke="none"/>
+      <circle cx="430" cy="110" r="7" stroke="none"/>
+      <rect x="380" y="150" width="72" height="38" rx="8"/>
+      <rect x="478" y="150" width="72" height="38" rx="8"/>
+      <rect x="380" y="200" width="72" height="38" rx="8"/>
+      <rect x="478" y="200" width="72" height="38" rx="8"/>
+    </g>
+  </g>
+  <!-- ground sparkle inside the assistant bubble -->
+  <path transform="translate(96 45) scale(0.85)" fill="#08152F" d="M170 125 L180.6 154.4 L210 165 L180.6 175.6 L170 205 L159.4 175.6 L130 165 L159.4 154.4 Z"/>
+</svg>

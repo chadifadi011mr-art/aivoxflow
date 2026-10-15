@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 339" role="img" aria-label="Cover: workflow loop with distinct input, processing and output stages">
+  <!-- FINAL PROPOSAL 3/6 — article 03 (Automation & Agents).
+       Stage silhouettes carry the meaning: in-arrow + solid node (Input),
+       gear-tick node (Processing), output tile + out-arrow (Output). -->
+  <rect width="100%" height="100%" fill="#08152F"/>
+  <g stroke="#4C8DFF" stroke-width="6" fill="#1E6BFF" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(10 10)" opacity="0.22">
+      <g transform="translate(96 45) scale(0.85)">
+        <path d="M88 210 h34" fill="none"/>
+        <polygon points="142,210 126,200 126,220"/>
+        <circle cx="170" cy="210" r="30"/>
+        <path d="M196 191 L292 134" fill="none"/>
+        <polygon points="299,130 282,142 286,122"/>
+        <circle cx="320" cy="110" r="28"/>
+        <path d="M354 110 h12 M344 86 l9 -9 M320 76 v-12 M296 86 l-9 -9 M286 110 h-12 M296 134 l-9 9 M320 144 v12 M344 134 l9 9" fill="none"/>
+        <path d="M346 128 L438 176" fill="none"/>
+        <polygon points="448,181 430,186 436,166"/>
+        <rect x="440" y="180" width="60" height="60" rx="14"/>
+        <path d="M516 210 h30" fill="none"/>
+        <polygon points="560,210 544,200 544,220"/>
+        <path d="M470 246 Q320 318 196 244" fill="none"/>
+        <polygon points="190,240 216,258 206,240"/>
+      </g>
+    </g>
+    <g transform="translate(96 45) scale(0.85)">
+      <path d="M88 210 h34" fill="none"/>
+      <polygon points="142,210 126,200 126,220"/>
+      <circle cx="170" cy="210" r="30"/>
+      <path d="M196 191 L292 134" fill="none"/>
+      <polygon points="299,130 282,142 286,122"/>
+      <circle cx="320" cy="110" r="28"/>
+      <path d="M354 110 h12 M344 86 l9 -9 M320 76 v-12 M296 86 l-9 -9 M286 110 h-12 M296 134 l-9 9 M320 144 v12 M344 134 l9 9" fill="none"/>
+      <path d="M346 128 L438 176" fill="none"/>
+      <polygon points="448,181 430,186 436,166"/>
+      <rect x="440" y="180" width="60" height="60" rx="14"/>
+      <path d="M516 210 h30" fill="none"/>
+      <polygon points="560,210 544,200 544,220"/>
+      <path d="M470 246 Q320 318 196 244" fill="none"/>
+      <polygon points="190,240 216,258 206,240"/>
+    </g>
+  </g>
+</svg>

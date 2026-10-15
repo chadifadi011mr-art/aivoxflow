@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 339" role="img" aria-label="Cover: news document cross-referenced by two sources and inspected with a lens">
+  <!-- FINAL PROPOSAL 5/6 — article 05 (AI News). No certification checkmark:
+       two sources cross-reference the same story; verification is the
+       cross-check itself, inspected with a lens. -->
+  <rect width="100%" height="100%" fill="#08152F"/>
+  <g stroke="#4C8DFF" stroke-width="6" fill="#1E6BFF" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(10 10)" opacity="0.22">
+      <g transform="translate(96 45) scale(0.85)">
+        <rect x="250" y="60" width="180" height="220" rx="14"/>
+        <rect x="70" y="110" width="120" height="70" rx="12"/>
+        <rect x="70" y="210" width="120" height="70" rx="12"/>
+        <path d="M190 145 L244 188" fill="none"/>
+        <path d="M190 245 L244 132" fill="none"/>
+        <circle cx="400" cy="240" r="44" fill="none" stroke-width="8"/>
+        <path d="M432 272 L464 302" fill="none" stroke-width="10"/>
+      </g>
+    </g>
+    <g transform="translate(96 45) scale(0.85)">
+      <rect x="250" y="60" width="180" height="220" rx="14"/>
+      <rect x="70" y="110" width="120" height="70" rx="12"/>
+      <rect x="70" y="210" width="120" height="70" rx="12"/>
+      <path d="M190 145 L244 188" fill="none"/>
+      <path d="M190 245 L244 132" fill="none"/>
+      <circle cx="400" cy="240" r="44" fill="none" stroke-width="8"/>
+      <path d="M432 272 L464 302" fill="none" stroke-width="10"/>
+    </g>
+  </g>
+  <!-- ground-colored newsroom marks: headline bar, story lines, source lines -->
+  <g stroke="#08152F" fill="#08152F">
+    <g transform="translate(96 45) scale(0.85)">
+      <rect x="272" y="84" width="136" height="20" rx="10" stroke="none"/>
+      <path d="M272 132 h136 M272 162 h136 M272 192 h96" fill="none" stroke-width="10" stroke-linecap="round"/>
+      <path d="M88 145 h84 M88 245 h84" fill="none" stroke-width="8" stroke-linecap="round"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 339" role="img" aria-label="Cover: checklist with pencil — choosing an AI writing tool">
+  <!-- FINAL PROPOSAL 1/6 — article 01 (AI Tools). Tokens only:
+       navy-900 ground, electric-500 fill, electric-400 outline,
+       offset shadow 0.22, 85% inset, no text. -->
+  <rect width="100%" height="100%" fill="#08152F"/>
+  <g stroke="#4C8DFF" stroke-width="6" fill="#1E6BFF" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(10 10)" opacity="0.22">
+      <g transform="translate(96 45) scale(0.85)">
+        <rect x="90" y="60" width="52" height="52" rx="12"/>
+        <rect x="168" y="72" width="240" height="28" rx="14"/>
+        <rect x="90" y="132" width="52" height="52" rx="12"/>
+        <rect x="168" y="144" width="240" height="28" rx="14"/>
+        <rect x="90" y="204" width="52" height="52" rx="12" fill="none"/>
+        <rect x="168" y="216" width="150" height="28" rx="14"/>
+        <g transform="rotate(22 470 170)">
+          <rect x="452" y="86" width="36" height="118" rx="8"/>
+          <polygon points="452,204 488,204 470,246"/>
+        </g>
+      </g>
+    </g>
+    <g transform="translate(96 45) scale(0.85)">
+      <rect x="90" y="60" width="52" height="52" rx="12"/>
+      <rect x="168" y="72" width="240" height="28" rx="14"/>
+      <rect x="90" y="132" width="52" height="52" rx="12"/>
+      <rect x="168" y="144" width="240" height="28" rx="14"/>
+      <rect x="90" y="204" width="52" height="52" rx="12" fill="none"/>
+      <rect x="168" y="216" width="150" height="28" rx="14"/>
+      <g transform="rotate(22 470 170)">
+        <rect x="452" y="86" width="36" height="118" rx="8"/>
+        <polygon points="452,204 488,204 470,246"/>
+      </g>
+    </g>
+  </g>
+  <!-- ground-colored marks: checks, pencil band + nib, unfinished tick -->
+  <g stroke="#08152F" fill="#08152F">
+    <g transform="translate(96 45) scale(0.85)">
+      <path d="M103 86 l11 11 l22 -24" fill="none" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M103 158 l11 11 l22 -24" fill="none" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+      <g transform="rotate(22 470 170)">
+        <path d="M452 116 h36" fill="none" stroke-width="6"/>
+        <polygon points="463,228 477,228 470,246" stroke="none"/>
+      </g>
+    </g>
+  </g>
+</svg>

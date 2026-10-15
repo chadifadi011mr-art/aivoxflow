@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 339" role="img" aria-label="Cover: structured prompt bubble with sparkle — prompt patterns">
+  <!-- FINAL PROPOSAL 2/6 — article 02 (Tutorials). -->
+  <rect width="100%" height="100%" fill="#08152F"/>
+  <g stroke="#4C8DFF" stroke-width="6" fill="#1E6BFF" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(10 10)" opacity="0.22">
+      <g transform="translate(96 45) scale(0.85)">
+        <rect x="80" y="60" width="400" height="200" rx="28"/>
+        <polygon points="140,260 140,300 190,260"/>
+        <path d="M505 44 L516.3 72.7 L545 84 L516.3 95.3 L505 124 L493.7 95.3 L465 84 L493.7 72.7 Z"/>
+      </g>
+    </g>
+    <g transform="translate(96 45) scale(0.85)">
+      <rect x="80" y="60" width="400" height="200" rx="28"/>
+      <polygon points="140,260 140,300 190,260"/>
+      <path d="M505 44 L516.3 72.7 L545 84 L516.3 95.3 L505 124 L493.7 95.3 L465 84 L493.7 72.7 Z"/>
+    </g>
+  </g>
+  <!-- ground-colored prompt blocks inside the bubble: two + two (context,
+       role · examples, constraints) — the "patterns" of the article -->
+  <g stroke="#08152F" fill="none" stroke-width="14" stroke-linecap="round">
+    <g transform="translate(96 45) scale(0.85)">
+      <path d="M116 108 h240"/>
+      <path d="M116 144 h176"/>
+      <path d="M116 196 h220"/>
+      <path d="M116 232 h124"/>
+    </g>
+  </g>
+</svg>
