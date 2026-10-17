@@ -1,0 +1,48 @@
+# AIVOXFLOW — Apache configuration for public_html (ezyro/Hostinger hPanel).
+# Upload as `.htaccess` next to the built site (the folder containing index.html).
+# Apache ignores the generated dist/_headers file, so this mirrors it by hand:
+# keep both in sync when the CSP changes (e.g. when analytics is enabled).
+
+Options -Indexes
+DirectoryIndex index.html
+
+# ---------------------------------------------------------------- 404
+# The built 404.html is noindexed in its own markup; this makes unknown
+# URLs actually return status 404 instead of 200.
+ErrorDocument 404 /404.html
+
+# ---------------------------------------------------------------- redirect to HTTPS
+# hPanel also has a "Force HTTPS" toggle; this is the belt-and-braces version.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+  # /search must never be indexed (the HTML meta says so too).
+  RewriteRule ^search/?$ /search/ [E=NOINDEX:1,L]
+</IfModule>
+
+# ---------------------------------------------------------------- headers
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "DENY"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "geolocation=(), camera=(), microphone=(), interest-cohort=()"
+  Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+  Header always set Cross-Origin-Opener-Policy "same-origin"
+  Header always set X-Robots-Tag "noindex, follow" env=NOINDEX
+
+  <FilesMatch "\.(css|js|woff2|png|jpe?g|svg|webp)$">
+    Header always set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.html$">
+    Header always set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+  <FilesMatch "^(feed\.xml|feed\.json|sitemap\.xml|robots\.txt)$">
+    Header always set Cache-Control "public, max-age=1800"
+  </FilesMatch>
+</IfModule>
+
+# ---------------------------------------------------------------- compression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml application/xml
+</IfModule>
