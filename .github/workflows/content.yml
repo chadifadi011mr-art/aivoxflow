@@ -1,0 +1,91 @@
+name: Content pipeline
+
+# Fills the calendar and generates any article whose slot is inside the lead
+# window. Runs early so the piece is ready before its peak slot.
+#
+# Required repository secrets (Settings → Secrets and variables → Actions):
+#   AIVOXFLOW_AI_API_KEY      your model key (or omit and use a self-hosted runner with Ollama)
+#   AIVOXFLOW_SEARCH_API_KEY  optional; without it, add a sources file per topic
+#
+# Nothing is committed unless every quality gate passed.
+
+on:
+  schedule:
+    - cron: '0 4 * * *'   # 04:00 UTC daily
+  workflow_dispatch:
+    inputs:
+      slots:
+        description: 'How many future slots to plan'
+        default: '7'
+      limit:
+        description: 'Max articles to generate this run'
+        default: '1'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: content-pipeline
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    # NOTE: `secrets` is not a valid context in a job-level `if` expression —
+    # that form made the whole workflow invalid. The key check now runs as a
+    # first step and the remaining steps read its output.
+    env:
+      AIVOXFLOW_AI_PROVIDER: ${{ vars.AIVOXFLOW_AI_PROVIDER || 'gemini' }}
+      AIVOXFLOW_AI_MODEL: ${{ vars.AIVOXFLOW_AI_MODEL || 'gemini-2.5-flash' }}
+      AIVOXFLOW_AI_API_KEY: ${{ secrets.AIVOXFLOW_AI_API_KEY }}
+      AIVOXFLOW_SEARCH_PROVIDER: ${{ vars.AIVOXFLOW_SEARCH_PROVIDER || 'none' }}
+      AIVOXFLOW_SEARCH_API_KEY: ${{ secrets.AIVOXFLOW_SEARCH_API_KEY }}
+      # Hosted images in CI (no GPU). Use `local` if you prefer zero cost.
+      AIVOXFLOW_IMAGE_PROVIDER: ${{ vars.AIVOXFLOW_IMAGE_PROVIDER || 'pollinations' }}
+      AIVOXFLOW_IMAGE_MODEL: ${{ vars.AIVOXFLOW_IMAGE_MODEL || 'flux' }}
+      AIVOXFLOW_AI_BUDGET_USD_DAILY: ${{ vars.AIVOXFLOW_AI_BUDGET_USD_DAILY || '2' }}
+    steps:
+      - name: Check for a provider key
+        id: key
+        run: |
+          if [ -z "$AIVOXFLOW_AI_API_KEY" ]; then
+            echo "has=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::AIVOXFLOW_AI_API_KEY is not set; skipping this run."
+          else
+            echo "has=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: ${{ steps.key.outputs.has == 'true' }}
+      - uses: actions/setup-node@v4
+        if: ${{ steps.key.outputs.has == 'true' }}
+        with:
+          node-version: '20'
+
+      - name: Plan the next slots
+        if: ${{ steps.key.outputs.has == 'true' }}
+        run: node agents/plan.mjs --slots "${{ github.event.inputs.slots || 7 }}"
+
+      - name: Generate what is due
+        if: ${{ steps.key.outputs.has == 'true' }}
+        run: node agents/scheduler.mjs --once --limit "${{ github.event.inputs.limit || 1 }}"
+
+      - name: Build and verify
+        if: ${{ steps.key.outputs.has == 'true' }}
+        run: |
+          node site/build.mjs
+          node tests/providers.mjs
+          node tests/run.mjs
+
+      - name: Commit published articles
+        if: ${{ steps.key.outputs.has == 'true' }}
+        run: |
+          git config user.name  "aivoxflow-bot"
+          git config user.email "bot@aivoxflow.com"
+          git add site/data/articles site/assets-src/articles content/calendar.json
+          if git diff --cached --quiet; then
+            echo "Nothing to publish."
+          else
+            git commit -m "content: scheduled article(s) $(date -u +%Y-%m-%d)"
+            git push
+          fi

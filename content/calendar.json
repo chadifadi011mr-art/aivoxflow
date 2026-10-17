@@ -1,0 +1,101 @@
+{
+  "generatedAt": "2026-10-17T14:40:05.088Z",
+  "items": [
+    {
+      "id": "software-web-vs-desktop",
+      "title": "Web App or Desktop App: The Real Trade-offs",
+      "category": "software-web",
+      "intent": "informational",
+      "notes": "Offline access, data locality, update cadence, integrations, and the failure modes of each. No product endorsements.",
+      "slot": {
+        "at": "2026-10-19T09:00:00Z",
+        "date": "2026-10-19",
+        "hour": 9,
+        "weight": 1,
+        "label": "Mon/Fri morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-10-17T14:40:05.088Z"
+    },
+    {
+      "id": "automation-fail-safely",
+      "title": "Designing an Automation That Fails Safely",
+      "category": "automation-agents",
+      "intent": "informational",
+      "notes": "Idempotency, retries with backoff, dead-letter handling, alerting, and a kill switch. Include a failure checklist.",
+      "slot": {
+        "at": "2026-10-20T08:00:00Z",
+        "date": "2026-10-20",
+        "hour": 8,
+        "weight": 3,
+        "label": "Tue–Thu morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-10-17T14:40:05.088Z"
+    },
+    {
+      "id": "news-read-release-note",
+      "title": "How to Read an AI Model Release Note",
+      "category": "ai-news",
+      "intent": "informational",
+      "notes": "Separate what shipped from what was announced, check the date and the model name, and find the limits section. Use a real, current release note as the worked example.",
+      "slot": {
+        "at": "2026-10-20T17:00:00Z",
+        "date": "2026-10-20",
+        "hour": 17,
+        "weight": 2,
+        "label": "Tue–Thu afternoon"
+      },
+      "status": "planned",
+      "createdAt": "2026-10-17T14:40:05.088Z"
+    },
+    {
+      "id": "comparison-chatbot-vs-search",
+      "title": "Chatbot vs Search Engine for Research",
+      "category": "comparisons",
+      "intent": "commercial-investigation",
+      "notes": "Where a chatbot saves time, where it invents, and the hybrid workflow that beats both. Test criteria stated up front.",
+      "slot": {
+        "at": "2026-10-21T08:00:00Z",
+        "date": "2026-10-21",
+        "hour": 8,
+        "weight": 3,
+        "label": "Tue–Thu morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-10-17T14:40:05.088Z"
+    },
+    {
+      "id": "ai-tools-free-tier-limits",
+      "title": "AI Tool Free Tiers: What the Limits Actually Mean",
+      "category": "ai-tools",
+      "intent": "informational",
+      "notes": "Translate vague 'limited' claims into concrete caps where the vendor documents them. Where they do not, say so plainly.",
+      "slot": {
+        "at": "2026-10-21T17:00:00Z",
+        "date": "2026-10-21",
+        "hour": 17,
+        "weight": 2,
+        "label": "Tue–Thu afternoon"
+      },
+      "status": "planned",
+      "createdAt": "2026-10-17T14:40:05.088Z"
+    },
+    {
+      "id": "tutorial-prompts-that-survive-upgrades",
+      "title": "Writing Prompts That Survive a Model Upgrade",
+      "category": "tutorials",
+      "intent": "informational",
+      "notes": "Why brittle prompts break, what to pin (constraints, format, examples), and how to test a prompt against two models.",
+      "slot": {
+        "at": "2026-10-22T08:00:00Z",
+        "date": "2026-10-22",
+        "hour": 8,
+        "weight": 3,
+        "label": "Tue–Thu morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-10-17T14:40:05.088Z"
+    }
+  ]
+}

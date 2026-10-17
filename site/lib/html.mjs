@@ -4,8 +4,10 @@
 // temporary domain is ever hardcoded here.
 import { config, absoluteUrl } from '../config.mjs';
 import { esc } from './markdown.mjs';
+import { assets } from './assets.mjs';
 
 export const p = (path) => `${config.basePath}${path}`;
+const abs = (path) => (config.siteUrl ? absoluteUrl(path) : p(path));
 
 export function iconMark(size = 28) {
   return `<svg class="mark" width="${size}" height="${size}" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
@@ -64,10 +66,12 @@ const NAV = [
 const FOOTER_GROUPS = [
   ['Read', [
     ['/articles/', 'All articles'], ['/tools/', 'AI tools index'],
+    ...(config.siteUrl ? [['/feed.xml', 'RSS feed']] : []),
   ]],
   ['About &amp; Standards', [
-    ['/about/', 'About AIVOXFLOW'], ['/contact/', 'Contact'],
-    ['/editorial-policy/', 'Editorial policy'], ['/corrections/', 'Corrections'],
+    ['/about/', 'About AIVOXFLOW'], ['/authors/editorial/', 'Editorial team'],
+    ['/contact/', 'Contact'], ['/editorial-policy/', 'Editorial policy'],
+    ['/corrections/', 'Corrections'],
   ]],
   ['Legal', [
     ['/privacy/', 'Privacy'], ['/affiliate-disclosure/', 'Affiliate disclosure'],
@@ -102,17 +106,19 @@ function footer() {
       <h2 class="footer-group-title">${label}</h2>
       <ul class="footer-links">${links.map(([href, text]) => `<li><a href="${p(href)}">${text}</a></li>`).join('')}</ul>
     </div>`).join('');
+  const year = new Date(config.buildTime).getUTCFullYear();
   return `<footer class="site-footer">
   <div class="wrap footer-inner">
     <div class="footer-brand">
       <a class="brand" href="${p('/')}">${iconMark(26)}<span class="brand-text">AIVO<span class="brand-x">X</span>FLOW</span></a>
       <p class="footer-tag">${esc(config.tagline)} ${esc(config.slogan)}</p>
+      ${config.siteUrl ? `<p class="footer-feed"><a href="${p('/feed.xml')}">RSS</a> · <a href="${p('/feed.json')}">JSON Feed</a></p>` : ''}
     </div>
     <nav aria-label="Footer"><div class="footer-groups">${groups}
     </div></nav>
   </div>
   <div class="wrap footer-meta">
-    <p>&copy; 2026 AIVOXFLOW. Editorial content &mdash; ${esc(config.author)}.</p>
+    <p>&copy; ${year} AIVOXFLOW. Editorial content &mdash; ${esc(config.author)}.</p>
   </div>
 </footer>`;
 }
@@ -123,31 +129,70 @@ function jsonLdScript(blocks) {
   return `\n  <script type="application/ld+json">${json}</script>`;
 }
 
-export function layout({ title, description, currentPath, body, jsonLd = [], ogType = 'website', ogImage = '', serifPreload = false }) {
+function analyticsTag() {
+  if (!config.analytics.script) return '';
+  return `\n  <script defer src="${esc(config.analytics.script)}"${
+    config.analytics.endpoint ? ` data-endpoint="${esc(config.analytics.endpoint)}"` : ''}></script>`;
+}
+
+// hreflang is only emitted when more than one locale is actually published,
+// and only for real equivalent translations.
+function hreflangTags() {
+  if (config.locales.length < 2) return '';
+  return config.locales.map((l) =>
+    `\n  <link rel="alternate" hreflang="${l.code}" href="${abs(`/${l.code}/`)}">`).join('') +
+    `\n  <link rel="alternate" hreflang="x-default" href="${abs('/')}">`;
+}
+
+export function layout({
+  title, description, currentPath, body, jsonLd = [], ogType = 'website',
+  ogImage = '', ogImageAlt = '', serifPreload = false, noindex = false,
+  prevUrl = '', nextUrl = '', article = null,
+}) {
   const fullTitle = currentPath === '/' ? `${config.name} — ${config.tagline}` : `${title} — ${config.name}`;
   const canonical = config.siteUrl ? `\n  <link rel="canonical" href="${absoluteUrl(currentPath)}">` : '';
   const ogUrl = config.siteUrl ? `\n  <meta property="og:url" content="${absoluteUrl(currentPath)}">` : '';
-  const ogImg = ogImage ? `\n  <meta property="og:image" content="${absoluteUrl(ogImage)}">` : '';
+  const img = ogImage ? `\n  <meta property="og:image" content="${abs(ogImage)}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="${esc(ogImageAlt || fullTitle)}">
+  <meta name="twitter:image" content="${abs(ogImage)}">
+  <meta name="twitter:image:alt" content="${esc(ogImageAlt || fullTitle)}">` : '';
+  const robots = noindex ? `\n  <meta name="robots" content="noindex, follow">` : '';
+  const paging = `${prevUrl ? `\n  <link rel="prev" href="${abs(prevUrl)}">` : ''}${
+    nextUrl ? `\n  <link rel="next" href="${abs(nextUrl)}">` : ''}`;
+  const articleMeta = article ? `
+  <meta property="article:published_time" content="${article.published}">
+  <meta property="article:modified_time" content="${article.modified}">
+  <meta property="article:section" content="${esc(article.categoryName)}">${
+    article.tags.map((t) => `\n  <meta property="article:tag" content="${esc(t)}">`).join('')}` : '';
+
   return `<!doctype html>
-<html lang="en">
+<html lang="${esc(config.language)}" dir="ltr">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${esc(fullTitle)}</title>
   <meta name="description" content="${esc(description)}">
-  <meta name="author" content="${esc(config.author)}">${canonical}
+  <meta name="author" content="${esc(config.author)}">
+  <meta name="color-scheme" content="light">${canonical}${robots}${paging}
   <meta property="og:site_name" content="${esc(config.name)}">
+  <meta property="og:locale" content="${esc(config.locale)}">
   <meta property="og:type" content="${ogType}">
   <meta property="og:title" content="${esc(fullTitle)}">
-  <meta property="og:description" content="${esc(description)}">${ogUrl}${ogImg}
-  <meta name="twitter:card" content="summary">
+  <meta property="og:description" content="${esc(description)}">${ogUrl}${img}${articleMeta}
+  <meta name="twitter:card" content="${ogImage ? 'summary_large_image' : 'summary'}">
+  <meta name="twitter:title" content="${esc(fullTitle)}">
+  <meta name="twitter:description" content="${esc(description)}">
   <meta name="theme-color" content="#08152F">
   <link rel="icon" href="${p('/assets/favicon.svg')}" type="image/svg+xml">
   <link rel="apple-touch-icon" href="${p('/assets/icons/apple-touch-icon-180.png')}">
   <link rel="manifest" href="${p('/assets/site.webmanifest')}">
+  ${config.siteUrl ? `<link rel="alternate" type="application/rss+xml" title="AIVOXFLOW" href="${p('/feed.xml')}">
+  <link rel="alternate" type="application/feed+json" title="AIVOXFLOW" href="${p('/feed.json')}">` : ''}${hreflangTags()}
   <link rel="preload" href="${p('/assets/fonts/inter-latin-400-normal.woff2')}" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="${p('/assets/fonts/inter-latin-800-normal.woff2')}" as="font" type="font/woff2" crossorigin>${serifPreload ? `\n  <link rel="preload" href="${p('/assets/fonts/source-serif-4-latin-400-normal.woff2')}" as="font" type="font/woff2" crossorigin>` : ''}
-  <link rel="stylesheet" href="${p('/assets/css/site.css')}">${jsonLdScript(jsonLd)}
+  <link rel="stylesheet" href="${p(assets.css)}">${jsonLdScript(jsonLd)}${analyticsTag()}
 </head>
 <body>
 ${header(currentPath)}
@@ -155,7 +200,7 @@ ${header(currentPath)}
 ${body}
 </main>
 ${footer()}
-<script src="${p('/assets/js/site.js')}" defer></script>
+<script src="${p(assets.js)}" defer></script>
 </body>
 </html>`;
 }
@@ -203,4 +248,27 @@ export function pagination({ page, totalPages, basePath }) {
     ? `<a class="page-link" href="${link(page + 1)}" rel="next">Older →</a>`
     : `<span class="page-link disabled">Older →</span>`);
   return `<nav class="pagination" aria-label="Pagination">${parts.join('')}</nav>`;
+}
+
+// First-party share links: no third-party script, no tracking pixel.
+export function shareRow(url, title) {
+  const u = encodeURIComponent(abs(url));
+  const t = encodeURIComponent(title);
+  return `<div class="share" aria-label="Share this article">
+  <span class="share-label">Share</span>
+  <a class="share-btn" href="https://x.com/intent/tweet?url=${u}&amp;text=${t}" rel="noopener noreferrer external" target="_blank">X</a>
+  <a class="share-btn" href="https://www.linkedin.com/sharing/share-offsite/?url=${u}" rel="noopener noreferrer external" target="_blank">LinkedIn</a>
+  <button class="share-btn" type="button" data-copy-url="${esc(abs(url))}">Copy link</button>
+  <span class="share-status" role="status" aria-live="polite"></span>
+</div>`;
+}
+
+export function authorBox(author) {
+  return `<aside class="author-box" aria-label="About the author">
+  <div class="author-mark" aria-hidden="true">${esc(author.name.charAt(0))}</div>
+  <div>
+    <p class="author-name"><a href="${p(`/authors/${author.slug}/`)}">${esc(author.name)}</a></p>
+    <p class="author-bio">${esc(author.bio)}</p>
+  </div>
+</aside>`;
 }

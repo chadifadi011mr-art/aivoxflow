@@ -4,12 +4,18 @@
 *.key
 credentials*.json
 
-# Dependencies / build output (activate when the stack is chosen)
+# Dependencies / build output
 node_modules/
 vendor/
 dist/
+dist.tmp/
+dist.old/
 build/
 .wp-env.json
+
+# Generated social cards are committed (builds must not need a browser);
+# only the renderer's scratch files are ignored.
+site/assets-src/og/*.tmp.png
 
 # WordPress-specific (if that stack is chosen)
 wp-config.php
@@ -27,3 +33,19 @@ backups/
 Thumbs.db
 .idea/
 .vscode/
+
+# Local agent workspace data (not part of the product)
+.workbuddy-ai/
+
+# Content-agent working state: job logs, drafts and draft artwork.
+# Only promoted articles and their images enter site/data and site/assets-src.
+# content/calendar.json IS tracked — it is the publishing queue.
+content/jobs/
+content/drafts/
+content/scheduler.log
+
+# Deployment (deploy/deploy.mjs): credentials and one-shot artefacts stay local.
+deploy/.ftp.env
+deploy/.curlcfg.tmp
+deploy/*.zip
+deploy/backup-*/

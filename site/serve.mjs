@@ -24,6 +24,13 @@ createServer((req, res) => {
   const url = decodeURIComponent(req.url.split('?')[0]);
   let file = path.join(dist, url);
   if (url.endsWith('/')) file = path.join(file, 'index.html');
+  // Never serve anything outside dist/ — path.join alone lets "../" escape.
+  const inside = path.resolve(file).startsWith(path.resolve(dist) + path.sep);
+  if (!inside) {
+    res.writeHead(403, { 'content-type': 'text/plain; charset=utf-8' });
+    res.end('Forbidden');
+    return;
+  }
   if (existsSync(file) && statSync(file).isFile()) {
     res.writeHead(200, { 'content-type': MIME[path.extname(file)] || 'application/octet-stream' });
     res.end(readFileSync(file));

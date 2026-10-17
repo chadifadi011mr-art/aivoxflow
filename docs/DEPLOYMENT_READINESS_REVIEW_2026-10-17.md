@@ -1,5 +1,12 @@
 # Deployment readiness & search-engine standards review — 17 October 2026
 
+> **Remediation update (same day):** P1 defects D1, D3, D4, D5 below are fixed;
+> the bonus CI defect (invalid `secrets`-in-`if` in `content.yml`) is fixed too.
+> Suites after the fix: providers 27/27, structural **106/106** (+4 new regression
+> checks: production guard fires, guard leaves dist untouched, `_headers` search
+> rule, paginated descriptions unique), responsive 31/31. D2 (release commit)
+> remains open and needs the owner's approval; nothing was deployed.
+
 Independent expert review of the current working tree. Every claim below was re-verified by
 running the code; nothing is copied from other reports without a fresh check. The tree under
 review includes the uncommitted remediation of 2026-10-17 (`REMEDIATION_2026-10-17.md`) plus

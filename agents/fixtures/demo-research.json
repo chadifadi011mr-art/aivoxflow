@@ -1,0 +1,62 @@
+{
+  "_note": "Development fixture. These are placeholder sources, not real research. It exists so the pipeline, the state machine and the gates can be exercised offline. The sourcing gate refuses to publish anything derived from this file.",
+  "research": {
+    "summary": "FIXTURE — placeholder evidence pack used to test the pipeline end to end. No claim here is real.",
+    "mock": true,
+    "sources": [
+      {
+        "title": "Fixture source A — official documentation",
+        "url": "https://example.com/fixture/docs-a",
+        "type": "primary",
+        "publisher": "Fixture",
+        "publishedOn": "2026-09-01",
+        "accessedOn": "2026-10-17",
+        "read": true,
+        "stale": false,
+        "keyPoints": ["Placeholder fact one", "Placeholder fact two"],
+        "quote": "Placeholder quote."
+      },
+      {
+        "title": "Fixture source B — pricing page",
+        "url": "https://example.com/fixture/pricing-b",
+        "type": "pricing",
+        "publisher": "Fixture",
+        "publishedOn": "2026-09-15",
+        "accessedOn": "2026-10-17",
+        "read": true,
+        "stale": false,
+        "keyPoints": ["Placeholder price statement"],
+        "quote": "Placeholder quote."
+      },
+      {
+        "title": "Fixture source C — release notes",
+        "url": "https://example.com/fixture/release-c",
+        "type": "release-notes",
+        "publisher": "Fixture",
+        "publishedOn": "2026-08-20",
+        "accessedOn": "2026-10-17",
+        "read": true,
+        "stale": false,
+        "keyPoints": ["Placeholder change note"],
+        "quote": "Placeholder quote."
+      },
+      {
+        "title": "Fixture source D — secondary analysis",
+        "url": "https://example.com/fixture/analysis-d",
+        "type": "secondary",
+        "publisher": "Fixture",
+        "publishedOn": "2026-07-10",
+        "accessedOn": "2026-10-17",
+        "read": true,
+        "stale": false,
+        "keyPoints": ["Placeholder analysis point"],
+        "quote": "Placeholder quote."
+      }
+    ],
+    "claims": [],
+    "contradictions": [],
+    "analysis": [],
+    "openQuestions": ["Everything — this is a fixture."],
+    "cannotVerify": ["All claims; this file is not research."]
+  }
+}

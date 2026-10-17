@@ -1,0 +1,18 @@
+# sources.txt — one https:// URL per line.
+# Copy this file, replace the URLs with the pages you want the article to be
+# based on, then:
+#
+#   node agents/run.mjs --topic "Your topic" --category ai-tools --sources sources.txt
+#
+# Rules the pipeline enforces:
+#   · at least 4 pages must be readable, or the run stops for review
+#   · the agent may only cite what it actually fetched
+#   · primary sources first: official docs, pricing pages, release notes
+#
+# The links below are examples of the right *kind* of source for a tool article.
+
+https://docs.ollama.com/
+https://github.com/ollama/ollama/releases
+https://ai.google.dev/gemini-api/docs/pricing
+https://www.anthropic.com/pricing
+https://platform.openai.com/docs/pricing

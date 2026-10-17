@@ -1,0 +1,73 @@
+name: Publish
+
+# Rebuilds the static site at the peak windows so a scheduled article goes live
+# at the right hour rather than whenever it was generated.
+#
+# The build hides future-dated articles, so this is safe to run as often as you
+# like: it only changes the output when a slot has actually arrived.
+#
+# Deployment: this workflow builds and uploads dist/ as an artifact. Add your
+# host's deploy step where marked — the three common one-liners are listed there.
+
+on:
+  schedule:
+    - cron: '0 8,17 * * 2-4'   # Tue–Thu, 08:00 and 17:00 UTC
+    - cron: '0 9 * * 1,5'      # Mon/Fri, 09:00 UTC
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      AIVOXFLOW_SITE_URL: https://aivoxflow.com
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build
+        run: npm run build
+
+      - name: Verify
+        run: |
+          node tests/providers.mjs
+          node tests/run.mjs
+
+      - name: Upload site
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 14
+
+      # ---------------------------------------------------------------------
+      # Deploy — uncomment the one that matches your host.
+      #
+      # Netlify:
+      #   - run: npx --yes netlify-cli deploy --prod --dir=dist
+      #     env: { NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}, NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }} }
+      #
+      # Vercel:
+      #   - run: npx --yes vercel deploy --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
+      #
+      # Cloudflare Pages:
+      #   - uses: cloudflare/wrangler-action@v3
+      #     with: { apiToken: '${{ secrets.CLOUDFLARE_API_TOKEN }}', accountId: '${{ secrets.CLOUDFLARE_ACCOUNT_ID }}', command: 'pages deploy dist --project-name=aivoxflow' }
+      #
+      # GitHub Pages:
+      #   - uses: actions/upload-pages-artifact@v3
+      #     with: { path: dist }
+      #   - uses: actions/deploy-pages@v4
+      # ---------------------------------------------------------------------

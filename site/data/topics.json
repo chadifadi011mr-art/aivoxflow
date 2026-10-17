@@ -1,0 +1,149 @@
+{
+  "_note": "Topic backlog. These are editorial seeds, not facts: the research agent must still find and read sources before anything is written. Order is by priority within each category; the planner rotates categories so the site never looks one-note.",
+  "topics": [
+    {
+      "id": "ai-tools-pricing-traps",
+      "title": "How to Compare AI Tool Pricing Without Getting Burned",
+      "category": "ai-tools",
+      "intent": "commercial-investigation",
+      "notes": "Focus on seat-based vs usage-based billing, annual lock-in, overage rules, and the second-year price. Use official pricing pages only.",
+      "priority": 1
+    },
+    {
+      "id": "ai-tools-free-tier-limits",
+      "title": "AI Tool Free Tiers: What the Limits Actually Mean",
+      "category": "ai-tools",
+      "intent": "informational",
+      "notes": "Translate vague 'limited' claims into concrete caps where the vendor documents them. Where they do not, say so plainly.",
+      "priority": 2
+    },
+    {
+      "id": "ai-tools-when-not-worth-it",
+      "title": "When an AI Tool Is Not Worth the Subscription",
+      "category": "ai-tools",
+      "intent": "commercial-investigation",
+      "notes": "Decision rules for cancelling: usage below a threshold, work that needs auditability, tasks where the free tier suffices.",
+      "priority": 3
+    },
+    {
+      "id": "ai-tools-data-policy",
+      "title": "Reading an AI Vendor's Data Policy in Ten Minutes",
+      "category": "ai-tools",
+      "intent": "informational",
+      "notes": "Retention, training opt-out, subprocessors, deletion on cancel. Quote the policy text; do not paraphrase legal terms loosely.",
+      "priority": 4
+    },
+    {
+      "id": "tutorial-research-workflow",
+      "title": "Build a Research Workflow with an AI Assistant",
+      "category": "tutorials",
+      "intent": "informational",
+      "notes": "Source collection, extraction, contradiction logging, and a final verification pass. Include a worked example with a neutral topic.",
+      "priority": 1
+    },
+    {
+      "id": "tutorial-prompts-that-survive-upgrades",
+      "title": "Writing Prompts That Survive a Model Upgrade",
+      "category": "tutorials",
+      "intent": "informational",
+      "notes": "Why brittle prompts break, what to pin (constraints, format, examples), and how to test a prompt against two models.",
+      "priority": 2
+    },
+    {
+      "id": "tutorial-document-to-brief",
+      "title": "Turn a Messy Document into a Structured Brief",
+      "category": "tutorials",
+      "intent": "informational",
+      "notes": "A repeatable extraction pattern: entities, decisions, open questions, owners. Warn about hallucinated detail.",
+      "priority": 3
+    },
+    {
+      "id": "tutorial-fact-check-ai",
+      "title": "A Repeatable Way to Fact-Check AI Output",
+      "category": "tutorials",
+      "intent": "informational",
+      "notes": "Claim extraction, primary-source matching, time-sensitivity checks, and how to record what could not be verified.",
+      "priority": 4
+    },
+    {
+      "id": "software-web-vs-desktop",
+      "title": "Web App or Desktop App: The Real Trade-offs",
+      "category": "software-web",
+      "intent": "informational",
+      "notes": "Offline access, data locality, update cadence, integrations, and the failure modes of each. No product endorsements.",
+      "priority": 1
+    },
+    {
+      "id": "software-web-vet-new-saas",
+      "title": "What to Check Before Trusting a New SaaS Tool",
+      "category": "software-web",
+      "intent": "commercial-investigation",
+      "notes": "Export options, uptime history, security page, company age, pricing change history. Cite what the vendor publishes.",
+      "priority": 2
+    },
+    {
+      "id": "software-web-export-data",
+      "title": "Exporting Your Data Before You Cancel a Subscription",
+      "category": "software-web",
+      "intent": "informational",
+      "notes": "What export formats actually preserve (structure vs text), and what is usually lost. Practical, checkable steps.",
+      "priority": 3
+    },
+    {
+      "id": "automation-fail-safely",
+      "title": "Designing an Automation That Fails Safely",
+      "category": "automation-agents",
+      "intent": "informational",
+      "notes": "Idempotency, retries with backoff, dead-letter handling, alerting, and a kill switch. Include a failure checklist.",
+      "priority": 1
+    },
+    {
+      "id": "automation-never-automate",
+      "title": "Which Tasks Should Never Be Automated",
+      "category": "automation-agents",
+      "intent": "informational",
+      "notes": "Low-frequency, high-consequence, judgement-heavy, or relationship-critical work. Give a decision test, not opinions.",
+      "priority": 2
+    },
+    {
+      "id": "automation-no-code-connect",
+      "title": "Connecting Two Tools Without Writing Code",
+      "category": "automation-agents",
+      "intent": "informational",
+      "notes": "Trigger/action mapping, field matching, rate limits, and when the no-code path becomes a maintenance trap.",
+      "priority": 3
+    },
+    {
+      "id": "news-read-release-note",
+      "title": "How to Read an AI Model Release Note",
+      "category": "ai-news",
+      "intent": "informational",
+      "notes": "Separate what shipped from what was announced, check the date and the model name, and find the limits section. Use a real, current release note as the worked example.",
+      "priority": 1
+    },
+    {
+      "id": "news-benchmark-vs-claim",
+      "title": "Separating an AI Benchmark from an AI Claim",
+      "category": "ai-news",
+      "intent": "informational",
+      "notes": "What a benchmark measures, who ran it, on what data, and why a headline number rarely transfers to your task.",
+      "priority": 2
+    },
+    {
+      "id": "comparison-chatbot-vs-search",
+      "title": "Chatbot vs Search Engine for Research",
+      "category": "comparisons",
+      "intent": "commercial-investigation",
+      "notes": "Where a chatbot saves time, where it invents, and the hybrid workflow that beats both. Test criteria stated up front.",
+      "priority": 1
+    },
+    {
+      "id": "comparison-local-vs-cloud",
+      "title": "Local AI Models vs Cloud AI Models",
+      "category": "comparisons",
+      "intent": "commercial-investigation",
+      "notes": "Cost at volume, privacy, latency, capability gap, and hardware requirements. Be explicit that the gap moves monthly.",
+      "priority": 2
+    }
+  ]
+}

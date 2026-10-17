@@ -1,0 +1,31 @@
+{
+  "name": "aivoxflow",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AIVOXFLOW — static, zero-dependency publication for AI tools, tutorials, automation and verified AI news.",
+  "engines": {
+    "node": ">=20.11"
+  },
+  "scripts": {
+    "build": "node site/build.mjs",
+    "dev": "node site/serve.mjs 8130",
+    "og": "node site/og/generate.mjs",
+    "og:force": "node site/og/generate.mjs --force",
+    "agent": "node agents/run.mjs",
+    "agent:list": "node agents/run.mjs --list",
+    "agent:doctor": "node agents/doctor.mjs",
+    "agent:probe": "node agents/doctor.mjs --probe",
+    "plan": "node agents/plan.mjs",
+    "schedule:due": "node agents/scheduler.mjs --due",
+    "schedule": "node agents/scheduler.mjs --once --build",
+    "schedule:daemon": "node agents/scheduler.mjs --daemon --interval 30 --limit 1 --build",
+    "agent:demo": "node agents/run.mjs --topic \"How to choose an AI writing tool without wasting a month\" --category ai-tools --fixture agents/fixtures/demo-research.json",
+    "test": "node tests/providers.mjs && node tests/run.mjs",
+    "test:providers": "node tests/providers.mjs",
+    "test:responsive": "node tests/responsive.mjs",
+    "verify": "node tests/providers.mjs && node tests/run.mjs && node tests/responsive.mjs"
+  },
+  "keywords": ["ai", "tools", "automation", "static-site"],
+  "license": "UNLICENSED"
+}

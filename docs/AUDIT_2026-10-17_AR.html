@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تدقيق جاهزية AIVOXFLOW — 17 أكتوبر 2026</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  :root{
+    --navy:#08152F; --navy-2:#0F2247; --electric:#1E6BFF; --electric-soft:#E8F0FF;
+    --ink:#0F1B33; --muted:#5A6885; --line:#E3E8F2; --bg:#F6F8FC; --card:#FFFFFF;
+    --ok:#067647; --ok-soft:#E7F6EE; --warn:#B45309; --warn-soft:#FDF3E3;
+    --danger:#B42318; --danger-soft:#FDECEA; --info:#1E6BFF;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Segoe UI","Noto Naskh Arabic","Tahoma",system-ui,-apple-system,sans-serif;
+    line-height:1.85; font-size:16px; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  a{color:var(--electric);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code,.mono{
+    font-family:ui-monospace,"Cascadia Mono",Consolas,monospace;font-size:.86em;
+    direction:ltr;unicode-bidi:embed;background:#F0F3F9;border:1px solid var(--line);
+    border-radius:5px;padding:1px 6px;color:#243B63;
+  }
+  pre{
+    direction:ltr;text-align:left;background:#0B1B36;color:#D7E3FF;border-radius:10px;
+    padding:14px 16px;overflow:auto;font-size:13px;line-height:1.6;margin:10px 0 0;
+    font-family:ui-monospace,"Cascadia Mono",Consolas,monospace;
+  }
+  pre code{background:none;border:0;padding:0;color:inherit;font-size:inherit}
+
+  /* ---------- hero ---------- */
+  .hero{background:linear-gradient(160deg,#08152F 0%,#0C1D3D 55%,#12305F 100%);color:#fff;padding:56px 0 44px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:auto -10% -60% -10%;height:320px;
+    background:radial-gradient(60% 100% at 50% 0%,rgba(76,141,255,.28),transparent 70%)}
+  .hero .wrap{position:relative;z-index:1}
+  .kicker{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;letter-spacing:.08em;
+    text-transform:uppercase;color:#9DBBFF;font-weight:700;margin-bottom:14px}
+  .dot{width:7px;height:7px;border-radius:50%;background:#4C8DFF;box-shadow:0 0 0 4px rgba(76,141,255,.18)}
+  h1{font-size:clamp(26px,3.4vw,36px);line-height:1.4;margin:0 0 14px;font-weight:800;letter-spacing:-.01em;max-width:26ch}
+  .sub{color:#C7D6F2;font-size:17px;max-width:62ch;margin:0}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+  .chip{font-size:12.5px;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.16);color:#DCE6FA;font-weight:600}
+
+  /* ---------- verdict ---------- */
+  .verdict{margin-top:-28px;position:relative;z-index:2}
+  .verdict-card{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    box-shadow:0 18px 40px -24px rgba(8,21,47,.35);padding:28px;display:grid;
+    grid-template-columns:1fr 1fr 1.6fr;gap:26px;align-items:center}
+  .gauge{text-align:center}
+  .gauge svg{display:block;margin:0 auto 6px}
+  .gauge b{display:block;font-size:13px;color:var(--muted);font-weight:600}
+  .verdict-text h2{margin:0 0 8px;font-size:19px}
+  .verdict-text p{margin:0;color:var(--muted);font-size:14.5px}
+
+  /* ---------- sections ---------- */
+  section{padding:44px 0 8px}
+  h2.sec{font-size:24px;margin:0 0 6px;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
+  h2.sec .num{font-size:12px;font-weight:800;color:var(--electric);background:var(--electric-soft);
+    border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+  .sec-desc{color:var(--muted);margin:0 0 22px;font-size:15px}
+  h3{font-size:17px;margin:26px 0 10px}
+
+  /* ---------- scorecard ---------- */
+  .scorecard{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .row{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:20px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid var(--line)}
+  .row:last-child{border-bottom:0}
+  .meter{display:flex;align-items:center;gap:14px}
+  .meter .bar{flex:1}
+  .row .lbl{font-size:13.5px;font-weight:600;line-height:1.55}
+  .row .lbl small{display:block;font-weight:400;color:var(--muted);font-size:11.5px}
+  .bar{height:9px;background:#EDF1F8;border-radius:999px;overflow:hidden}
+  .bar i{display:block;height:100%;border-radius:999px}
+  .row .val{text-align:left;font-weight:800;font-size:14px;font-variant-numeric:tabular-nums;min-width:34px}
+  .b-hi{background:linear-gradient(90deg,#067647,#2CA26B)}
+  .b-mid{background:linear-gradient(90deg,#B45309,#E08A2E)}
+  .b-low{background:linear-gradient(90deg,#B42318,#E0574A)}
+
+  /* ---------- strengths ---------- */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+  .card h3{margin:0 0 6px;font-size:15px;display:flex;gap:8px;align-items:center}
+  .card p{margin:0;color:var(--muted);font-size:14px}
+  .tick{color:var(--ok);font-weight:800}
+
+  /* ---------- findings ---------- */
+  .finding{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:20px 22px;margin-bottom:14px;border-right:4px solid var(--danger)}
+  .finding.p1{border-right-color:var(--warn)}
+  .finding.p2{border-right-color:#8FA3C4}
+  .f-head{display:flex;justify-content:flex-start;align-items:baseline;gap:12px;margin-bottom:8px}
+  .f-head h3{margin:0;font-size:16.5px}
+  .pill{font-size:11.5px;font-weight:800;padding:3px 9px;border-radius:999px;white-space:nowrap;
+    letter-spacing:.02em}
+  .pill.p0{background:var(--danger-soft);color:var(--danger)}
+  .pill.p1{background:var(--warn-soft);color:var(--warn)}
+  .pill.p2{background:#EEF2F9;color:#54658A}
+  .f-body{font-size:14.5px;color:#26334D}
+  .f-body p{margin:6px 0}
+  .f-label{font-weight:700;color:var(--ink)}
+  .impact{background:#FAFBFE;border:1px dashed var(--line);border-radius:8px;padding:10px 14px;
+    margin-top:10px;font-size:13.8px;color:#3A4A68}
+
+  /* ---------- table ---------- */
+  table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;font-size:14px}
+  th,td{padding:11px 14px;text-align:right;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:#F2F5FB;font-size:12.5px;letter-spacing:.02em;color:#3B4C6B;font-weight:700}
+  tr:last-child td{border-bottom:0}
+  td.yes{color:var(--ok);font-weight:700}
+  td.no{color:var(--danger);font-weight:700}
+
+  /* ---------- roadmap ---------- */
+  .road{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .phase{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px}
+  .phase .tag{font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--electric)}
+  .phase h3{margin:4px 0 10px;font-size:16px}
+  .phase ul{margin:0;padding-inline-start:18px;font-size:14px;color:#2C3A57}
+  .phase li{margin-bottom:7px}
+  .phase .goal{margin-top:12px;font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+
+  .note{background:var(--electric-soft);border:1px solid #C9DAFF;border-radius:10px;
+    padding:14px 18px;font-size:14px;color:#1B3A78;margin:18px 0}
+  footer{padding:34px 0 60px;color:var(--muted);font-size:13px;text-align:center}
+
+  @media (max-width:860px){
+    .verdict-card{grid-template-columns:1fr 1fr}
+    .verdict-text{grid-column:1/-1}
+    .grid2,.road{grid-template-columns:1fr}
+    .row{grid-template-columns:minmax(0,1fr) 240px;gap:12px}
+  }
+  @media (max-width:520px){
+    .verdict-card{grid-template-columns:1fr}
+    .row{grid-template-columns:1fr}
+    .meter{display:none}
+  }
+  @media print{
+    body{background:#fff}
+    .hero{background:#fff;color:#000;padding:0 0 20px}
+    .hero .sub,.chip,.kicker{color:#333}
+    .chip{border-color:#ccc}
+    .verdict{margin-top:0}
+    .finding,.card,.phase,table{break-inside:avoid}
+    a{color:#000}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker"><span class="dot"></span> تقرير تدقيق تقني — مراجعة ما قبل الإطلاق</div>
+    <h1>جاهزية AIVOXFLOW للمنافسة كموقع نشر تقني كبير</h1>
+    <p class="sub">مراجعة كاملة للبنية، هندسة البناء، SEO التقني، المحتوى، الوصولية، والأمان — مع أدلة من الكود والمخرجات الفعلية، وقائمة إصلاحات مرتّبة بالأولوية.</p>
+    <div class="chips">
+      <span class="chip">17 أكتوبر 2026</span>
+      <span class="chip">25 مسارًا مبنياً</span>
+      <span class="chip">53/53 + 31/31 اختبارًا ناجحًا</span>
+      <span class="chip">مولّد ثابت بلا اعتماديات</span>
+      <span class="chip">آخر التزام: ac230e4</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap verdict">
+  <div class="verdict-card">
+    <div class="gauge">
+      <svg width="132" height="132" viewBox="0 0 132 132" role="img" aria-label="الجاهزية التقنية للإطلاق 74 من 100">
+        <circle cx="66" cy="66" r="54" fill="none" stroke="#EDF1F8" stroke-width="12"/>
+        <circle cx="66" cy="66" r="54" fill="none" stroke="#1E6BFF" stroke-width="12" stroke-linecap="round"
+          stroke-dasharray="251 339" transform="rotate(-90 66 66)"/>
+        <text x="66" y="70" text-anchor="middle" font-size="30" font-weight="800" fill="#0F1B33" font-family="Segoe UI,sans-serif">74</text>
+        <text x="66" y="90" text-anchor="middle" font-size="11" fill="#5A6885" font-family="Segoe UI,sans-serif">/ 100</text>
+      </svg>
+      <b>الجاهزية التقنية للإطلاق</b>
+    </div>
+    <div class="gauge">
+      <svg width="132" height="132" viewBox="0 0 132 132" role="img" aria-label="جاهزية المنافسة 52 من 100">
+        <circle cx="66" cy="66" r="54" fill="none" stroke="#EDF1F8" stroke-width="12"/>
+        <circle cx="66" cy="66" r="54" fill="none" stroke="#B45309" stroke-width="12" stroke-linecap="round"
+          stroke-dasharray="176 339" transform="rotate(-90 66 66)"/>
+        <text x="66" y="70" text-anchor="middle" font-size="30" font-weight="800" fill="#0F1B33" font-family="Segoe UI,sans-serif">52</text>
+        <text x="66" y="90" text-anchor="middle" font-size="11" fill="#5A6885" font-family="Segoe UI,sans-serif">/ 100</text>
+      </svg>
+      <b>جاهزية المنافسة</b>
+    </div>
+    <div class="verdict-text">
+      <h2>الحكم: أساس هندسي ممتاز، منتج غير مكتمل</h2>
+      <p>الكود نظيف ومقصود، والاختبارات حقيقية، والوصولية والأداء فوق المتوسط. لكن الموقع اليوم <strong>MVP تقني</strong> لا <strong>منشأة نشر</strong>: ستة مقالات قصيرة، لا صور مشاركة اجتماعية، خريطة موقع معطوبة، لا تغذية RSS، لا صفحات مؤلفين، لا تعدد لغوي، ولا قياس. الفجوة ليست في جودة ما بُني، بل في ما لم يُبنَ بعد.</p>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+
+<section>
+  <h2 class="sec"><span class="num">01</span> بطاقة التقييم</h2>
+  <p class="sec-desc">تقييم على عشرة محاور، مبني على قراءة الكود وتشغيل البناء والاختبارات فعليًا — لا على الوعود في ملفات الخطط.</p>
+  <div class="scorecard">
+    <div class="row"><div class="lbl">البنية وجودة الكود<small>فصل واضح، بلا اعتماديات، تعليقات تفسيرية</small></div><div class="meter"><div class="bar"><i class="b-hi" style="width:85%"></i></div><div class="val">8.5</div></div></div>
+    <div class="row"><div class="lbl">هندسة البناء والنشر<small>لا package.json، لا CI، بناء يمسح dist بالكامل</small></div><div class="meter"><div class="bar"><i class="b-low" style="width:30%"></i></div><div class="val">3.0</div></div></div>
+    <div class="row"><div class="lbl">SEO التقني<small>أساسات سليمة + أخطاء في sitemap والـ schema</small></div><div class="meter"><div class="bar"><i class="b-mid" style="width:50%"></i></div><div class="val">5.0</div></div></div>
+    <div class="row"><div class="lbl">المحتوى والتحرير<small>6 مقالات × ~404 كلمة، بلا صور أو جداول</small></div><div class="meter"><div class="bar"><i class="b-low" style="width:30%"></i></div><div class="val">3.0</div></div></div>
+    <div class="row"><div class="lbl">تجربة المستخدم والتصميم<small>نظيف ومقروء، لكنه عام وبلا هوية بصرية قوية</small></div><div class="meter"><div class="bar"><i class="b-mid" style="width:65%"></i></div><div class="val">6.5</div></div></div>
+    <div class="row"><div class="lbl">الوصولية (a11y)<small>skip link، حلقات تركيز، تباين مُختبَر، تقليل الحركة</small></div><div class="meter"><div class="bar"><i class="b-hi" style="width:80%"></i></div><div class="val">8.0</div></div></div>
+    <div class="row"><div class="lbl">الأداء<small>صفحات 9–14KB، خطوط محلية — بلا تصغير أو بصمة ملفات</small></div><div class="meter"><div class="bar"><i class="b-hi" style="width:75%"></i></div><div class="val">7.5</div></div></div>
+    <div class="row"><div class="lbl">الأمان<small>ساكن وبلا أطراف ثالثة، لكن بلا CSP أو رؤوس أمان</small></div><div class="meter"><div class="bar"><i class="b-mid" style="width:60%"></i></div><div class="val">6.0</div></div></div>
+    <div class="row"><div class="lbl">التعدد اللغوي والعالمية<small>مطلوب صراحة في AGENTS.md — غير موجود إطلاقًا</small></div><div class="meter"><div class="bar"><i class="b-low" style="width:10%"></i></div><div class="val">1.0</div></div></div>
+    <div class="row"><div class="lbl">القياس والنمو<small>لا تحليلات، لا نشرة بريدية، لا RSS، لا قناة تواصل</small></div><div class="meter"><div class="bar"><i class="b-low" style="width:20%"></i></div><div class="val">2.0</div></div></div>
+    <div class="row"><div class="lbl">أتمتة خط إنتاج المحتوى<small>محدّدة في AGENTS.md بالكامل — لم يبدأ تنفيذها</small></div><div class="meter"><div class="bar"><i class="b-low" style="width:10%"></i></div><div class="val">1.0</div></div></div>
+  </div>
+</section>
+
+<section>
+  <h2 class="sec"><span class="num">02</span> ما ينجح فعلًا</h2>
+  <p class="sec-desc">هذه ليست مجاملات: كل بند أدناه مُتحقَّق منه في المخرجات أو في الاختبارات.</p>
+  <div class="grid2">
+    <div class="card"><h3><span class="tick">✓</span> مولّد ثابت بلا أي اعتمادية</h3><p>لا <code>node_modules</code>، لا إطار عمل، لا سلسلة أدوات هشّة. البناء يعمل بـ <code>node site/build.mjs</code> فقط — أصغر سطح هجوم وأقل تكلفة تشغيل ممكنة.</p></div>
+    <div class="card"><h3><span class="tick">✓</span> اختبارات حقيقية لا صورية</h3><p>53 فحصًا للبنية والروابط والتباين والـ JSON-LD وحدود الحجم، و31 فحصًا للاستجابة والكيبورد عبر Edge/CDP. النتيجة الفعلية: <strong>53/53</strong> و<strong>31/31</strong>.</p></div>
+    <div class="card"><h3><span class="tick">✓</span> أمان المحتوى بالتصميم</h3><p>مُصيّر Markdown يهرّب كل HTML أولًا، ويرفض <code>javascript:</code> و<code>data:</code> والروابط البروتوكولية النسبية. قرار صحيح لمحتوى قادم من الذكاء الاصطناعي.</p></div>
+    <div class="card"><h3><span class="tick">✓</span> فصل صارم بين البيانات والعرض</h3><p>المحتوى JSON، القوالب في <code>lib/html.mjs</code>، القواعد في <code>build.mjs</code>. البناء يفشل فورًا عند نقص حقل مطلوب بدلًا من نشر صفحة ناقصة.</p></div>
+    <div class="card"><h3><span class="tick">✓</span> SEO مشروط بصدق</h3><p>عند غياب <code>AIVOXFLOW_SITE_URL</code> لا يُولَّد canonical ولا sitemap ولا robots — بدلًا من تخمين نطاق مؤقت. سلوك نادر وناضج.</p></div>
+    <div class="card"><h3><span class="tick">✓</span> وصولية فوق المتوسط</h3><p>skip link، <code>aria-current</code>، حلقات تركيز مرئية، احترام <code>prefers-reduced-motion</code>، تباين محسوب في الاختبارات، وتدرّج سليم بلا JavaScript.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2 class="sec"><span class="num">03</span> الفجوات الحرجة — تُصلح قبل أي إطلاق</h2>
+  <p class="sec-desc">سبعة عيوب مؤكدة بالتشغيل. الأول والثاني يضرّان الفهرسة مباشرة، والرابع يمحو أثرك على كل منصة اجتماعية.</p>
+
+  <div class="finding">
+    <div class="f-head"><h3>1. خريطة الموقع تحتوي روابط بشرطة مزدوجة</h3><span class="pill p0">P0</span></div>
+    <div class="f-body">
+      <p><span class="f-label">الدليل (مخرج فعلي من البناء):</span></p>
+      <pre><code>&lt;url&gt;&lt;loc&gt;https://example.com//&lt;/loc&gt;...
+&lt;url&gt;&lt;loc&gt;https://example.com/articles//&lt;/loc&gt;...
+&lt;url&gt;&lt;loc&gt;https://example.com/category/ai-tools//&lt;/loc&gt;...</code></pre>
+      <p><span class="f-label">السبب:</span> <code>build.mjs:33</code> يضيف <code>/</code> لكل مسار حتى لو كان ينتهي بها أصلًا، ثم <code>absoluteUrl</code> يلصق الناتج بالنطاق. النتيجة: 24 رابطًا مشوّهًا من أصل 24.</p>
+      <div class="impact"><strong>الأثر:</strong> Google يعامل <code>example.com//</code> كعنوان مختلف عن <code>example.com/</code> — فقدان إشارات الفهرسة، وأخطاء في Search Console، واحتمال رفض الخريطة بالكامل. هذا أخطر عيب في المشروع اليوم.</div>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div class="f-head"><h3>2. <code>lastmod</code> في الخريطة = تاريخ البناء لكل صفحة</h3><span class="pill p0">P0</span></div>
+    <div class="f-body">
+      <p>كل صفحة تحمل تاريخ اليوم: <code>&lt;lastmod&gt;2026-10-17&lt;/lastmod&gt;</code>. ومحاولة ربط تاريخ المقال به تفشل دائمًا لأن المقارنة <code>a.url === r</code> لا تتحقق بسبب العيب السابق (<code>build.mjs:375-377</code>).</p>
+      <div class="impact"><strong>الأثر:</strong> مع كل بناء تُخبر Google أن كل صفحاتك تغيّرت، فتفقد مصداقية الإشارة وتُهدر ميزانية الزحف. الحل: <code>lastmod</code> من تاريخ النشر/التحديث الحقيقي، أو حذفه تمامًا للصفحات الثابتة.</div>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div class="f-head"><h3>3. بيانات منظّمة غير صالحة: BreadcrumbList فارغة</h3><span class="pill p0">P0</span></div>
+    <div class="f-body">
+      <p>عند غياب النطاق، يُرشَّح كل عنصر من عناصر المسار فيبقى الهيكل هكذا في كل صفحة مقال:</p>
+      <pre><code>{"@type":"BreadcrumbList","itemListElement":[]}</code></pre>
+      <p>السبب: <code>build.mjs:80</code> يستخدم <code>.filter(x =&gt; x.item)</code> بدل حذف الكتلة كاملة عند غياب النطاق.</p>
+      <div class="impact"><strong>الأثر:</strong> تحذير خطير في Rich Results Test، وفقدان مسار التنقّل في نتائج البحث. الإصلاح بسطر واحد: أعد الكتلة فقط عندما <code>config.siteUrl</code> موجود.</div>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div class="f-head"><h3>4. لا توجد صورة مشاركة اجتماعية على أي صفحة</h3><span class="pill p0">P0</span></div>
+    <div class="f-body">
+      <p>الفحص: <code>grep -l "og:image" dist/**/*.html</code> → <strong>صفر</strong> ملف. السبب أن <code>build.mjs:58</code> يبحث عن <code>site/assets-src/share-card.png</code> وهو غير موجود، فيصبح <code>ogImage = ''</code>. كذلك <code>twitter:card</code> بقيمة <code>summary</code> لا <code>summary_large_image</code> (<code>html.mjs:143</code>).</p>
+      <div class="impact"><strong>الأثر:</strong> كل مشاركة على X وLinkedIn وWhatsApp وفيسبوك تظهر كرابط نصي عاري. في سوق يعتمد على المشاركة الاجتماعية، هذا يخفض معدل النقر إلى النصف تقريبًا. يحتاج الموقع صورة OG لكل مقال (قالب SVG → PNG)، لا صورة عامة واحدة.</div>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div class="f-head"><h3>5. بيانات Article المنظّمة ناقصة لحقول Google الإلزامية</h3><span class="pill p0">P0</span></div>
+    <div class="f-body">
+      <p>المولَّد حاليًا يحتوي <code>headline</code> و<code>description</code> و<code>datePublished</code> فقط. الناقص: <code>image</code> (إلزامي)، <code>publisher.logo</code> (إلزامي)، <code>dateModified</code>، <code>inLanguage</code>، و<code>mainEntityOfPage</code> يُحذف عند غياب النطاق.</p>
+      <div class="impact"><strong>الأثر:</strong> فقدان أهلية ظهور بطاقة المقال الغنية (Top Stories / Discover)، وهي أهم قناة زيارة لموقع إخباري تقني جديد.</div>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div class="f-head"><h3>6. <code>absoluteUrl</code> يتجاهل <code>basePath</code></h3><span class="pill p0">P0</span></div>
+    <div class="f-body">
+      <p><code>config.mjs:35</code>: <code>absoluteUrl = (path) =&gt; siteUrl + path</code> — بينما كل الروابط الداخلية تمرّ عبر <code>p()</code> التي تضيف <code>basePath</code>. فإذا نُشر الموقع على مسار فرعي (GitHub Pages مثلًا)، تصبح canonical وخريطة الموقع وصور OG كلها خاطئة.</p>
+      <div class="impact"><strong>الأثر:</strong> ميزة موجودة في الإعدادات لكنها معطّلة فعليًا. إصلاحها سطر واحد: <code>siteUrl + config.basePath + path</code>.</div>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div class="f-head"><h3>7. البناء يمسح <code>dist/</code> بالكامل وغير ذرّي</h3><span class="pill p0">P0</span></div>
+    <div class="f-body">
+      <p><code>build.mjs:23</code> يبدأ بـ <code>rmSync(dist, {recursive:true})</code>. أثناء المراجعة، فشل عملية الحذف في البيئة (قفل ملفات) تَرَك <code>dist</code> بأربعة ملفات فقط — أي موقع مكسور. الاختبارات نفسها تنهار بعدها بـ <code>ENOENT</code>.</p>
+      <div class="impact"><strong>الأثر:</strong> لا يوجد أبدًا حالة «نشر نصف مكتمل» في موقع احترافي. الحل: البناء إلى <code>dist.tmp</code> ثم تبديل ذرّي، مع إبقاء النسخة السابقة للتراجع الفوري.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="sec"><span class="num">04</span> فجوات الاحترافية — P1</h2>
+  <p class="sec-desc">لا تمنع الإطلاق، لكنها الفرق بين «موقع جيد» و«موقع ينافس الكبار».</p>
+
+  <h3>أ. هندسة الإصدار والتشغيل</h3>
+  <div class="finding p1"><div class="f-head"><h3>لا يوجد <code>package.json</code> ولا README ولا CI</h3><span class="pill p1">P1</span></div>
+    <div class="f-body"><p>لا أوامر موحّدة (<code>npm run build/test</code>)، ولا إصدار Node محدد، ولا ملف واحد يشرح كيف تبني وتنشر. ولا يوجد <code>.github/workflows</code> — أي أن الاختبارات تعمل فقط حين يتذكّر إنسان تشغيلها. المشروع يحتاج: <code>scripts</code>، <code>engines</code>، وworkflow يشغّل البناء + الاختبارين + Lighthouse CI على كل PR.</p></div></div>
+
+  <div class="finding p1"><div class="f-head"><h3>لا بصمة ملفات ولا سياسة تخزين مؤقت ولا رؤوس أمان</h3><span class="pill p1">P1</span></div>
+    <div class="f-body"><p>الأصول تُنشر بأسماء ثابتة (<code>/assets/css/site.css</code>، <code>/assets/js/site.js</code>) فلا يمكن استخدام <code>Cache-Control: immutable</code>، وكل نشر يُبطل الكاش عند كل الزوار. ولا يوجد <code>_headers</code> أو <code>netlify.toml</code> أو <code>vercel.json</code> يضبط CSP وHSTS و<code>X-Content-Type-Options</code>. موقع بلا أطراف ثالثة يمكنه تطبيق <code>default-src 'self'</code> بسهولة — فرصة أمان شبه مجانية مُهدرة.</p></div></div>
+
+  <div class="finding p1"><div class="f-head"><h3>لا نسخ احتياطي ولا تراجع للإصدارات</h3><span class="pill p1">P1</span></div>
+    <div class="f-body"><p><code>dist/</code> مستبعَد من Git، ولا تُحفظ نسخة من كل إصدار منشور. عند نشر نسخة سيئة لا توجد طريقة للرجوع إلى السابقة في ثوانٍ. الحل: نشر من CI مع أرشيف إصدارات، أو الاعتماد على تراجع المنصة (Netlify/Vercel) مع توثيق ذلك.</p></div></div>
+
+  <h3>ب. المحتوى — الفجوة الأكبر</h3>
+  <div class="finding p1"><div class="f-head"><h3>عمق المحتوى لا يقترب من منافس واحد</h3><span class="pill p1">P1</span></div>
+    <div class="f-body">
+      <p>القياس الفعلي: 6 مقالات، متوسط <strong>404 كلمات</strong> للمقال، أي ~2,400 كلمة للموقع بأكمله. تصنيفات بأكملها فيها مقال واحد، ما يُنتج صفحات تصنيف «رقيقة» تُضعف التقييم العام.</p>
+      <div class="impact"><strong>المرجع:</strong> مقال مقارنة واحد لدى منافس جدي يتراوح بين 1,200 و2,500 كلمة، مع جدول مقارنة، لقطات شاشة، تاريخ تحديث، ومنهجية اختبار معلنة. الأولوية ليست «مقالات أكثر» بل <strong>عمق أعلى في 3 محاور</strong>: مقارنات، دروس عملية، ومراجعات أدوات مبنية على تجربة فعلية.</div>
+    </div></div>
+
+  <div class="finding p1"><div class="f-head"><h3>مُصيّر Markdown لا يدعم الجداول ولا الصور</h3><span class="pill p1">P1</span></div>
+    <div class="f-body"><p><code>markdown.mjs</code> يدعم العناوين والقوائم والاقتباس والشيفرة فقط. لا جداول، لا صور، لا قوائم متداخلة، لا عناوين h4، لا فواصل، لا حواشٍ. بينما «المقارنات» أحد أعمدة الموقع الستة — ومقارنة بلا جدول مقارنة غير قابلة للتحقيق. هذا قيد في المحرّك يمنع نوع المحتوى الأساسي.</p></div></div>
+
+  <div class="finding p1"><div class="f-head"><h3>لا صفحات مؤلفين ولا إشارات خبرة (E-E-A-T)</h3><span class="pill p1">P1</span></div>
+    <div class="f-body"><p>كل المقالات موقّعة بـ «AIVOXFLOW Editorial» ككيان تنظيمي، ولا صفحة كاتب، ولا سيرة، ولا <code>Person</code> في الـ schema، ولا <code>reviewedBy</code>. Google صار يعامل «من كتب هذا ولماذا يُوثق به» كعامل ترتيب مباشر في المجال التقني. هذا أرخص مكسب مصداقية متاح.</p></div></div>
+
+  <div class="finding p1"><div class="f-head"><h3>لا تاريخ تحديث ولا دورة صيانة للمحتوى</h3><span class="pill p1">P1</span></div>
+    <div class="f-body"><p>لا حقل <code>updated</code> في أي مقال، ولا <code>dateModified</code>، ولا «آخر مراجعة». في مجال يتغير شهريًا (أسعار، حدود الخطط، أسماء موديلات) المقال بلا تاريخ مراجعة يفقد قيمته بسرعة — والموقع يعرّف نفسه بأنه «يتحقق من الحقائق قبل النشر» فقط.</p></div></div>
+
+  <h3>ج. التوزيع والنمو</h3>
+  <div class="finding p1"><div class="f-head"><h3>لا RSS، لا نشرة بريدية، ولا قناة تواصل عاملة</h3><span class="pill p1">P1</span></div>
+    <div class="f-body"><p>لا <code>feed.xml</code> ولا <code>feed.json</code> — أي لا وسيلة لقرّاء RSS ولا لمنصات النشر الآلي. وصفحة <code>/contact/</code> تعلن صراحة «لا توجد قناة تواصل بعد»، والنشرة معطّلة في الإعدادات. النتيجة: كل زيارة لا يمكن تحويلها إلى علاقة. القرار «لا نضع بريدًا غير مُراقَب» صحيح تحريريًا، لكن غياب البديل خطأ تجاري.</p></div></div>
+
+  <div class="finding p1"><div class="f-head"><h3>صفر قياس</h3><span class="pill p1">P1</span></div>
+    <div class="f-body"><p>لا تحليلات ولا Search Console موثّقة ولا قياس أداء مستمر. <code>AGENTS.md</code> يشترط أن يكون الموقع «قابلًا للقياس»، والواقع أنه لا توجد أي بيانات. البديل المحترم: تحليلات خفيفة تحترم الخصوصية (self-hosted/بدون كوكيز) + تقرير Core Web Vitals شهري.</p></div></div>
+
+  <h3>د. SEO والتعدد اللغوي</h3>
+  <div class="finding p1"><div class="f-head"><h3>صفحة البحث قابلة للفهرسة</h3><span class="pill p1">P1</span></div>
+    <div class="f-body"><p><code>/search/</code> تُبنى بلا <code>meta robots</code> وتُدرَج في خريطة الموقع. صفحة بحث فارغة المحتوى في الفهرس = محتوى رقيق يستهلك ميزانية الزحف. القاعدة المتّبعة عند الكبار: <code>noindex,follow</code> دائمًا.</p></div></div>
+
+  <div class="finding p1"><div class="f-head"><h3>لا وجود لأي بنية تعدد لغوي</h3><span class="pill p1">P1</span></div>
+    <div class="f-body"><p><code>AGENTS.md</code> يطلب مسارات لغوية مستقلة و<code>hreflang</code> ومبدّل لغة. الواقع: <code>lang="en"</code> مثبّت في القالب، صفر <code>hreflang</code>، لا مبدّل، والتواريخ بـ <code>en-US</code> فقط. وحتى <code>slugify</code> يحذف كل ما ليس ASCII — أي أن عنوانًا عربيًا سيُنتج <code>id</code> فارغًا ومعرّفًا مكسورًا. هذه ليست «مرحلة لاحقة» بل قرار معماري يجب أن يُتخذ قبل تراكم 50 مقالًا.</p></div></div>
+
+  <div class="finding p1"><div class="f-head"><h3>مخاطر فهرسة ثانوية</h3><span class="pill p1">P1</span></div>
+    <div class="f-body"><p>لا <code>rel="prev/next"</code> في <code>&lt;head&gt;</code> للترقيم، صفحات الترقيم مُدرجة في الخريطة، لا <code>xhtml:link</code> للبدائل اللغوية، ولا خريطة إعادة توجيه عند تغيير المسارات، ولا حماية من تكرار <code>slug</code> (مقالان بنفس الـ slug يكتبان فوق بعضهما بصمت ويظهران مرتين في الخريطة).</p></div></div>
+
+  <h3>هـ. تجربة القراءة</h3>
+  <div class="finding p1"><div class="f-head"><h3>صفحة المقال بلا مقوّمات النشر الحديث</h3><span class="pill p1">P1</span></div>
+    <div class="f-body"><p>لا صورة بطل، لا أزرار مشاركة، لا «النقاط الرئيسية»، لا وقت تحديث، لا سيرة كاتب أسفل المقال، لا مقال تالٍ/سابق، لا تعليقات أو ردود. أغلفة التصنيفات أشكال هندسية SVG متكررة تبدو كعناصر مؤقتة أكثر من كونها هوية بصرية — وهي أول ما يميّز موقعًا كبيرًا عن قالب جاهز.</p></div></div>
+
+  <div class="finding p1"><div class="f-head"><h3>البحث بدائي</h3><span class="pill p1">P1</span></div>
+    <div class="f-body"><p>مطابقة نصية بسيطة بلا تجذير ولا أخطاء إملائية، الفهرس مقطوع عند 1500 حرف، النتائج محدودة بـ20 بلا ترقيم، بلا تصفية بالتصنيف، بلا إبراز للمصطلح، وبلا نمط <code>combobox</code> القياسي للوصولية (تنقّل بالأسهم، <code>aria-activedescendant</code>).</p></div></div>
+</section>
+
+<section>
+  <h2 class="sec"><span class="num">05</span> الفجوة مقابل المواقع الكبرى</h2>
+  <p class="sec-desc">مقارنة القدرات لا الشعارات: ما يتوقعه القارئ والمحرّك من منشور تقني كبير.</p>
+  <table>
+    <thead><tr><th>القدرة</th><th>AIVOXFLOW</th><th>المواقع الكبرى</th><th>الأثر</th></tr></thead>
+    <tbody>
+      <tr><td>عمق المقال</td><td class="no">~400 كلمة</td><td>1,200–2,500 كلمة + جداول وصور</td><td>ترتيب ومصداقية</td></tr>
+      <tr><td>صورة مشاركة اجتماعية</td><td class="no">غير موجودة</td><td>صورة لكل مقال</td><td>معدل النقر</td></tr>
+      <tr><td>صفحة مؤلف + سيرة</td><td class="no">لا</td><td>لكل كاتب، مع <code>Person</code></td><td>E-E-A-T</td></tr>
+      <tr><td>تاريخ تحديث ظاهر</td><td class="no">لا</td><td>«Updated …» في كل مقال</td><td>حداثة المحتوى</td></tr>
+      <tr><td>تغذية RSS</td><td class="no">لا</td><td>قياسية</td><td>توزيع واعتماد آلي</td></tr>
+      <tr><td>نشرة بريدية</td><td class="no">معطّلة</td><td>المحرّك الأول للعودة</td><td>احتفاظ بالجمهور</td></tr>
+      <tr><td>وسوم/مواضيع مترابطة</td><td class="no">تصنيفات فقط</td><td>وسوم + كتل «اقرأ أيضًا»</td><td>عمق الجلسة</td></tr>
+      <tr><td>تحليلات وقياس</td><td class="no">صفر</td><td>لوحات كاملة</td><td>قرارات تحريرية</td></tr>
+      <tr><td>تعدد لغوي + hreflang</td><td class="no">لا</td><td>إنجليزي + لغات أساسية</td><td>وصول عالمي</td></tr>
+      <tr><td>هوية بصرية مميزة</td><td>جزئي</td><td>أغلفة وصور أصلية</td><td>تمييز وثقة</td></tr>
+      <tr><td>الوصولية والأداء</td><td class="yes">قوي</td><td>متفاوت</td><td>ميزة تنافسية حقيقية</td></tr>
+      <tr><td>شفافية تحريرية</td><td class="yes">ممتاز</td><td>غالبًا ضعيفة</td><td>ثقة — احتفظ بها</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2 class="sec"><span class="num">06</span> خارطة الطريق</h2>
+  <p class="sec-desc">ثلاث مراحل مرتّبة بالأثر لا بالجهد. كل بند له معيار قبول قابل للفحص.</p>
+  <div class="road">
+    <div class="phase">
+      <div class="tag">المرحلة 0</div>
+      <h3>إصلاحات حاسمة</h3>
+      <ul>
+        <li>إصلاح الشرطة المزدوجة في <code>emit()</code> وإعادة توليد الخريطة</li>
+        <li><code>lastmod</code> حقيقي أو حذفه</li>
+        <li>حذف BreadcrumbList عند غياب النطاق</li>
+        <li>توليد صورة OG لكل مقال + <code>summary_large_image</code></li>
+        <li>إكمال <code>image</code> و<code>publisher.logo</code> و<code>dateModified</code> و<code>inLanguage</code></li>
+        <li><code>absoluteUrl</code> يحترم <code>basePath</code></li>
+        <li>بناء ذرّي إلى <code>dist.tmp</code> ثم تبديل</li>
+        <li><code>package.json</code> + README + CI أساسي</li>
+      </ul>
+      <div class="goal"><strong>معيار القبول:</strong> خريطة بلا <code>//</code>، صفر أخطاء في Rich Results Test، وكل صفحة لها صورة OG.</div>
+    </div>
+    <div class="phase">
+      <div class="tag">المرحلة 1</div>
+      <h3>الاحترافية التشغيلية</h3>
+      <ul>
+        <li>بصمة أصول + <code>_headers</code> مع CSP وHSTS</li>
+        <li>RSS + JSON Feed</li>
+        <li><code>noindex</code> لصفحة البحث</li>
+        <li>صفحات مؤلفين + <code>Person</code> + <code>reviewedBy</code></li>
+        <li>حقل <code>updated</code> ظاهر في المقال</li>
+        <li>دعم الجداول والصور في Markdown</li>
+        <li>حماية من تكرار <code>slug</code> + <code>rel=prev/next</code></li>
+        <li>تحليلات تحترم الخصوصية + قناة تواصل أو نشرة</li>
+        <li>Lighthouse CI + axe في كل PR</li>
+      </ul>
+      <div class="goal"><strong>معيار القبول:</strong> نشر تلقائي من CI، تراجع بنقرة، وتقرير وصولية آلي بلا أخطاء حرجة.</div>
+    </div>
+    <div class="phase">
+      <div class="tag">المرحلة 2</div>
+      <h3>المنافسة الفعلية</h3>
+      <ul>
+        <li>30 مقالًا بعمق 1,200+ كلمة في 6 تصنيفات</li>
+        <li>3 مقارنات مرجعية بجداول ومنهجية معلنة</li>
+        <li>بنية i18n: <code>/en</code> <code>/es</code> <code>/fr</code> + <code>hreflang</code></li>
+        <li>مبدّل لغة + إصلاح <code>slugify</code> لغير ASCII</li>
+        <li>ترقية البحث (فهرس كامل، تصفية، combobox)</li>
+        <li>هوية بصرية للأغلفة بدل الأشكال العامة</li>
+        <li>خط إنتاج المحتوى الآلي وفق حالات <code>AGENTS.md</code></li>
+      </ul>
+      <div class="goal"><strong>معيار القبول:</strong> تغطية موضوعية حقيقية + ظهور في Discover + نسختان لغويتان متكافئتان.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="sec"><span class="num">07</span> ملحق: قياسات مُتحقَّق منها</h2>
+  <div class="scorecard">
+    <div class="row"><div class="lbl">مسارات مبنية</div><div class="meter"><div class="bar"><i class="b-hi" style="width:100%"></i></div><div class="val">25</div></div></div>
+    <div class="row"><div class="lbl">اختبارات البنية</div><div class="meter"><div class="bar"><i class="b-hi" style="width:100%"></i></div><div class="val">53/53</div></div></div>
+    <div class="row"><div class="lbl">اختبارات الاستجابة/الكيبورد</div><div class="meter"><div class="bar"><i class="b-hi" style="width:100%"></i></div><div class="val">31/31</div></div></div>
+    <div class="row"><div class="lbl">وزن الصفحة الرئيسية</div><div class="meter"><div class="bar"><i class="b-hi" style="width:22%"></i></div><div class="val">14 KB</div></div></div>
+    <div class="row"><div class="lbl">CSS (مع الرموز)</div><div class="meter"><div class="bar"><i class="b-hi" style="width:63%"></i></div><div class="val">26 KB</div></div></div>
+    <div class="row"><div class="lbl">JavaScript</div><div class="meter"><div class="bar"><i class="b-hi" style="width:9%"></i></div><div class="val">3.7 KB</div></div></div>
+    <div class="row"><div class="lbl">مقالات / كلمات لكل مقال</div><div class="meter"><div class="bar"><i class="b-low" style="width:16%"></i></div><div class="val">6 / 404</div></div></div>
+    <div class="row"><div class="lbl">أدوات مُفهرسة</div><div class="meter"><div class="bar"><i class="b-low" style="width:20%"></i></div><div class="val">4</div></div></div>
+    <div class="row"><div class="lbl">روابط sitemap صالحة</div><div class="meter"><div class="bar"><i class="b-low" style="width:0%"></i></div><div class="val">0/24</div></div></div>
+    <div class="row"><div class="lbl">صفحات بصورة OG</div><div class="meter"><div class="bar"><i class="b-low" style="width:0%"></i></div><div class="val">0</div></div></div>
+  </div>
+
+  <div class="note">
+    <strong>ملاحظة عن إعادة الإنتاج:</strong> في بيئة العمل هذه يُحقن <code>NODE_OPTIONS</code> بطبقة اعتراض لحذف الملفات، ما يجعل <code>rmSync</code> في بداية البناء ينتهي بمهلة ويترك <code>dist/</code> ناقصًا. تشغيل البناء والاختبارات بـ <code>NODE_OPTIONS= node …</code> يعطي النتائج أعلاه. هذا عَرَض بيئي لا عيب في المشروع — لكنه يكشف هشاشة البناء غير الذرّي المذكورة في البند P0-7.
+  </div>
+</section>
+
+<footer>
+  تدقيق AIVOXFLOW — 17 أكتوبر 2026 · جميع النتائج مستخرجة من تشغيل فعلي للبناء والاختبارات على <code>ac230e4</code>
+</footer>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "authors": [
+    {
+      "slug": "editorial",
+      "name": "AIVOXFLOW Editorial",
+      "type": "Organization",
+      "role": "Editorial team",
+      "bio": "AIVOXFLOW's editorial team writes and verifies every article. We work from primary sources — official documentation, pricing pages, release notes and standards — and we state plainly when a piece is desk research rather than hands-on testing. Corrections are published on the corrections page.",
+      "knowsAbout": ["AI tools", "Automation", "Software", "Web services"],
+      "sameAs": []
+    }
+  ]
+}
