@@ -86,7 +86,7 @@ Draft artwork is written to `content/drafts/assets/<slug>/` and only copied into
 | `AIVOXFLOW_AI_BASE_URL` | provider default | Point at Ollama/vLLM for a local model |
 | `AIVOXFLOW_AI_TIMEOUT_SECONDS` | `120` (`600` for Ollama) | Per request |
 | `AIVOXFLOW_AI_MAX_RETRIES` | `4` | Transient errors only, exponential backoff + `Retry-After` |
-| `AIVOXFLOW_AI_MAX_OUTPUT_TOKENS` | `8192` | Raise for very long drafts |
+| `AIVOXFLOW_AI_MAX_OUTPUT_TOKENS` | `16384` | Output cap per call; the figure-covering fact-check needs the room |
 | `AIVOXFLOW_AI_NUM_CTX` | `16384` | Ollama context window — the default truncates long drafts |
 | `AIVOXFLOW_AI_BUDGET_USD_DAILY` | `0` | `0` = no ceiling. Spend is tracked in `content/jobs/_ledger.json` |
 | `AIVOXFLOW_AI_BUDGET_USD_MONTHLY` | `0` | Same, monthly |

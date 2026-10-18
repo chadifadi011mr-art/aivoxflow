@@ -28,6 +28,7 @@ const PNG_B64 = PNG.toString('base64');
 
 const seen = [];
 let geminiConfigAttempts = 0;
+let flakyAttempts = 0;
 
 const server = http.createServer((req, res) => {
   const chunks = [];
@@ -76,6 +77,25 @@ const server = http.createServer((req, res) => {
         }
         return json(200, {
           candidates: [{ content: { parts: [{ inlineData: { mimeType: 'image/png', data: PNG_B64 } }] }, finishReason: 'STOP' }],
+        });
+      }
+      const userText = (body?.contents || []).map((c) => (c.parts || []).map((p) => p.text || '').join('')).join('');
+      if (userText.includes('MODE:truncate')) {
+        return json(200, {
+          candidates: [{ content: { parts: [{ text: '{"claims":[{"te' }] }, finishReason: 'MAX_TOKENS' }],
+          usageMetadata: { promptTokenCount: 12, candidatesTokenCount: 900 },
+        });
+      }
+      if (userText.includes('MODE:flaky')) {
+        if (flakyAttempts++ === 0) {
+          return json(200, {
+            candidates: [{ content: { parts: [{ text: 'this is not JSON' }] }, finishReason: 'STOP' }],
+            usageMetadata: { promptTokenCount: 12, candidatesTokenCount: 7 },
+          });
+        }
+        return json(200, {
+          candidates: [{ content: { parts: [{ text: '{"ok":true,"flaky":"recovered"}' }] }, finishReason: 'STOP' }],
+          usageMetadata: { promptTokenCount: 12, candidatesTokenCount: 7 },
         });
       }
       return json(200, {
@@ -147,6 +167,30 @@ process.env.AIVOXFLOW_AI_MAX_RETRIES = '1';
   const models = await listModels({ provider: 'gemini', apiKey: 'test-key-not-real', baseUrl: base });
   ok('gemini: listModels strips the models/ prefix', models.some((m) => m.id === 'gemini-2.5-flash'));
   ok('gemini: listModels exposes image models', models.some((m) => /image|imagen/.test(m.id)));
+}
+
+// ================================================================ Gemini failure modes
+// A truncated ledger must stop the run instead of half-verifying it, and one
+// malformed body must be retried inside the same budget as the HTTP call.
+reset();
+process.env.AIVOXFLOW_AI_PROVIDER = 'gemini';
+process.env.AIVOXFLOW_AI_MODEL = 'gemini-2.5-flash';
+process.env.AIVOXFLOW_AI_API_KEY = 'test-key-not-real';
+process.env.AIVOXFLOW_AI_BASE_URL = base;
+process.env.AIVOXFLOW_AI_MAX_RETRIES = '2';
+
+{
+  const llm = createLLM(() => {});
+  let err = null;
+  try {
+    await llm.run({ task: 'factcheck', system: 's', user: 'MODE:truncate <input>{}</input>' });
+  } catch (e) { err = e; }
+  ok('gemini: truncation at maxOutputTokens is refused, never parsed',
+    err !== null && /truncated the response at maxOutputTokens/.test(err.message), String(err && err.message));
+
+  const { data } = await llm.run({ task: 'probe', system: 's', user: 'MODE:flaky <input>{}</input>' });
+  ok('gemini: a malformed body is retried within the budget',
+    data?.flaky === 'recovered', JSON.stringify(data));
 }
 
 // ================================================================ Ollama

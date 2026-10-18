@@ -210,7 +210,9 @@ export function createLLM(log = () => {}) {
             : 'https://api.openai.com');
   const timeout = num('AIVOXFLOW_AI_TIMEOUT_SECONDS', isOllama ? 600 : provider === 'mock' ? 60 : 120) * 1000;
   const maxRetries = num('AIVOXFLOW_AI_MAX_RETRIES', 4);
-  const maxOut = num('AIVOXFLOW_AI_MAX_OUTPUT_TOKENS', 8192);
+  // 16 384 by default: a long draft fits, and the fact-check now carries a
+  // claim for every figure-bearing unit, which 8 192 cut mid-ledger once.
+  const maxOut = num('AIVOXFLOW_AI_MAX_OUTPUT_TOKENS', 16384);
   // Ollama silently truncates at its default context (often 2048–4096 tokens),
   // which would cut a 2 000-word draft in half. Ask for room explicitly.
   const numCtx = num('AIVOXFLOW_AI_NUM_CTX', 16384);
@@ -263,10 +265,17 @@ export function createLLM(log = () => {}) {
         },
         timeout,
       );
-      const parts = data.candidates?.[0]?.content?.parts || [];
+      const cand = data.candidates?.[0];
+      // Refuse a truncated response outright: parsing a half-written ledger
+      // and quietly verifying half the claims would be worse than stopping.
+      // The same budget cannot get shorter on a retry, so this fails fast.
+      if (cand?.finishReason === 'MAX_TOKENS') {
+        throw new Error(`Gemini truncated the response at maxOutputTokens (${maxOut}); raise AIVOXFLOW_AI_MAX_OUTPUT_TOKENS.`);
+      }
+      const parts = cand?.content?.parts || [];
       const text = parts.filter((p) => typeof p.text === 'string').map((p) => p.text).join('');
       if (!text) {
-        const reason = data.candidates?.[0]?.finishReason || data.promptFeedback?.blockReason || 'no text returned';
+        const reason = cand?.finishReason || data.promptFeedback?.blockReason || 'no text returned';
         throw new Error(`Gemini returned no text (${reason}).`);
       }
       return {
@@ -320,7 +329,9 @@ export function createLLM(log = () => {}) {
         return await fn();
       } catch (e) {
         lastErr = e;
-        const retryable = e.status ? RETRYABLE.has(e.status) : e.name === 'AbortError' || /ECONN|ETIMEDOUT|fetch failed/i.test(e.message);
+        const retryable = e.status
+          ? RETRYABLE.has(e.status)
+          : e.name === 'AbortError' || e.nonJson === true || /ECONN|ETIMEDOUT|fetch failed/i.test(e.message);
         if (!retryable || attempt === maxRetries) break;
         // Free tiers throttle hard: honour Retry-After before our own backoff.
         const backoff = e.retryAfterMs
@@ -339,19 +350,29 @@ export function createLLM(log = () => {}) {
       return { data: mock(task, JSON.parse(user.match(/<input>([\s\S]*)<\/input>/)?.[1] || '{}')), usage: { in: 0, out: 0 }, costUsd: 0 };
     }
     assertBudget(0.02);
-    const { text, usage } = await withRetry(() => callOnce({ system, user, json }), task);
+    // The HTTP call and the JSON parse share one retry budget: a malformed or
+    // transiently truncated body is exactly what a second attempt fixes, while
+    // auth, quota and truncation-at-cap errors still fail fast in withRetry().
+    const { text, usage, parsed } = await withRetry(async () => {
+      const r = await callOnce({ system, user, json });
+      if (!json) return { ...r, parsed: null };
+      try {
+        return { ...r, parsed: JSON.parse(r.text) };
+      } catch {
+        const fenced = r.text.match(/```(?:json)?\s*([\s\S]*?)```/);
+        let inner = null;
+        if (fenced) { try { inner = JSON.parse(fenced[1]); } catch { inner = null; } }
+        if (inner === null) {
+          const err = new Error(`Model returned non-JSON for "${task}": ${r.text.slice(0, 200)}`);
+          err.nonJson = true;
+          throw err;
+        }
+        return { ...r, parsed: inner };
+      }
+    }, task);
     const costUsd = (usage.in / 1000) * priceIn + (usage.out / 1000) * priceOut;
     accountSpend(costUsd);
-    if (!json) return { data: text, usage, costUsd };
-    let parsed;
-    try {
-      parsed = JSON.parse(text);
-    } catch {
-      const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/);
-      if (!fenced) throw new Error(`Model returned non-JSON for "${task}": ${text.slice(0, 200)}`);
-      parsed = JSON.parse(fenced[1]);
-    }
-    return { data: parsed, usage, costUsd };
+    return { data: json ? parsed : text, usage, costUsd };
   };
 
   return {
