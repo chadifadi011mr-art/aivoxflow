@@ -150,7 +150,8 @@ motifs cost nothing and the article still ships with a real, dimensioned, alt-te
 node agents/run.mjs --topic "…" --category ai-tools        # research → scheduled
 node agents/run.mjs --topic "…" --category tutorials --notes "focus on pricing traps"
 node agents/run.mjs --list                                  # every job and its state
-node agents/run.mjs --resume job_20261017130726_90fcec      # continue after a review
+node agents/run.mjs --resume job_20261017130726_90fcec      # continue an interrupted run
+node agents/run.mjs --resolve job_… --decision "why the claim ledger is acceptable"
 node agents/run.mjs --topic "…" --publish                   # promote a fully-gated draft
 node agents/run.mjs --topic "…" --fixture agents/fixtures/demo-research.json   # offline demo
 node agents/doctor.mjs [--probe]                            # check keys, list models, test one call
@@ -165,6 +166,26 @@ node agents/scheduler.mjs --daemon --interval 30
 See [`docs/SCHEDULING.md`](../docs/SCHEDULING.md).
 
 Exit codes: `0` published/scheduled · `1` failed · `2` bad usage · `3` needs human review.
+
+## When a job stops for human review
+
+Exit `3` means a gate refused the piece and the job moved to `needs_human_review` —
+a dead end for automation: `transition()` cannot leave it, `--resume` refuses it, and the
+scheduler marks the calendar item `needs_review` instead of retrying.
+
+To continue, after you have actually looked at the stop:
+
+```bash
+node agents/run.mjs --resolve job_20261018125109_6e334c \
+  --decision "Accepted the applied corrections: invented pricing line cut, unverified base price removed."
+```
+
+`--resolve` prints the claim ledger (statuses plus the note behind each one), requires a
+`--decision` of at least 10 characters, stamps that decision onto every claim the fact-checker
+could not verify, records it in the job's audit log, and returns the job to the exact stage that
+stopped — so the remaining gates (SEO, images, editorial QA) still run before anything can be
+scheduled. Resolving is not publishing: `--publish` stays a separate, explicit act, and the
+original verdict stays in the ledger as history.
 
 ## Offline demo
 

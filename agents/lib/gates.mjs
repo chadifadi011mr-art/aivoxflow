@@ -78,8 +78,11 @@ export function runGates({ draft, research = {}, factcheck = {}, seo = {}, corpu
 
     const claims = factcheck.claims || [];
     if (!claims.length) fail(g, 'No claim ledger: the fact-check stage produced nothing to verify.');
-    const unverified = claims.filter((c) => c.status !== 'verified');
-    if (unverified.length) fail(g, `${unverified.length} claim(s) not verified: ${unverified.slice(0, 3).map((c) => c.text).join(' | ')}`);
+    // A claim the checker could not verify blocks until a human resolves it;
+    // resolveReview() stamps the decision onto the claim. Status is unchanged
+    // on purpose — the ledger keeps telling the truth about what was verified.
+    const unverified = claims.filter((c) => c.status !== 'verified' && !c.resolved);
+    if (unverified.length) fail(g, `${unverified.length} claim(s) not verified and not human-resolved: ${unverified.slice(0, 3).map((c) => c.text).join(' | ')}`);
 
     // Every sentence carrying a number, price or percentage must be in the ledger.
     const numeric = body.split(/(?<=[.!?])\s+/).filter((s) => /\d/.test(s) && !/^##/.test(s));

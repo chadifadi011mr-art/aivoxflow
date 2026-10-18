@@ -74,6 +74,7 @@ jobs:
         if: ${{ steps.key.outputs.has == 'true' }}
         run: |
           node site/build.mjs
+          node tests/jobs.mjs
           node tests/providers.mjs
           node tests/run.mjs
 

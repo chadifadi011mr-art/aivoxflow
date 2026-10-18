@@ -42,6 +42,7 @@ jobs:
 
       - name: Verify
         run: |
+          node tests/jobs.mjs
           node tests/providers.mjs
           node tests/run.mjs
 

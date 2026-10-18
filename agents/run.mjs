@@ -5,9 +5,11 @@
 //   node agents/run.mjs --topic "…" --category tutorials --notes "focus on pricing traps"
 //   node agents/run.mjs --list
 //   node agents/run.mjs --resume job_20261017123000_ab12cd
+//   node agents/run.mjs --resolve job_… --decision "why the claim ledger is acceptable"
 //
 // Flags:
 //   --publish   promote a fully-gated draft into site/data/articles/ (default: stop at "scheduled")
+//   --resolve   continue a needs_human_review stop; requires --decision
 //   --force     allow a second job for the same topic
 //   --quiet     only print failures and the final summary
 //
@@ -20,7 +22,7 @@ import { createLLM } from './lib/llm.mjs';
 import { createSearch } from './lib/search.mjs';
 import { createImageProvider } from './lib/render-image.mjs';
 import {
-  createJob, transition, saveJob, loadJob, listJobs, note, TERMINAL, repo,
+  createJob, transition, saveJob, loadJob, listJobs, note, resolveReview, nowIso, TERMINAL, repo,
 } from './lib/job.mjs';
 import { researchAgent, briefAgent } from './stages/research.mjs';
 import { draftAgent, factCheckAgent } from './stages/draft.mjs';
@@ -38,6 +40,8 @@ const { values: args } = parseArgs({
     quiet: { type: 'boolean', default: false },
     list: { type: 'boolean', default: false },
     resume: { type: 'string' },
+    resolve: { type: 'string' },
+    decision: { type: 'string' },
     fixture: { type: 'string' },
     sources: { type: 'string' },
     slot: { type: 'string' },
@@ -75,16 +79,50 @@ if (args.list) {
 
 // ---------------------------------------------------------------- boot
 let job;
-if (args.resume) {
+if (args.resolve) {
+  job = loadJob(args.resolve);
+  if (job.state !== 'needs_human_review') {
+    console.error(`Job ${job.id} is in state "${job.state}" — --resolve only applies to a job waiting in needs_human_review.`);
+    process.exit(2);
+  }
+  if (!args.decision || args.decision.trim().length < 10) {
+    console.error('Add --decision "what you checked and accepted" — the resolution is the human review record.');
+    process.exit(2);
+  }
+  head('Human resolution');
+  log(`  stop       ${job.review?.reason || '(reason not recorded — see the job log)'}`);
+  const fcLedger = job.artifacts.factcheck;
+  if (fcLedger?.claims?.length) {
+    const counts = {};
+    for (const c of fcLedger.claims) counts[c.status] = (counts[c.status] || 0) + 1;
+    log(`  ledger     ${fcLedger.claims.length} claims · ${Object.entries(counts).map(([k, v]) => `${v} ${k}`).join(', ')}`);
+    for (const c of fcLedger.claims.filter((x) => x.status !== 'verified')) {
+      log(`    ${C.yellow}${c.status}${C.off} ${c.text}`);
+      log(`      ${C.dim}${c.note || ''}${C.off}`);
+    }
+  }
+  try {
+    const r = resolveReview(job, args.decision);
+    saveJob(job);
+    log(`  resolved   → ${r.from} · ${r.resolved} claim(s) stamped with the decision`);
+  } catch (e) {
+    console.error(e.message);
+    process.exit(2);
+  }
+} else if (args.resume) {
   job = loadJob(args.resume);
   if (TERMINAL.includes(job.state)) {
-    console.error(`Job ${job.id} is in terminal state "${job.state}" — start a new job instead.`);
+    const hint = job.state === 'needs_human_review'
+      ? ` Review the stop, then run: node agents/run.mjs --resolve ${job.id} --decision "…"`
+      : '';
+    console.error(`Job ${job.id} is in terminal state "${job.state}" — start a new job instead.${hint}`);
     process.exit(2);
   }
   log(`${C.dim}Resuming ${job.id} from "${job.state}"${C.off}`);
 } else {
   if (!args.topic) {
     console.error('Usage: node agents/run.mjs --topic "…" [--category ai-tools] [--publish]');
+    console.error('       node agents/run.mjs --resolve job_… --decision "…"');
     console.error('       node agents/run.mjs --list');
     process.exit(2);
   }
@@ -172,10 +210,15 @@ async function fail(err, from) {
 }
 
 function stopForReview(reason) {
+  // Record the exact stage the pipeline stopped at: resolveReview() may only
+  // ever return the job here, and only with a written human decision.
+  job.review = { from: job.state, reason, at: nowIso() };
   transition(job, 'needs_human_review', reason);
   saveJob(job);
   console.log(`\n${C.yellow}NEEDS HUMAN REVIEW${C.off} — ${reason}`);
   console.log(`${C.dim}Job: ${job.id}  ·  log: content/jobs/${job.id}.json${C.off}`);
+  console.log(`${C.dim}Inspect the stop, then continue with:${C.off}`);
+  console.log(`${C.dim}  node agents/run.mjs --resolve ${job.id} --decision "what you checked"${C.off}`);
   process.exit(3);
 }
 

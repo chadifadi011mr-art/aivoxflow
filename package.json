@@ -21,10 +21,10 @@
     "schedule": "node agents/scheduler.mjs --once --build",
     "schedule:daemon": "node agents/scheduler.mjs --daemon --interval 30 --limit 1 --build",
     "agent:demo": "node agents/run.mjs --topic \"How to choose an AI writing tool without wasting a month\" --category ai-tools --fixture agents/fixtures/demo-research.json",
-    "test": "node tests/providers.mjs && node tests/run.mjs",
+    "test": "node tests/jobs.mjs && node tests/providers.mjs && node tests/run.mjs",
     "test:providers": "node tests/providers.mjs",
     "test:responsive": "node tests/responsive.mjs",
-    "verify": "node tests/providers.mjs && node tests/run.mjs && node tests/responsive.mjs"
+    "verify": "node tests/jobs.mjs && node tests/providers.mjs && node tests/run.mjs && node tests/responsive.mjs"
   },
   "keywords": ["ai", "tools", "automation", "static-site"],
   "license": "UNLICENSED"

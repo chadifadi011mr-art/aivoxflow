@@ -98,6 +98,46 @@ export function note(job, event, detail = '') {
   job.updatedAt = nowIso();
 }
 
+// The one legal way out of needs_human_review. transition() keeps that state a
+// dead end on purpose: nothing automated may walk past a review. The human
+// decision is recorded on the job and stamped onto every claim the fact-checker
+// could not verify; the original verdict stays in the ledger as history.
+// The job returns to the exact stage that stopped (recorded at stop time), so
+// the remaining gates still run — resolving is not publishing.
+export function resolveReview(job, decision) {
+  if (job.state !== 'needs_human_review') {
+    throw new Error(`resolveReview: job is "${job.state}", not needs_human_review.`);
+  }
+  // Older stops predate the review record; the transition entry in the log is
+  // the same fact, so fall back to it rather than hand-editing the job file.
+  const from = job.review?.from
+    || (job.log || []).map((e) => e.event).filter((ev) => ev.endsWith(' → needs_human_review')).pop()?.split(' → ')[0];
+  if (!from || !STATES.includes(from)) {
+    throw new Error('resolveReview: no valid stopping stage recorded on this job.');
+  }
+  if (!job.review) job.review = { from, reason: '(stop record derived from the transition log)' };
+  const text = String(decision || '').trim();
+  if (text.length < 10) {
+    throw new Error('resolveReview: the decision must say what was checked (at least 10 characters).');
+  }
+  const claims = job.artifacts?.factcheck?.claims || [];
+  let resolved = 0;
+  for (const c of claims) {
+    if (c.status !== 'verified' && !c.resolved) {
+      c.resolved = true;
+      c.resolution = text;
+      resolved++;
+    }
+  }
+  job.review.resolution = text;
+  job.review.resolvedAt = nowIso();
+  job.review.resolvedClaims = resolved;
+  job.log.push({ at: nowIso(), event: `needs_human_review → ${from}`, note: `human resolution: ${text}` });
+  job.state = from;
+  job.updatedAt = nowIso();
+  return { from, resolved };
+}
+
 export function saveJob(job) {
   mkdirSync(jobsDir, { recursive: true });
   writeFileSync(path.join(jobsDir, `${job.id}.json`), JSON.stringify(job, null, 2), 'utf8');
