@@ -161,12 +161,18 @@ export AIVOXFLOW_SEARCH_PROVIDER=brave
 export AIVOXFLOW_SEARCH_API_KEY=...
 ```
 
-### 3. Tavily — free monthly credits, key required
+### 3. Tavily — works with no key at all (keyless), free credits with one
 
 ```bash
-export AIVOXFLOW_SEARCH_PROVIDER=tavily
-export AIVOXFLOW_SEARCH_API_KEY=...
+export AIVOXFLOW_SEARCH_PROVIDER=tavily   # keyless: no account, no card, no key
+export AIVOXFLOW_SEARCH_API_KEY=...       # optional: lifts the cap — 1,000 free credits/month
 ```
+
+Tavily's documented keyless mode (docs.tavily.com/documentation/keyless) returns
+responses identical to keyed ones — free, rate-limited, zero setup. The free API
+key is also free ("No credit card required", Tavily docs) and simply raises the cap.
+Our research stage uses roughly 10–16 credits per article (advanced depth = 2
+credits/request), so ~30 articles fit inside the 1,000 free monthly credits.
 
 With `AIVOXFLOW_SEARCH_PROVIDER=none` and no `--sources`, the pipeline stops before writing and
 tells you why. An article without sources is exactly the content farm `AGENTS.md` forbids.

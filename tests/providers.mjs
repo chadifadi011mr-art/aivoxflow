@@ -98,6 +98,14 @@ const server = http.createServer((req, res) => {
       return res.end(PNG);
     }
 
+    // ---- Tavily search (JSON, keyed or keyless)
+    if (req.method === 'POST' && url === '/search') {
+      return json(200, {
+        results: [{ title: 'Stub result', url: 'https://example.com/a', content: 'snippet text', score: 0.9 }],
+        response_time: 0.1,
+      });
+    }
+
     return json(404, {});
   });
 });
@@ -108,6 +116,7 @@ const tmp = path.join(process.env.TEMP || '/tmp', `aivox-provider-${Date.now()}`
 
 const { createLLM, listModels } = await import('../agents/lib/llm.mjs');
 const { createImageProvider } = await import('../agents/lib/render-image.mjs');
+const { createSearch } = await import('../agents/lib/search.mjs');
 
 const reset = () => {
   for (const k of Object.keys(process.env)) if (k.startsWith('AIVOXFLOW_')) delete process.env[k];
@@ -206,6 +215,62 @@ for (const [provider, model, assert] of imgCases) {
   const poll = seen.find((s) => s.url.startsWith('/prompt/'));
   ok('pollinations: width/height/model in the query string', /width=1600/.test(poll?.url || '') && /height=900/.test(poll?.url || '') && /model=flux/.test(poll?.url || ''));
   ok('pollinations: no key is sent', !poll?.headers?.authorization && !poll?.headers['x-goog-api-key']);
+}
+
+// ================================================================ search (tavily/brave)
+const resetSearch = () => {
+  reset();
+  process.env.AIVOXFLOW_SEARCH_TAVILY_URL = `${base}/search`;
+};
+
+// Keyless mode: no account, no key — the documented free fallback.
+resetSearch();
+process.env.AIVOXFLOW_SEARCH_PROVIDER = 'tavily';
+{
+  const s = createSearch(() => {});
+  ok('tavily keyless: provider counts as available with no key', s.hasProvider === true && s.keyless === true);
+  const r = await s.search('test query', { limit: 3 });
+  ok('tavily keyless: results are mapped', r.length === 1 && r[0].url === 'https://example.com/a',
+    JSON.stringify(r));
+  const call = seen.find((x) => x.url === '/search');
+  ok('tavily keyless: sends the keyless header', call?.headers['x-tavily-access-mode'] === 'keyless');
+  ok('tavily keyless: no api_key is sent', call?.body?.api_key === undefined);
+  ok('tavily keyless: still requests advanced depth', call?.body?.search_depth === 'advanced');
+}
+
+// Keyed mode: the key rides in the body, no keyless header.
+resetSearch();
+process.env.AIVOXFLOW_SEARCH_PROVIDER = 'tavily';
+process.env.AIVOXFLOW_SEARCH_API_KEY = 'tvly-test-key-not-real';
+{
+  const s = createSearch(() => {});
+  ok('tavily keyed: keyless flag is off', s.keyless === false && s.hasProvider === true);
+  await s.search('test query', { limit: 3 });
+  const calls = seen.filter((x) => x.url === '/search');
+  const call = calls[calls.length - 1];
+  ok('tavily keyed: api_key rides in the body', call?.body?.api_key === 'tvly-test-key-not-real');
+  ok('tavily keyed: no keyless header', call?.headers['x-tavily-access-mode'] === undefined);
+  ok('tavily keyed: key never appears in the url', !call?.url.includes('test-key'));
+}
+
+// Brave has no keyless mode — it must refuse clearly, not call out.
+resetSearch();
+process.env.AIVOXFLOW_SEARCH_PROVIDER = 'brave';
+{
+  const s = createSearch(() => {});
+  ok('brave without key: hasProvider is false', s.hasProvider === false);
+  let threw = '';
+  try { await s.search('q'); } catch (e) { threw = e.message; }
+  ok('brave without key: refuses with a clear error', /AIVOXFLOW_SEARCH_API_KEY is required/.test(threw), threw);
+}
+
+// No provider: empty results, nothing called.
+resetSearch();
+{
+  const s = createSearch(() => {});
+  const before = seen.length;
+  const r = await s.search('q');
+  ok('provider none: no request is made', seen.length === before && Array.isArray(r) && r.length === 0);
 }
 
 server.close();

@@ -93,7 +93,7 @@ Draft artwork is written to `content/drafts/assets/<slug>/` and only copied into
 | `AIVOXFLOW_AI_PRICE_INPUT_PER_1K` | `0` | For cost accounting |
 | `AIVOXFLOW_AI_PRICE_OUTPUT_PER_1K` | `0` | For cost accounting |
 | `AIVOXFLOW_SEARCH_PROVIDER` | `none` | `tavily` · `brave` |
-| `AIVOXFLOW_SEARCH_API_KEY` | — | Required for either |
+| `AIVOXFLOW_SEARCH_API_KEY` | — | Optional for `tavily` (falls back to the free keyless mode); required for `brave` |
 | `AIVOXFLOW_IMAGE_PROVIDER` | `local` | `local` · `pollinations` · `a1111` · `gemini` · `openai` |
 | `AIVOXFLOW_IMAGE_API_KEY` | falls back to `AIVOXFLOW_AI_API_KEY` | Required for hosted providers |
 | `AIVOXFLOW_IMAGE_MODEL` | `flux` / `gemini-2.5-flash-image` / `gpt-image-1` | Provider-specific |

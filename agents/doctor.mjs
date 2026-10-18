@@ -42,7 +42,12 @@ console.log(`  text      ${llmProvider.padEnd(12)} ${llmModel || `${C.yellow}(mo
 console.log(`            key ${llmProvider === 'ollama' || llmProvider === 'local' ? `${C.dim}not needed (local model)${C.off}` : mask(llmKey)}`);
 console.log(`  images    ${imgProvider.padEnd(12)} ${imgModelShown}`);
 console.log(`            key ${KEYLESS_IMAGE.includes(imgProvider) ? `${C.dim}not needed${C.off}` : mask(imgKey)}`);
-console.log(`  search    ${searchProvider.padEnd(12)} ${searchProvider === 'none' ? `${C.yellow}(no provider — research will stop)${C.off}` : mask(searchKey)}`);
+const searchNote = searchProvider === 'none'
+  ? `${C.yellow}(no provider — research will stop)${C.off}`
+  : searchProvider === 'tavily' && !searchKey
+    ? `${C.dim}keyless mode — free, rate-limited (a free key lifts the cap)${C.off}`
+    : mask(searchKey);
+console.log(`  search    ${searchProvider.padEnd(12)} ${searchNote}`);
 console.log(`  browser   ${findBrowser() ? `${C.green}found${C.off} ${path.basename(findBrowser())}` : `${C.yellow}not found${C.off} (local images unavailable)`}`);
 
 let problems = 0;

@@ -5,7 +5,7 @@ name: Content pipeline
 #
 # Required repository secrets (Settings → Secrets and variables → Actions):
 #   AIVOXFLOW_AI_API_KEY      your model key (or omit and use a self-hosted runner with Ollama)
-#   AIVOXFLOW_SEARCH_API_KEY  optional; without it, add a sources file per topic
+#   AIVOXFLOW_SEARCH_API_KEY  optional; tavily runs keyless without it (rate-limited)
 #
 # Nothing is committed unless every quality gate passed.
 
@@ -36,7 +36,7 @@ jobs:
     # first step and the remaining steps read its output.
     env:
       AIVOXFLOW_AI_PROVIDER: ${{ vars.AIVOXFLOW_AI_PROVIDER || 'gemini' }}
-      AIVOXFLOW_AI_MODEL: ${{ vars.AIVOXFLOW_AI_MODEL || 'gemini-2.5-flash' }}
+      AIVOXFLOW_AI_MODEL: ${{ vars.AIVOXFLOW_AI_MODEL || 'gemini-flash-latest' }}
       AIVOXFLOW_AI_API_KEY: ${{ secrets.AIVOXFLOW_AI_API_KEY }}
       AIVOXFLOW_SEARCH_PROVIDER: ${{ vars.AIVOXFLOW_SEARCH_PROVIDER || 'none' }}
       AIVOXFLOW_SEARCH_API_KEY: ${{ secrets.AIVOXFLOW_SEARCH_API_KEY }}

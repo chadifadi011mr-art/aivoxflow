@@ -146,7 +146,7 @@ head(`AIVOXFLOW content agents · ${job.id}`);
 log(`  topic      ${job.topic}`);
 log(`  category   ${job.category}`);
 log(`  llm        ${llm.health()}`);
-log(`  search     ${search.provider}${
+log(`  search     ${search.provider}${search.keyless ? ' (keyless — free, rate-limited)' : ''}${
   search.hasProvider ? ''
     : job.artifacts.sourceList ? ` (${job.artifacts.sourceList.length} URLs supplied)`
       : ' (no provider — research will stop for review)'}`);

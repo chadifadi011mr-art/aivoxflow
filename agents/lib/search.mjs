@@ -2,8 +2,11 @@
 //
 // Providers (AIVOXFLOW_SEARCH_PROVIDER):
 //   none    → no search; the research stage marks the job needs_human_review
-//   tavily  → https://api.tavily.com/search
-//   brave   → https://api.search.brave.com/res/v1/web/search
+//   tavily  → https://api.tavily.com/search — with an API key, or keyless when
+//             AIVOXFLOW_SEARCH_API_KEY is empty: no account, no key, same
+//             responses; free and rate-limited (docs.tavily.com/documentation/
+//             keyless). A free key = 1,000 credits/month, no card required.
+//   brave   → https://api.search.brave.com/res/v1/web/search (key required)
 //
 // Reading a page is provider-independent: fetch, strip chrome, return text.
 // The research agent must quote from what it actually read — snippets are not
@@ -26,26 +29,31 @@ async function timedFetch(url, opts = {}, ms = 15000) {
 export function createSearch(log = () => {}) {
   const provider = env('AIVOXFLOW_SEARCH_PROVIDER', 'none').toLowerCase();
   const key = env('AIVOXFLOW_SEARCH_API_KEY');
+  // Tests point this at a local stub; production keeps the real endpoint.
+  const tavilyUrl = env('AIVOXFLOW_SEARCH_TAVILY_URL', 'https://api.tavily.com/search');
+  const keyless = provider === 'tavily' && !key;
 
   const search = async (query, { limit = 8 } = {}) => {
     if (provider === 'none') {
       log('  search: no provider configured (AIVOXFLOW_SEARCH_PROVIDER=none)');
       return [];
     }
-    if (!key) throw new Error(`AIVOXFLOW_SEARCH_API_KEY is required for "${provider}".`);
 
     if (provider === 'tavily') {
-      const res = await timedFetch('https://api.tavily.com/search', {
+      const headers = { 'content-type': 'application/json' };
+      const payload = {
+        query,
+        max_results: limit,
+        search_depth: 'advanced',
+        include_answer: false,
+        include_raw_content: false,
+      };
+      if (key) payload.api_key = key;
+      else headers['x-tavily-access-mode'] = 'keyless';
+      const res = await timedFetch(tavilyUrl, {
         method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          api_key: key,
-          query,
-          max_results: limit,
-          search_depth: 'advanced',
-          include_answer: false,
-          include_raw_content: false,
-        }),
+        headers,
+        body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error(`tavily ${res.status}: ${(await res.text()).slice(0, 200)}`);
       const data = await res.json();
@@ -55,6 +63,7 @@ export function createSearch(log = () => {}) {
     }
 
     if (provider === 'brave') {
+      if (!key) throw new Error(`AIVOXFLOW_SEARCH_API_KEY is required for "${provider}".`);
       const res = await timedFetch(`https://api.search.brave.com/res/v1/web/search?q=${encodeURIComponent(query)}&count=${limit}`, {
         headers: { 'x-subscription-token': key, accept: 'application/json' },
       });
@@ -68,7 +77,7 @@ export function createSearch(log = () => {}) {
     throw new Error(`Unknown AIVOXFLOW_SEARCH_PROVIDER "${provider}"`);
   };
 
-  return { provider, hasProvider: provider !== 'none' && Boolean(key), search };
+  return { provider, keyless, hasProvider: provider !== 'none' && (provider === 'tavily' || Boolean(key)), search };
 }
 
 // ---------------------------------------------------------------- page text

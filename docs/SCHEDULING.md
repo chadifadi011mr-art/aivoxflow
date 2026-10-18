@@ -84,8 +84,8 @@ Two workflows ship in `.github/workflows/`:
 | `content.yml` | daily 04:00 UTC | plans slots, generates what is due, runs the gates, commits passing articles |
 | `publish.yml` | 08:00/17:00 Tue–Thu, 09:00 Mon/Fri + on push | rebuilds, verifies, uploads `dist/` (add your deploy step) |
 
-Set the secrets once: `AIVOXFLOW_AI_API_KEY`, optionally `AIVOXFLOW_SEARCH_API_KEY`. If the key
-is absent, `content.yml` skips itself instead of failing.
+Set the secrets once: `AIVOXFLOW_AI_API_KEY`; `AIVOXFLOW_SEARCH_API_KEY` is optional (tavily
+runs keyless without it). If the AI key is absent, `content.yml` skips itself instead of failing.
 
 ### Windows Task Scheduler
 
