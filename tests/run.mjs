@@ -41,7 +41,10 @@ build();
 ok('build output exists (dist/)', existsSync(dist));
 ok('atomic build leaves no dist.tmp behind', !existsSync(path.join(repo, 'dist.tmp')));
 
-const htmlFiles = walk(dist).filter((f) => f.endsWith('.html'));
+// Search-engine ownership files (google<token>.html) are one-line verification
+// tokens served verbatim to search engines — not site pages — so the page
+// checks (structure, links, a11y) skip them by design.
+const htmlFiles = walk(dist).filter((f) => f.endsWith('.html') && !/^google[0-9a-f]+\.html$/i.test(path.basename(f)));
 ok('HTML pages generated (>= 22)', htmlFiles.length >= 22, `found ${htmlFiles.length}`);
 
 // ------------------------------------------------------------ 2. routes
@@ -64,6 +67,11 @@ const expected = [
   '/_headers',
 ];
 for (const r of expected) ok(`route ${r}`, existsSync(path.join(dist, r)));
+
+// Search Console ownership files (site/google<token>.html) must survive every
+// build: deleting one silently drops site verification in Search Console.
+const ownershipFiles = readdirSync(dist).filter((f) => /^google[0-9a-f]+\.html$/i.test(f));
+ok('search ownership file copied to dist root', ownershipFiles.length >= 1, ownershipFiles.join(', ') || 'none found');
 
 const articleDirs = readdirSync(path.join(dist, 'articles')).filter((d) =>
   d !== 'page' && statSync(path.join(dist, 'articles', d)).isDirectory());

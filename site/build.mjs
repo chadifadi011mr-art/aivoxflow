@@ -134,6 +134,16 @@ for (const f of readdirSync(path.join(repo, 'brand', 'icons'))) {
 for (const f of readdirSync(path.join(root, 'assets', 'fonts'))) {
   cpSync(path.join(root, 'assets', 'fonts', f), path.join(tmp, 'assets', 'fonts', f));
 }
+// Search-engine ownership files (google<token>.html, bing-site-verification…):
+// site operators drop them in site/ and they must reach the site root verbatim.
+// Only files matching the well-known verification patterns are copied, so a
+// stray HTML file in site/ can never end up publicly served by accident.
+for (const f of readdirSync(root)) {
+  if (/^(google[0-9a-f]+|google-site-verification|BingSiteAuthForm)\.html$/i.test(f)) {
+    cpSync(path.join(root, f), path.join(tmp, f));
+    console.log(`Verification file copied: ${f}`);
+  }
+}
 for (const c of categories) {
   writeFileSync(path.join(tmp, 'assets', 'covers', `${c.slug}.svg`), coverSvg(c.slug), 'utf8');
 }
