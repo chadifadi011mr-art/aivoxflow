@@ -117,15 +117,17 @@ Two separate things share the name "Gemini":
 
 ```bash
 # 1. see what your key can actually use
+# (gemini-flash-latest tracks the newest stable Flash; older models such as
+#  gemini-2.5-flash are no longer served to newly created keys)
 AIVOXFLOW_AI_PROVIDER=gemini \
-AIVOXFLOW_AI_MODEL=gemini-2.5-flash \
-AIVOXFLOW_AI_API_KEY=AIza... \
+AIVOXFLOW_AI_MODEL=gemini-flash-latest \
+AIVOXFLOW_AI_API_KEY=AQ.… \
 node agents/doctor.mjs
 
 # 2. same key for text and images
 export AIVOXFLOW_AI_PROVIDER=gemini
-export AIVOXFLOW_AI_MODEL=gemini-2.5-flash
-export AIVOXFLOW_AI_API_KEY=AIza...
+export AIVOXFLOW_AI_MODEL=gemini-flash-latest
+export AIVOXFLOW_AI_API_KEY=AQ.…
 export AIVOXFLOW_IMAGE_PROVIDER=gemini
 export AIVOXFLOW_IMAGE_MODEL=gemini-2.5-flash-image
 
