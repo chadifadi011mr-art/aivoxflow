@@ -10,6 +10,7 @@
 import { createJob, transition, resolveReview, TERMINAL } from '../agents/lib/job.mjs';
 import { runGates } from '../agents/lib/gates.mjs';
 import { factCheckAgent } from '../agents/stages/draft.mjs';
+import { interleave } from '../agents/stages/research.mjs';
 
 let failures = 0;
 let checks = 0;
@@ -124,6 +125,16 @@ ok('the recheck is visible in the audit log',
   job2.log.at(-1).event === 'needs_human_review → draft' && /recheck requested/.test(job2.log.at(-1).note) && job2.review.recheck === true);
 const job3 = { state: 'needs_human_review', review: { from: 'editorial_qa' }, log: [], artifacts: {} };
 ok('recheck without a ledger is refused', throws(() => resolveReview(job3, decision, { recheck: true })));
+
+// ------------------------------------------------- research reads every query intent
+{
+  const groups = [['a1', 'a2', 'a3'], ['b1'], ['c1', 'c2']];
+  ok('interleave reads across query intents, not first-come',
+    JSON.stringify(interleave(groups, 5)) === JSON.stringify(['a1', 'b1', 'c1', 'a2', 'c2']),
+    JSON.stringify(interleave(groups, 5)));
+  ok('interleave respects the read limit', interleave(groups, 2).length === 2);
+  ok('interleave stops when every group is exhausted', interleave(groups, 99).length === 6);
+}
 
 // ------------------------------------------------- fact-check recheck keeps history
 {

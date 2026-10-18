@@ -6,6 +6,25 @@ import { note } from '../lib/job.mjs';
 const MAX_SOURCES = 6;
 const MAX_CHARS_PER_SOURCE = 9000;
 
+// Results are read across query intents, never first-come. The generic topic
+// query always returns blogs; taking its first six hits starved the "official
+// documentation" and "pricing OR limits OR changelog" queries — exactly where
+// a vendor's own pricing and docs pages live, and exactly what the editorial
+// gates ask the ledger to stand on.
+export function interleave(groups, limit) {
+  const out = [];
+  const idx = groups.map(() => 0);
+  while (out.length < limit) {
+    let added = false;
+    for (let g = 0; g < groups.length && out.length < limit; g++) {
+      const row = groups[g][idx[g]];
+      if (row) { out.push(row); idx[g] += 1; added = true; }
+    }
+    if (!added) break;
+  }
+  return out;
+}
+
 // ---------------------------------------------------------------- 01 research
 export async function researchAgent(ctx) {
   const { job, llm, search, log } = ctx;
@@ -14,6 +33,8 @@ export async function researchAgent(ctx) {
   // The second needs no key, no account and no quota — you choose the sources,
   // the agent still has to read them before it may cite them.
   const manual = job.artifacts.sourceList || [];
+  const groups = [];
+  const seen = new Set();
   let found = [];
 
   if (manual.length) {
@@ -27,13 +48,15 @@ export async function researchAgent(ctx) {
       `${job.topic} problems OR limitations`,
     ];
     for (const q of queries) {
-      const hits = await search.search(q, { limit: 6 });
-      for (const h of hits) if (!found.some((f) => f.url === h.url)) found.push(h);
-      if (found.length >= MAX_SOURCES * 2) break;
+      const hits = (await search.search(q, { limit: 6 })).filter((h) => !seen.has(h.url));
+      for (const h of hits) seen.add(h.url);
+      groups.push(hits);
+      if (seen.size >= MAX_SOURCES * 2) break;
     }
+    found = groups.flat();
   }
 
-  const picked = found.slice(0, MAX_SOURCES);
+  const picked = manual.length ? found.slice(0, MAX_SOURCES) : interleave(groups, MAX_SOURCES);
   log(`  research: ${found.length} result(s), reading ${picked.length} pages`);
 
   const sources = [];

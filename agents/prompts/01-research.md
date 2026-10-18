@@ -22,6 +22,13 @@ readers. You gather evidence that a writer can stand on.
    page you actually read.
 7. **Sensitive facts get a second look.** Pricing, limits, model names, availability by country
    and release dates change monthly. Prefer the vendor's own page dated closest to today.
+8. **The pack must carry the official page when the numbers need it.** When the topic, the
+   supplied notes or a product named in them make a price, a limit or a feature claim
+   material, the pack must include that product's own pricing page, documentation or release
+   notes. If no such page could be read, say exactly that in `cannotVerify` ("the official
+   pricing page of X was not among the sources read") instead of letting secondary coverage
+   stand in for it. Classify first-party pages honestly as `pricing`, `vendor-doc` or
+   `release-notes` — never as `secondary`.
 
 ## What makes research useful
 
