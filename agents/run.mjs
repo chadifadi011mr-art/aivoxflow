@@ -26,6 +26,7 @@ import { createImageProvider } from './lib/render-image.mjs';
 import {
   createJob, transition, saveJob, loadJob, listJobs, note, resolveReview, nowIso, TERMINAL, repo,
 } from './lib/job.mjs';
+import { stopExists, STOP_HINT } from './lib/stop.mjs';
 import { researchAgent, briefAgent } from './stages/research.mjs';
 import { draftAgent, factCheckAgent } from './stages/draft.mjs';
 import { seoAgent, imageAgent } from './stages/seo.mjs';
@@ -138,6 +139,10 @@ if (args.resolve) {
     console.error('       node agents/run.mjs --resolve job_… --decision "…"');
     console.error('       node agents/run.mjs --list');
     process.exit(2);
+  }
+  if (stopExists()) {
+    console.error(`\n${STOP_HINT}\nNew jobs are not started while the stop is in place.`);
+    process.exit(1);
   }
   job = createJob({
     topic: args.topic,
@@ -324,6 +329,10 @@ try {
 
   // 09 publish (explicit)
   if (args.publish && job.state === 'scheduled') {
+    if (stopExists()) {
+      console.error(`\n${STOP_HINT}\nThe article stays in "scheduled"; nothing was published.`);
+      process.exit(1);
+    }
     const file = promote(job);
     transition(job, 'published');
     saveJob(job);

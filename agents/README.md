@@ -160,6 +160,8 @@ node agents/doctor.mjs [--probe]                            # check keys, list m
 node agents/plan.mjs --slots 10        # fill the calendar from site/data/topics.json
 node agents/scheduler.mjs --due        # what is ready to be written now
 node agents/scheduler.mjs --once --build
+node agents/scheduler.mjs --once --deploy      # …build + upload to the live host
+node agents/scheduler.mjs --unpublish <slug> --deploy   # pull a live article
 node agents/scheduler.mjs --daemon --interval 30
 ```
 
@@ -167,6 +169,48 @@ node agents/scheduler.mjs --daemon --interval 30
 See [`docs/SCHEDULING.md`](../docs/SCHEDULING.md).
 
 Exit codes: `0` published/scheduled · `1` failed · `2` bad usage · `3` needs human review.
+
+## Autonomous publishing
+
+`agents/.local.env` is loaded automatically by the scheduler (a CI runner's real environment
+variables always win), so an unattended `node` invocation still has the provider keys.
+
+The GitHub Actions workflow [`.github/workflows/autonomous-publish.yml`](../.github/workflows/autonomous-publish.yml)
+runs the whole loop on a schedule: generate whatever is due → run every gate → promote only
+what passes → build → upload over FTP → commit the generated articles and the calendar back to
+the repo. **No gate is relaxed**: a piece a gate refuses is recorded as `needs_human_review`,
+not published. (The separate `publish.yml` is the on-push build-and-verify CI; it does not
+generate or deploy.)
+
+To turn it on:
+
+1. Push this repo to GitHub.
+2. **Settings → Secrets and variables → Actions**, add:
+   `AIVOXFLOW_AI_API_KEY`, `AIVOXFLOW_FTP_HOST`, `AIVOXFLOW_FTP_USER`, `AIVOXFLOW_FTP_PASS`
+   (optional overrides: `AIVOXFLOW_AI_PROVIDER`, `AIVOXFLOW_AI_MODEL`,
+   `AIVOXFLOW_SEARCH_PROVIDER`, `AIVOXFLOW_SEARCH_API_KEY`, `AIVOXFLOW_SITE_URL`,
+   `AIVOXFLOW_FTP_REMOTE_ROOT`, `AIVOXFLOW_FTP_SSL`).
+3. **Settings → Actions → General → Workflow permissions → Read and write permissions**, so the
+   run can commit generated content back.
+4. The first run happens on the next cron tick, or trigger it manually from the **Actions** tab
+   (**Run workflow**).
+
+### Emergency stop
+
+Drop an empty file at `content/SCHEDULER_STOP` and commit it. The next run halts **before**
+generating or publishing anything; `run.mjs` also refuses new jobs and `--publish` while the
+file exists. Recovery paths stay open during an emergency — `--resolve` and `--unpublish` still
+work. Delete the file to resume.
+
+### Pulling a live article
+
+```bash
+node agents/scheduler.mjs --unpublish <slug> --deploy
+```
+
+The article is moved to `content/unpublished/<timestamp>-<slug>.json` (never deleted), its
+artwork moves with it, the site is rebuilt without it, and `--deploy` pushes the removal to the
+live host.
 
 ## When a job stops for human review
 
@@ -218,6 +262,9 @@ fastest way to verify the machinery after a change.
 ## What these agents will not do
 
 - Invent a source, a quote, a benchmark or a person.
-- Publish without a human deciding to publish.
+- Publish anything the gates reject, even in autonomous mode. A human decides to publish by
+  filling the calendar and enabling the runner; every piece still has to clear fact-check,
+  sourcing, SEO, originality, images and editorial QA before it goes live — and any live piece
+  can be pulled in one command.
 - Lower a gate to make a draft pass. If a piece cannot meet the bar, the correct output is
   `needs_human_review` — or no article at all.

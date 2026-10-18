@@ -384,6 +384,73 @@ ok('agent never writes a draft into site/data', !existsSync(path.join(repo, 'sit
   }
 }
 
+// ------------------------------------------------------------ 15. emergency stop + rollback
+// Autonomous publishing needs two controls before it may run unattended: a
+// one-file emergency stop, and a way to pull a live article. Both are asserted
+// here against real spawned processes.
+{
+  const stopFile = path.join(repo, 'content', 'SCHEDULER_STOP');
+  const spawn = (args) => {
+    try {
+      return { status: 0, out: execFileSync(process.execPath, args, { cwd: repo, encoding: 'utf8', stdio: 'pipe' }) };
+    } catch (e) { return { status: e.status, out: `${e.stdout || ''}${e.stderr || ''}` }; }
+  };
+  try {
+    writeFileSync(stopFile, 'paused by test\n', 'utf8');
+
+    // A new job must be refused while the stop is in place.
+    const blocked = spawn([path.join(repo, 'agents', 'run.mjs'), '--topic', 'emergency stop probe', '--force']);
+    ok('emergency stop blocks a new job (exit 1)', blocked.status === 1, `exit ${blocked.status}`);
+    ok('emergency stop explains itself', /SCHEDULER_STOP exists/.test(blocked.out), blocked.out.slice(-120));
+
+    // Recovery paths stay open during an emergency: --list must still work.
+    const listed = spawn([path.join(repo, 'agents', 'run.mjs'), '--list']);
+    ok('emergency stop leaves --list usable', listed.status === 0, `exit ${listed.status}`);
+
+    // The scheduler halts its cycle before touching the calendar or providers.
+    const paused = spawn([path.join(repo, 'agents', 'scheduler.mjs'), '--once']);
+    ok('emergency stop pauses the scheduler cycle', paused.status === 0 && /paused/.test(paused.out),
+      `exit ${paused.status} — ${paused.out.slice(-120)}`);
+  } finally {
+    rmSync(stopFile, { force: true });
+  }
+
+  // Rollback: a published article is quarantined (never deleted) and disappears
+  // from the build. --deploy is omitted so this stays offline.
+  const slug = 'zz-unpublish-test';
+  const artFile = path.join(repo, 'site', 'data', 'articles', `${slug}.json`);
+  const quarantine = path.join(repo, 'content', 'unpublished');
+  writeFileSync(artFile, `${JSON.stringify({
+    slug,
+    title: 'Rollback fixture',
+    description: 'Temporary article proving --unpublish quarantines and rebuilds without it.',
+    category: 'ai-tools',
+    published: new Date().toISOString().slice(0, 10),
+    author: 'AIVOXFLOW Editorial',
+    authorSlug: 'editorial',
+    tags: ['test'],
+    body: '## Heading\n\nBody for the rollback test.',
+  }, null, 2)}\n`, 'utf8');
+  try {
+    build();
+    ok('rollback fixture is built before unpublish', existsSync(path.join(dist, 'articles', slug, 'index.html')));
+
+    const un = spawn([path.join(repo, 'agents', 'scheduler.mjs'), '--unpublish', slug]);
+    ok('unpublish runs', un.status === 0, `exit ${un.status} — ${un.out.slice(-160)}`);
+    ok('unpublish removes the article from site/data', !existsSync(artFile));
+    const qFile = readdirSync(quarantine).find((f) => f.endsWith(`-${slug}.json`));
+    ok('unpublish quarantines (does not delete) the article', Boolean(qFile), qFile || 'no quarantine file');
+    ok('unpublish rebuilds the article out of the site',
+      !existsSync(path.join(dist, 'articles', slug, 'index.html')));
+  } finally {
+    rmSync(artFile, { force: true });
+    if (existsSync(quarantine)) for (const f of readdirSync(quarantine)) {
+      if (f.includes(`-${slug}`)) rmSync(path.join(quarantine, f), { force: true, recursive: true });
+    }
+    build();
+  }
+}
+
 // ------------------------------------------------------------ summary
 console.log(`\n${checks - failures}/${checks} checks passed${failures ? ` — ${failures} FAILED` : ''}`);
 if (failures) process.exit(1);

@@ -3,18 +3,44 @@
 //
 //   node agents/scheduler.mjs --due              # what is ready to be written now
 //   node agents/scheduler.mjs --once             # generate + queue everything due
-//   node agents/scheduler.mjs --once --build     # …and rebuild dist/ afterwards
+//   node agents/scheduler.mjs --once --deploy    # …and build + upload to the host
+//   node agents/scheduler.mjs --unpublish <slug> # pull a live article (quarantine, rebuild)
 //   node agents/scheduler.mjs --daemon --interval 30
 //
 // "Due" means: the slot is within the lead window (default 24h). The article is
 // written now, dated for the slot, and the site build keeps it hidden until that
 // date. A rebuild at or after the slot publishes it.
+//
+// Emergency stop: if content/SCHEDULER_STOP exists, every cycle halts before it
+// touches anything. Delete the file to resume.
+//
+// agents/.local.env is loaded automatically (a CI runner's real env wins), so an
+// unattended `node` call still has the provider keys.
 import { parseArgs } from 'node:util';
-import { readFileSync, writeFileSync, existsSync, appendFileSync, mkdirSync } from 'node:fs';
+import {
+  readFileSync, writeFileSync, existsSync, appendFileSync, mkdirSync, readdirSync, renameSync,
+} from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { repo } from './lib/job.mjs';
 import { describeSlot } from './lib/calendar.mjs';
+import { stopExists, STOP_HINT } from './lib/stop.mjs';
+
+// Local secrets (agents/.local.env) are loaded here so the scheduler can run
+// unattended from a bare `node` invocation — a CI runner supplies these same
+// names as real environment variables, which always win over the file.
+(() => {
+  const f = path.join(repo, 'agents', '.local.env');
+  if (!existsSync(f)) return;
+  for (const line of readFileSync(f, 'utf8').split(/\r?\n/)) {
+    const t = line.trim();
+    if (!t || t.startsWith('#') || !t.includes('=')) continue;
+    const i = t.indexOf('=');
+    const name = t.slice(0, i).trim();
+    const value = t.slice(i + 1).trim();
+    if (name && process.env[name] === undefined) process.env[name] = value;
+  }
+})();
 
 const { values: args } = parseArgs({
   options: {
@@ -22,6 +48,8 @@ const { values: args } = parseArgs({
     due: { type: 'boolean', default: false },
     daemon: { type: 'boolean', default: false },
     build: { type: 'boolean', default: false },
+    deploy: { type: 'boolean', default: false },
+    unpublish: { type: 'string' },
     interval: { type: 'string', default: '30' },
     lead: { type: 'string', default: '24' },
     limit: { type: 'string', default: '1' },
@@ -108,6 +136,10 @@ function runOne(item) {
 }
 
 function cycle() {
+  if (stopExists()) {
+    log(`${C.yellow}paused${C.off} — ${STOP_HINT}`);
+    return 0;
+  }
   const cal = readCal();
   const due = dueItems(cal);
   if (!due.length) { log(`${C.dim}nothing due${C.off}`); return 0; }
@@ -118,7 +150,16 @@ function cycle() {
   }
   writeCal(cal);
 
-  if (published && args.build) {
+  // --deploy runs the full production build + upload itself (deploy.mjs sets
+  // AIVOXFLOW_SITE_URL and refuses a preview build), so we skip the local
+  // preview build here to avoid a redundant, non-deployable rebuild.
+  if (published && args.deploy) {
+    log('Deploying to the host…');
+    const d = spawnSync(process.execPath, [path.join(repo, 'deploy', 'deploy.mjs')], { cwd: repo, encoding: 'utf8', env: process.env });
+    try { appendFileSync(logFile, `${d.stdout || ''}${d.stderr || ''}\n`, 'utf8'); } catch { /* ignore */ }
+    if (d.status === 0) log(`${C.green}✓ deployed${C.off}`);
+    else log(`${C.red}✗ deploy exited ${d.status}${C.off} — files may be uploaded; see content/scheduler.log`);
+  } else if (published && args.build) {
     log('Rebuilding dist/…');
     const b = spawnSync(process.execPath, [path.join(repo, 'site', 'build.mjs')], { cwd: repo, encoding: 'utf8', env: process.env });
     log(b.status === 0 ? `${C.green}✓ build ok${C.off}` : `${C.red}✗ build failed${C.off}\n${b.stderr}`);
@@ -126,7 +167,44 @@ function cycle() {
   return published;
 }
 
+// Pull a published article: quarantine it (never delete), rebuild, and — with
+// --deploy — push the removal to the live host. This is the rollback control
+// autonomous publishing depends on: any article can be removed in one command.
+function unpublish(slug) {
+  if (!/^[a-z0-9][a-z0-9-]*$/.test(slug)) { console.error(`Invalid slug "${slug}".`); process.exit(2); }
+  const dir = path.join(repo, 'site', 'data', 'articles');
+  const file = path.join(dir, `${slug}.json`);
+  if (!existsSync(file)) { console.error(`No published article at site/data/articles/${slug}.json`); process.exit(2); }
+
+  const quarantine = path.join(repo, 'content', 'unpublished');
+  mkdirSync(quarantine, { recursive: true });
+  const stamp = new Date().toISOString().replace(/[:T]/g, '-').slice(0, 16);
+  renameSync(file, path.join(quarantine, `${stamp}-${slug}.json`));
+
+  // Its hero artwork moves too, so nothing references a removed article.
+  const assets = path.join(repo, 'site', 'assets-src', 'articles', slug);
+  if (existsSync(assets)) renameSync(assets, path.join(quarantine, `${stamp}-${slug}-assets`));
+
+  log(`${C.bold}Unpublished${C.off} ${slug} → content/unpublished/${stamp}-${slug}.json`);
+
+  log('Rebuilding dist/…');
+  const b = spawnSync(process.execPath, [path.join(repo, 'site', 'build.mjs')], { cwd: repo, encoding: 'utf8', env: process.env });
+  if (b.status !== 0) { log(`${C.red}✗ build failed${C.off}\n${b.stderr}`); process.exit(1); }
+  log(`${C.green}✓ build ok${C.off}`);
+
+  if (args.deploy) {
+    log('Deploying removal to the host…');
+    const d = spawnSync(process.execPath, [path.join(repo, 'deploy', 'deploy.mjs')], { cwd: repo, encoding: 'utf8', env: process.env });
+    log(d.status === 0 ? `${C.green}✓ deployed${C.off}` : `${C.red}✗ deploy exited ${d.status}${C.off} — see output above`);
+  } else {
+    log(`${C.dim}Not uploaded — re-run with --deploy to push the removal to the live site.${C.off}`);
+  }
+  process.exit(0);
+}
+
 if (args.due) { showDue(); process.exit(0); }
+
+if (args.unpublish) { unpublish(args.unpublish); }
 
 if (args.once) {
   const n = cycle();
@@ -141,6 +219,6 @@ if (args.daemon) {
   tick();
   setInterval(tick, every);
 } else {
-  console.log('Usage: node agents/scheduler.mjs [--due | --once [--build] | --daemon [--interval 30]]');
+  console.log('Usage: node agents/scheduler.mjs [--due | --once [--build|--deploy] | --unpublish <slug> [--deploy] | --daemon [--interval 30]]');
   process.exit(2);
 }

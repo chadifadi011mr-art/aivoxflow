@@ -40,6 +40,9 @@ const say = (...a) => console.log(...a);
 const die = (msg, code = 1) => { console.error(`ERROR  ${msg}`); process.exit(code); };
 
 // ---------------------------------------------------------------- credentials
+// Sources, in order: deploy/.ftp.env (local operator) then the process
+// environment (a CI runner injects the same names as secrets). A deploy is
+// only attempted when the essential host+user are present from either source.
 const envFile = path.join(here, '.ftp.env');
 const local = {};
 if (existsSync(envFile)) {
@@ -49,19 +52,23 @@ if (existsSync(envFile)) {
     const i = t.indexOf('=');
     if (i > 0) local[t.slice(0, i).trim()] = t.slice(i + 1).trim();
   }
-} else if (!has('--dry-run')) {
-  die('deploy/.ftp.env is missing.\n'
-    + '       1) hPanel -> Files -> FTP Accounts -> set an FTP password\n'
-    + '       2) cp deploy/.ftp.env.example deploy/.ftp.env   then fill it in\n'
-    + '       (the file is gitignored; use --dry-run to preview without it)', 2);
+}
+const fromEnv = (name) => (process.env[name] ?? '').trim();
+const cred = (name) => (local[name] !== undefined && local[name] !== '' ? local[name] : fromEnv(name));
+
+if (!has('--dry-run') && !cred('AIVOXFLOW_FTP_HOST')) {
+  die('No FTP host configured.\n'
+    + '       Local:  cp deploy/.ftp.env.example deploy/.ftp.env   then fill it in\n'
+    + '       CI:     set AIVOXFLOW_FTP_HOST / _USER / _PASS (and _SITE_URL) as secrets\n'
+    + '       (use --dry-run to preview without any credentials)', 2);
 }
 
-const siteUrl = (local.AIVOXFLOW_SITE_URL || 'https://aivoxflow.unaux.com').replace(/\/+$/, '');
-const ftpHost = local.AIVOXFLOW_FTP_HOST || 'ftp.example.invalid';
-const ftpUser = local.AIVOXFLOW_FTP_USER || '';
-const ftpPass = local.AIVOXFLOW_FTP_PASS || '';
-const remoteRoot = (local.AIVOXFLOW_FTP_REMOTE_ROOT ?? 'public_html').replace(/^\/+|\/+$/g, '');
-const ftpSsl = /^(1|true|yes)$/i.test(local.AIVOXFLOW_FTP_SSL || '');
+const siteUrl = (cred('AIVOXFLOW_SITE_URL') || 'https://aivoxflow.unaux.com').replace(/\/+$/, '');
+const ftpHost = cred('AIVOXFLOW_FTP_HOST') || 'ftp.example.invalid';
+const ftpUser = cred('AIVOXFLOW_FTP_USER') || '';
+const ftpPass = cred('AIVOXFLOW_FTP_PASS') || '';
+const remoteRoot = (cred('AIVOXFLOW_FTP_REMOTE_ROOT') || 'public_html').replace(/^\/+|\/+$/g, '');
+const ftpSsl = /^(1|true|yes)$/i.test(cred('AIVOXFLOW_FTP_SSL') || '');
 
 // ---------------------------------------------------------------- 1. build
 if (!has('--skip-build')) {
@@ -106,15 +113,16 @@ if (has('--dry-run')) {
   process.exit(0);
 }
 
-const probe = spawnSync('curl.exe', ['--version'], { encoding: 'utf8' });
-if (probe.status !== 0) die('curl.exe not found on PATH (it ships with Windows 10+)');
+// curl.exe ships with Windows 10+; Linux/macOS runners provide plain `curl`.
+const curlBin = ['curl.exe', 'curl'].find((bin) => spawnSync(bin, ['--version'], { encoding: 'utf8' }).status === 0);
+if (!curlBin) die('curl not found on PATH (it ships with Windows 10+ and every CI runner)');
 
 // curl reads the credentials from a temp config file (-K) so the password
 // never appears on a command line or in any log.
 const cfgPath = path.join(here, '.curlcfg.tmp');
 const q = (s) => `"${String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
 writeFileSync(cfgPath, `user = ${q(`${ftpUser}:${ftpPass}`)}\n${ftpSsl ? 'ssl-reqd = true\n' : ''}`, 'utf8');
-const curl = (extra) => spawnSync('curl.exe', [
+const curl = (extra) => spawnSync(curlBin, [
   '-sS', '--fail', '--retry', '2', '--retry-delay', '1', '-K', cfgPath, ...extra,
 ], { encoding: 'utf8' });
 
