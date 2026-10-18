@@ -20,8 +20,13 @@ survive being quoted alone, with no "as mentioned above".
 2. **Meta description** — 140–160 characters. It is an ad, not a summary: state the reader, the
    payoff and the differentiator.
 3. **Slug** — 3–6 words, lowercase latin, hyphens. Stable forever; changing it later costs rankings.
-4. **One primary keyword**, 2–5 secondary. They must already appear naturally in the body. If a
-   secondary keyword is absent, do not add it to a list — leave it out.
+4. **One primary keyword**, 2–5 secondary. The primary keyword must appear VERBATIM (ignoring
+   case) as a substring of your `seoTitle` AND inside the first 100 words of the body — that is
+   exactly what the editorial gate tests, and "comparing AI tool pricing" does not satisfy
+   "compare AI tool pricing". Prefer the phrase the article already uses: a shorter phrase
+   present everywhere beats a longer phrase present nowhere. Secondary keywords must already
+   appear naturally in the body; if a secondary keyword is absent, do not add it to a list —
+   leave it out.
 5. **FAQ** — 3–6 questions written the way people actually type them, each answered in 40–60 words,
    self-contained. These become `FAQPage` structured data.
 6. **llmsSummary** — 40–70 words, plain, factual, no marketing. This is what `/llms.txt` serves to
@@ -49,3 +54,6 @@ survive being quoted alone, with no "as mentioned above".
   }
 }
 ```
+
+`keywordPlacement` is overwritten with measured values before the result is stored — report
+your best actual measurement, not an aspiration.

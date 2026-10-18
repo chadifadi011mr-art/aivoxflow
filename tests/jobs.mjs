@@ -8,8 +8,9 @@
 //
 // Usage: node tests/jobs.mjs
 import { createJob, transition, resolveReview, TERMINAL } from '../agents/lib/job.mjs';
-import { runGates } from '../agents/lib/gates.mjs';
+import { runGates, densityOf } from '../agents/lib/gates.mjs';
 import { factCheckAgent } from '../agents/stages/draft.mjs';
+import { seoAgent } from '../agents/stages/seo.mjs';
 import { interleave } from '../agents/stages/research.mjs';
 
 let failures = 0;
@@ -134,6 +135,86 @@ ok('recheck without a ledger is refused', throws(() => resolveReview(job3, decis
     JSON.stringify(interleave(groups, 5)));
   ok('interleave respects the read limit', interleave(groups, 2).length === 2);
   ok('interleave stops when every group is exhausted', interleave(groups, 99).length === 6);
+}
+
+// ------------------------------------------------- keyword density is phrase maths
+{
+  const body = 'Widgets pricing starts free. Widgets pricing scales with seats. Plenty of other words here. '
+    + 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt. '.repeat(25);
+  const d = densityOf(body, 'widgets pricing');
+  ok('density counts phrase occurrences for a multi-word keyword', d > 0 && d < 2.5, String(d));
+  ok('density is zero when the phrase is absent', densityOf(body, 'nonexistent phrase here') === 0);
+  ok('density flags a stuffed phrase', densityOf('widgets pricing '.repeat(30) + 'tail words', 'widgets pricing') > 2.5);
+
+  const kwLinks = '\n\n[one](/articles/a/) [two](/articles/b/) [three](/articles/c/)';
+  const mkSeoDraft = (body) => ({
+    title: 'Widgets Pricing: Compare Costs Before You Commit',
+    description: 'D'.repeat(150),
+    slug: 'widgets-pricing',
+    body,
+    answerFirst: 'An answer that clears the ai-first word window without any help from the seo gate which ignores it. '.repeat(2),
+    takeaways: ['one'],
+  });
+  const seoGate = (body) => runGates({
+    draft: mkSeoDraft(body),
+    research,
+    factcheck: { claims: [{ text: 'x', status: 'verified' }] },
+    seo: { primaryKeyword: 'widgets pricing' },
+    corpus: [],
+  }).gates.find((g) => g.name === 'seo');
+  const healthy = seoGate('Widgets pricing: how to compare widgets without burning the budget.'
+    + ' lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor. '.repeat(12) + kwLinks);
+  ok('seo gate: a natural keyword passes with no density advisory',
+    healthy.pass === true && !healthy.findings.some((f) => /very low|stuffing/.test(f)), JSON.stringify(healthy.findings));
+  const stuffed = seoGate('widgets pricing widgets pricing widgets pricing widgets pricing widgets pricing widgets pricing. '
+    + 'lorem ipsum dolor sit amet consectetur adipiscing elit. '.repeat(6) + kwLinks);
+  ok('seo gate: a stuffed keyword still blocks',
+    stuffed.pass === false && stuffed.findings.some((f) => /stuffing/.test(f)), JSON.stringify(stuffed.findings));
+}
+
+// ------------------------------------------------- seo agent keyword self-check
+{
+  const calls = [];
+  const mk = (datas) => ({ run: async (a) => { calls.push(a); return { data: datas[Math.min(calls.length - 1, datas.length - 1)], costUsd: 0 }; } });
+  const freshJob = () => ({
+    id: 'seo-test', topic: 'Widgets', category: 'ai-tools', log: [],
+    artifacts: {
+      draft: {
+        title: 'Widgets Pricing Guide for Teams',
+        description: 'x', answerFirst: 'y',
+        body: 'Widgets pricing starts free for everyone. '.repeat(6)
+          + '\n\n## A section\n\n[one](/articles/a) [two](/articles/b) [three](/articles/c)',
+      },
+    },
+  });
+  const good = {
+    seoTitle: 'Widgets Pricing: How to Compare Costs', primaryKeyword: 'widgets pricing',
+    metaDescription: 'm'.repeat(150), slug: 'widgets-pricing', faq: [], llmsSummary: 's', internalLinks: [],
+  };
+  const bad = { ...good, primaryKeyword: 'widgets pricing comparison tools' };
+
+  const j1 = freshJob();
+  await seoAgent({ job: j1, llm: mk([bad, good]), log: () => {} });
+  ok('seo: a mismatched keyword triggers exactly one corrective round', calls.length === 2, String(calls.length));
+  ok('seo: the corrective answer applies when it fits',
+    j1.artifacts.seo.primaryKeyword === 'widgets pricing', JSON.stringify(j1.artifacts.seo.primaryKeyword));
+  ok('seo: keywordPlacement is measured, not claimed',
+    j1.artifacts.seo.keywordPlacement.inTitle === true
+    && j1.artifacts.seo.keywordPlacement.inFirst100Words === true
+    && j1.artifacts.seo.keywordPlacement.densityPercent > 0, JSON.stringify(j1.artifacts.seo.keywordPlacement));
+
+  calls.length = 0;
+  const j2 = freshJob();
+  await seoAgent({ job: j2, llm: mk([good]), log: () => {} });
+  ok('seo: a fitting keyword needs no extra call', calls.length === 1, String(calls.length));
+
+  calls.length = 0;
+  const j3 = freshJob();
+  const stillBad = { ...good, primaryKeyword: 'widgets pricing costs 2026 money' };
+  await seoAgent({ job: j3, llm: mk([bad, stillBad]), log: () => {} });
+  ok('seo: two mismatched rounds keep the first answer for the gate to judge',
+    calls.length === 2 && j3.artifacts.seo.primaryKeyword === bad.primaryKeyword,
+    JSON.stringify({ calls: calls.length, kw: j3.artifacts.seo.primaryKeyword }));
 }
 
 // ------------------------------------------------- fact-check recheck keeps history

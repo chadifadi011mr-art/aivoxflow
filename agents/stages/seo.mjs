@@ -2,15 +2,34 @@
 import path from 'node:path';
 import { prompt, wrap } from '../lib/prompt.mjs';
 import { note } from '../lib/job.mjs';
+import { norm, densityOf } from '../lib/gates.mjs';
 import { draftAssetDir, articleAssetUrl } from '../lib/render-image.mjs';
 
 // ---------------------------------------------------------------- 05 seo
+// Mirror of the seo gate's two blocker checks: the primary keyword must be a
+// verbatim substring of the title (raw, like the gate) and of the first 100
+// words (normalized). Used to catch a keyword the model picked that appears
+// in neither — the exact mismatch that stopped the first real article.
+function keywordFit(data, draft) {
+  const kw = String(data.primaryKeyword || '').toLowerCase().trim();
+  if (!kw) return { ok: false, reason: 'no primary keyword was declared' };
+  const title = String(data.seoTitle || draft.title || '');
+  if (!title.toLowerCase().includes(kw)) {
+    return { ok: false, reason: `is not a verbatim substring of the title "${title}"` };
+  }
+  const first100 = norm(String(draft.body || '').split(/\s+/).slice(0, 100).join(' '));
+  if (!first100.includes(norm(kw))) {
+    return { ok: false, reason: 'does not appear in the first 100 words of the body' };
+  }
+  return { ok: true };
+}
+
 export async function seoAgent(ctx) {
   const { job, llm, log } = ctx;
   const draft = job.artifacts.draft || {};
   const corpus = ctx.corpus || [];
 
-  const { data, costUsd } = await llm.run({
+  const ask = (correction) => llm.run({
     task: 'seo',
     system: prompt('05-seo.md'),
     user: wrap({
@@ -22,8 +41,24 @@ export async function seoAgent(ctx) {
       body: draft.body,
       existingArticles: corpus.map((c) => ({ title: c.title, slug: c.slug, url: `/articles/${c.slug}/`, tags: c.tags })),
       categories: ctx.categories || [],
+      ...(correction ? { correction } : {}),
     }),
   });
+
+  let result = await ask();
+  let costUsd = result.costUsd || 0;
+  const fit = keywordFit(result.data, draft);
+  if (!fit.ok) {
+    // One corrective round with the exact mismatch spelled out. If the model
+    // still disagrees, keep its first answer and let the gate stop the job for
+    // a human — never rewrite the model's keyword selection ourselves.
+    log(`  seo: primary keyword "${result.data.primaryKeyword}" ${fit.reason} — one corrective round`);
+    const again = await ask(`Your primaryKeyword fails the editorial gate: ${fit.reason}. Choose the exact phrase the article already uses (shorter and verbatim beats longer and absent), or adjust seoTitle so the keyword appears in it, and make sure the keyword appears in the first 100 words of the body. Re-check both substrings before returning.`);
+    costUsd += again.costUsd || 0;
+    if (keywordFit(again.data, draft).ok) result = again;
+    else log('  seo: primary keyword still mismatches after the corrective round; the gate will decide');
+  }
+  const data = result.data;
 
   const before = { title: draft.title, slug: draft.slug };
   draft.seoTitle = data.seoTitle;
@@ -33,6 +68,17 @@ export async function seoAgent(ctx) {
   draft.faq = data.faq || [];
   draft.llmsSummary = data.llmsSummary;
   draft.internalLinks = data.internalLinks || [];
+
+  // Measured, never claimed: the model used to assert inTitle:true for a
+  // keyword that was in neither place, and nothing checked it.
+  const kwNorm = norm(data.primaryKeyword || '');
+  const bodyWords = (draft.body || '').split(/\s+/).filter(Boolean);
+  data.keywordPlacement = {
+    inTitle: Boolean(kwNorm && norm(data.seoTitle || '').includes(kwNorm)),
+    inFirst100Words: Boolean(kwNorm && norm(bodyWords.slice(0, 100).join(' ')).includes(kwNorm)),
+    inAnH2: Boolean(kwNorm && [...(draft.body || '').matchAll(/^##\s+(.+)$/gm)].some((m) => norm(m[1]).includes(kwNorm))),
+    densityPercent: Math.round(densityOf(draft.body || '', data.primaryKeyword || '') * 100) / 100,
+  };
 
   job.artifacts.seo = { ...data, previousTitle: before.title, previousSlug: before.slug };
   note(job, 'seo:done', `slug ${draft.slug}`);

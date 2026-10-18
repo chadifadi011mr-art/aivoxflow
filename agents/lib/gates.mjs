@@ -15,7 +15,17 @@ const MIN_INTERNAL_LINKS = 3;
 const MAX_SHINGLE_OVERLAP = 0.12;
 
 const words = (s) => s.trim().split(/\s+/).filter(Boolean);
-const norm = (s) => s.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
+export const norm = (s) => s.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
+// Keyword density for a PHRASE: occurrences of the phrase times its word
+// count, over total words. Counting single words that equal the phrase (the
+// old maths) is always zero for any multi-word keyword — every advisory
+// "0.00% density" the gates ever printed came from that bug.
+export function densityOf(body, keyword) {
+  const kw = norm(keyword || '');
+  if (!kw) return 0;
+  const phraseCount = norm(body || '').split(kw).length - 1;
+  return (phraseCount * kw.split(' ').length) / Math.max(1, words(body || '').length) * 100;
+}
 // Figures as a reader sees them: "1,050,000", "0.028", "126%". Compared after
 // stripping separators so 0.04/0.40 stay distinct while $20/mo and $20 match.
 const NUM_RE = /\d+(?:[.,]\d+)*/g;
@@ -151,8 +161,7 @@ export function runGates({ draft, research = {}, factcheck = {}, seo = {}, corpu
       if (!t.toLowerCase().includes(kw)) fail(g, `Primary keyword "${kw}" missing from the title.`);
       const first100 = norm(w.slice(0, 100).join(' '));
       if (!first100.includes(norm(kw))) fail(g, `Primary keyword "${kw}" missing from the first 100 words.`);
-      const bodyNorm = norm(body);
-      const density = (bodyNorm.split(' ').filter((x) => x === norm(kw)).length / Math.max(1, w.length)) * 100;
+      const density = densityOf(body, kw);
       if (density > 2.5) fail(g, `Keyword density ${density.toFixed(2)}% is stuffing (limit 2.5%).`);
       if (density < 0.15) warn(g, `Keyword density ${density.toFixed(2)}% is very low; check the topic is actually covered.`);
     }
