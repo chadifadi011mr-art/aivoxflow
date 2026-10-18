@@ -104,7 +104,10 @@ export function note(job, event, detail = '') {
 // could not verify; the original verdict stays in the ledger as history.
 // The job returns to the exact stage that stopped (recorded at stop time), so
 // the remaining gates still run — resolving is not publishing.
-export function resolveReview(job, decision) {
+// { recheck: true } returns to "draft" instead, which re-runs the fact-check
+// stage against the CURRENT text (the draft stage itself only runs from
+// "brief", so the article is never regenerated on this path).
+export function resolveReview(job, decision, { recheck = false } = {}) {
   if (job.state !== 'needs_human_review') {
     throw new Error(`resolveReview: job is "${job.state}", not needs_human_review.`);
   }
@@ -116,6 +119,9 @@ export function resolveReview(job, decision) {
     throw new Error('resolveReview: no valid stopping stage recorded on this job.');
   }
   if (!job.review) job.review = { from, reason: '(stop record derived from the transition log)' };
+  if (recheck && !job.artifacts?.factcheck) {
+    throw new Error('resolveReview: a recheck needs a fact-check ledger to re-run against.');
+  }
   const text = String(decision || '').trim();
   if (text.length < 10) {
     throw new Error('resolveReview: the decision must say what was checked (at least 10 characters).');
@@ -129,13 +135,19 @@ export function resolveReview(job, decision) {
       resolved++;
     }
   }
+  const target = recheck ? 'draft' : from;
   job.review.resolution = text;
   job.review.resolvedAt = nowIso();
   job.review.resolvedClaims = resolved;
-  job.log.push({ at: nowIso(), event: `needs_human_review → ${from}`, note: `human resolution: ${text}` });
-  job.state = from;
+  if (recheck) job.review.recheck = true;
+  job.log.push({
+    at: nowIso(),
+    event: `needs_human_review → ${target}`,
+    note: `human resolution: ${text}${recheck ? ' (fact-check recheck requested)' : ''}`,
+  });
+  job.state = target;
   job.updatedAt = nowIso();
-  return { from, resolved };
+  return { from: target, resolved, rechecked: recheck };
 }
 
 export function saveJob(job) {

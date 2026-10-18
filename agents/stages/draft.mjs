@@ -55,7 +55,8 @@ export async function factCheckAgent(ctx) {
   });
 
   // Apply the checker's own corrections before the gates see the text, but keep
-  // the original for the audit trail.
+  // the original for the audit trail. A recheck (second fact-check pass over
+  // already-corrected text) must not overwrite the first pass's original.
   const corrections = data.corrections || [];
   if (corrections.length && draft.body) {
     let body = draft.body;
@@ -64,12 +65,26 @@ export async function factCheckAgent(ctx) {
       if (c.find && body.includes(c.find)) { body = body.split(c.find).join(c.replace); applied++; }
     }
     if (applied) {
+      if (job.artifacts.draftPreCorrection) {
+        job.artifacts.draftPreCorrectionHistory = [
+          ...(job.artifacts.draftPreCorrectionHistory || []),
+          job.artifacts.draftPreCorrection,
+        ];
+      }
       job.artifacts.draftPreCorrection = { body: draft.body };
       draft.body = body;
       log(`  factcheck: applied ${applied}/${corrections.length} corrections`);
     }
   }
 
+  // A recheck replaces the ledger; archive the earlier one so its verdict and
+  // the human resolutions stamped onto its claims stay in the audit trail.
+  if (job.artifacts.factcheck) {
+    job.artifacts.factcheckHistory = [
+      ...(job.artifacts.factcheckHistory || []),
+      job.artifacts.factcheck,
+    ];
+  }
   job.artifacts.factcheck = data;
   note(job, 'factcheck:done', `${(data.claims || []).length} claims · verdict ${data.verdict}`);
   log(`  factcheck: ${(data.claims || []).length} claims · ${data.verdict}`);

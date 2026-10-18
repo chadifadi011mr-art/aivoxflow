@@ -16,6 +16,10 @@ const MAX_SHINGLE_OVERLAP = 0.12;
 
 const words = (s) => s.trim().split(/\s+/).filter(Boolean);
 const norm = (s) => s.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
+// Figures as a reader sees them: "1,050,000", "0.028", "126%". Compared after
+// stripping separators so 0.04/0.40 stay distinct while $20/mo and $20 match.
+const NUM_RE = /\d+(?:[.,]\d+)*/g;
+const numsOf = (s) => (String(s || '').match(NUM_RE) || []).map((n) => n.replace(/[.,]/g, ''));
 
 function shingles(text, n = 5) {
   const w = norm(text).split(' ').filter(Boolean);
@@ -49,7 +53,12 @@ export function runGates({ draft, research = {}, factcheck = {}, seo = {}, corpu
   const body = draft.body || '';
   const w = words(body);
   const h2s = [...body.matchAll(/^##\s+(.+)$/gm)].map((m) => m[1].trim());
-  const paras = body.split(/\n{2,}/).filter((p) => p.trim() && !p.startsWith('#') && !p.startsWith('|'));
+  // Prose paragraphs only: list items, checkboxes and table rows are
+  // navigational structure (scannable by nature), not prose a reader must
+  // crawl through on a phone.
+  const isStructure = (p) => /^\s*([-*+]\s+(\[[ xX]\]\s+)?|\d+\.\s+|\|)/.test(p);
+  const paras = body.split(/\n{2,}/).map((p) => p.trim())
+    .filter((p) => p && !p.startsWith('#') && !isStructure(p));
 
   // ---------------------------------------------------------------- 1 structure
   {
@@ -81,17 +90,29 @@ export function runGates({ draft, research = {}, factcheck = {}, seo = {}, corpu
     // A claim the checker could not verify blocks until a human resolves it;
     // resolveReview() stamps the decision onto the claim. Status is unchanged
     // on purpose — the ledger keeps telling the truth about what was verified.
-    const unverified = claims.filter((c) => c.status !== 'verified' && !c.resolved);
-    if (unverified.length) fail(g, `${unverified.length} claim(s) not verified and not human-resolved: ${unverified.slice(0, 3).map((c) => c.text).join(' | ')}`);
+    // "opinion" is the fact-check prompt's own documented verdict: a normative
+    // recommendation is not a fact to verify, only its framing is.
+    const unverified = claims.filter((c) => c.status !== 'verified' && c.status !== 'opinion' && !c.resolved);
+    if (unverified.length) fail(g, `${unverified.length} claim(s) neither verified, framed as opinion, nor human-resolved: ${unverified.slice(0, 3).map((c) => c.text).join(' | ')}`);
 
-    // Every sentence carrying a number, price or percentage must be in the ledger.
-    const numeric = body.split(/(?<=[.!?])\s+/).filter((s) => /\d/.test(s) && !/^##/.test(s));
-    const claimText = norm(claims.map((c) => c.text).join(' '));
-    const untracked = numeric.filter((s) => {
-      const key = norm(s).split(' ').slice(0, 8).join(' ');
-      return key && !claimText.includes(key);
-    });
-    if (untracked.length > 2) fail(g, `${untracked.length} sentence(s) with figures are not in the claim ledger.`);
+    // Every figure-bearing unit — prose line, list item, table row — must carry
+    // its numbers in the ledger. Units match on their FIGURES, not on an
+    // eight-word prefix: the ledger paraphrases, and links and tables defeat
+    // any prefix test. Evidence and the checker's own corrections count as
+    // ledger text — sentences the checker itself stood behind.
+    const ledgerNums = new Set([
+      ...claims.flatMap((c) => numsOf(c.text)),
+      ...claims.flatMap((c) => numsOf(c.evidence || '')),
+      ...(factcheck.corrections || []).flatMap((c) => numsOf(c.replace || '')),
+    ]);
+    // Links are removed before the digit test: a figure that exists only
+    // inside a citation (source-list bullets, linked titles) belongs to the
+    // cited page, not to a claim this article makes.
+    const units = body.split(/\n+/)
+      .map((l) => l.replace(/\[[^\]]*\]\([^)]*\)/g, ' ').trim().replace(/^\d+\.\s+/, ''))
+      .filter((l) => /\d/.test(l) && !l.startsWith('#'));
+    const untracked = units.filter((l) => numsOf(l).some((n) => !ledgerNums.has(n)));
+    if (untracked.length > 2) fail(g, `${untracked.length} unit(s) with figures carry numbers missing from the claim ledger: ${untracked.slice(0, 3).map((u) => u.slice(0, 70)).join(' | ')}`);
     gates.push(g);
   }
 

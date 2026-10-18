@@ -152,6 +152,7 @@ node agents/run.mjs --topic "…" --category tutorials --notes "focus on pricing
 node agents/run.mjs --list                                  # every job and its state
 node agents/run.mjs --resume job_20261017130726_90fcec      # continue an interrupted run
 node agents/run.mjs --resolve job_… --decision "why the claim ledger is acceptable"
+node agents/run.mjs --resolve job_… --decision "…" --recheck   # re-run the fact-check first
 node agents/run.mjs --topic "…" --publish                   # promote a fully-gated draft
 node agents/run.mjs --topic "…" --fixture agents/fixtures/demo-research.json   # offline demo
 node agents/doctor.mjs [--probe]                            # check keys, list models, test one call
@@ -180,12 +181,19 @@ node agents/run.mjs --resolve job_20261018125109_6e334c \
   --decision "Accepted the applied corrections: invented pricing line cut, unverified base price removed."
 ```
 
-`--resolve` prints the claim ledger (statuses plus the note behind each one), requires a
-`--decision` of at least 10 characters, stamps that decision onto every claim the fact-checker
-could not verify, records it in the job's audit log, and returns the job to the exact stage that
-stopped — so the remaining gates (SEO, images, editorial QA) still run before anything can be
-scheduled. Resolving is not publishing: `--publish` stays a separate, explicit act, and the
-original verdict stays in the ledger as history.
+`--resolve` prints the claim ledger (statuses plus the note behind each one) and, for a QA
+stop, the failing gate findings, requires a `--decision` of at least 10 characters, stamps
+that decision onto every claim the fact-checker could not verify, records it in the job's
+audit log, and returns the job to the exact stage that stopped — so the remaining gates
+(SEO, images, editorial QA) still run before anything can be scheduled. Resolving is not
+publishing: `--publish` stays a separate, explicit act, and the original verdict stays in
+the ledger as history. **Editorial QA re-runs on every resolve** — a resolution can never
+schedule a piece whose gates have not passed again.
+
+Add `--recheck` when figures entered the text after the check or the ledger is thinner than
+the final text (for example checklist or table figures the first pass never extracted). It
+sends the job to `draft` first, which re-runs the fact-check stage against the current text;
+the draft stage itself only runs from `brief`, so the article is never regenerated.
 
 ## Offline demo
 

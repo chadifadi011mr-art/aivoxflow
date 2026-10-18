@@ -6,10 +6,12 @@
 //   node agents/run.mjs --list
 //   node agents/run.mjs --resume job_20261017123000_ab12cd
 //   node agents/run.mjs --resolve job_… --decision "why the claim ledger is acceptable"
+//   node agents/run.mjs --resolve job_… --decision "…" --recheck
 //
 // Flags:
 //   --publish   promote a fully-gated draft into site/data/articles/ (default: stop at "scheduled")
 //   --resolve   continue a needs_human_review stop; requires --decision
+//   --recheck   with --resolve: re-run the fact-check on the current text first (from "draft")
 //   --force     allow a second job for the same topic
 //   --quiet     only print failures and the final summary
 //
@@ -42,6 +44,7 @@ const { values: args } = parseArgs({
     resume: { type: 'string' },
     resolve: { type: 'string' },
     decision: { type: 'string' },
+    recheck: { type: 'boolean', default: false },
     fixture: { type: 'string' },
     sources: { type: 'string' },
     slot: { type: 'string' },
@@ -78,6 +81,10 @@ if (args.list) {
 }
 
 // ---------------------------------------------------------------- boot
+if (args.recheck && !args.resolve) {
+  console.error('--recheck only makes sense with --resolve: it re-runs the fact-check on the current text.');
+  process.exit(2);
+}
 let job;
 if (args.resolve) {
   job = loadJob(args.resolve);
@@ -101,10 +108,16 @@ if (args.resolve) {
       log(`      ${C.dim}${c.note || ''}${C.off}`);
     }
   }
+  // A stop raised by the QA gates must show those findings here too — resolving
+  // without seeing what blocked the piece would be a rubber stamp.
+  for (const [name, g] of Object.entries(job.gates || {}).filter(([, g]) => !g.pass)) {
+    log(`  ${C.red}gate ${name}${C.off}`);
+    for (const f of g.findings) log(`      ${f}`);
+  }
   try {
-    const r = resolveReview(job, args.decision);
+    const r = resolveReview(job, args.decision, { recheck: args.recheck });
     saveJob(job);
-    log(`  resolved   → ${r.from} · ${r.resolved} claim(s) stamped with the decision`);
+    log(`  resolved   → ${r.from} · ${r.resolved} claim(s) stamped with the decision${r.rechecked ? ' · fact-check re-runs against the current text' : ''}`);
   } catch (e) {
     console.error(e.message);
     process.exit(2);
@@ -219,6 +232,7 @@ function stopForReview(reason) {
   console.log(`${C.dim}Job: ${job.id}  ·  log: content/jobs/${job.id}.json${C.off}`);
   console.log(`${C.dim}Inspect the stop, then continue with:${C.off}`);
   console.log(`${C.dim}  node agents/run.mjs --resolve ${job.id} --decision "what you checked"${C.off}`);
+  console.log(`${C.dim}  …append --recheck when the text changed after the check or figures still look uncovered${C.off}`);
   process.exit(3);
 }
 
@@ -284,9 +298,13 @@ try {
     saveJob(job);
   }
 
-  // 07 editorial QA
+  // 07 editorial QA — enters from "image", and runs whenever the job sits in
+  // "editorial_qa", including after a human resolution: resolving may never
+  // schedule a piece whose gates have not passed again.
   if (job.state === 'image') {
     transition(job, 'editorial_qa');
+  }
+  if (job.state === 'editorial_qa') {
     head('07 · Editorial QA');
     const qa = await qaAgent(ctx);
     saveJob(job);

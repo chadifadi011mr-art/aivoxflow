@@ -10,6 +10,11 @@ article; you produce a verdict and a correction list.
    prices, limits, dates, version names, availability, "supports X", "requires Y", rankings,
    causal statements ("X because Y").
 2. **Match each claim to a source** in the research pack. Quote the exact sentence that supports it.
+2b. **Cover every figure.** Every sentence, list item and table row that contains a number,
+    price, percentage, date, limit or ratio becomes a claim of its own — the editorial gate
+    checks exactly those units against this ledger, so anything you skip blocks the article
+    later for no good reason. Prescriptive recommendations that carry figures ("require a
+    60-day notice") are `opinion`, with the figure quoted in the evidence field.
 3. **Classify**:
    - `verified` — a source states it, and the source is primary or reputable.
    - `unverified` — no source in the pack states it. This is a blocker.
