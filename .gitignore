@@ -49,3 +49,6 @@ deploy/.ftp.env
 deploy/.curlcfg.tmp
 deploy/*.zip
 deploy/backup-*/
+
+# Local agent secrets (run-local.ps1 loads this; .example template is tracked).
+agents/.local.env
