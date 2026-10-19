@@ -52,7 +52,7 @@ jobs:
       AIVOXFLOW_AI_PROVIDER: ${{ vars.AIVOXFLOW_AI_PROVIDER || 'gemini' }}
       AIVOXFLOW_AI_MODEL: ${{ vars.AIVOXFLOW_AI_MODEL || 'gemini-flash-latest' }}
       AIVOXFLOW_AI_API_KEY: ${{ secrets.AIVOXFLOW_AI_API_KEY }}
-      AIVOXFLOW_SEARCH_PROVIDER: ${{ vars.AIVOXFLOW_SEARCH_PROVIDER || 'none' }}
+      AIVOXFLOW_SEARCH_PROVIDER: ${{ vars.AIVOXFLOW_SEARCH_PROVIDER || 'tavily' }}
       AIVOXFLOW_SEARCH_API_KEY: ${{ secrets.AIVOXFLOW_SEARCH_API_KEY }}
       # Hosted images in CI (no GPU). Use `local` if you prefer zero cost.
       AIVOXFLOW_IMAGE_PROVIDER: ${{ vars.AIVOXFLOW_IMAGE_PROVIDER || 'pollinations' }}
