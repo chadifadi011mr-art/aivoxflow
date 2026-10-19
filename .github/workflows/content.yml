@@ -1,13 +1,27 @@
 name: Content pipeline
 
-# Fills the calendar and generates any article whose slot is inside the lead
-# window. Runs early so the piece is ready before its peak slot.
+# Fills the calendar, generates any article whose slot is inside the lead
+# window, and — when every quality gate passed and the piece was committed —
+# uploads the built site to the live host over FTP. Runs daily so each piece is
+# written ahead of its slot and goes live when that slot arrives.
 #
 # Required repository secrets (Settings → Secrets and variables → Actions):
 #   AIVOXFLOW_AI_API_KEY      your model key (or omit and use a self-hosted runner with Ollama)
 #   AIVOXFLOW_SEARCH_API_KEY  optional; tavily runs keyless without it (rate-limited)
+#   AIVOXFLOW_FTP_HOST        FTP host from hPanel (deploy step)
+#   AIVOXFLOW_FTP_USER        FTP username
+#   AIVOXFLOW_FTP_PASS        FTP password
+# Optional (Actions variables): AIVOXFLOW_AI_PROVIDER, AIVOXFLOW_AI_MODEL,
+#   AIVOXFLOW_IMAGE_PROVIDER, AIVOXFLOW_IMAGE_MODEL, AIVOXFLOW_SITE_URL,
+#   AIVOXFLOW_FTP_REMOTE_ROOT, AIVOXFLOW_FTP_SSL, AIVOXFLOW_AI_BUDGET_USD_DAILY.
 #
-# Nothing is committed unless every quality gate passed.
+# Nothing is committed unless every quality gate passed, and nothing is deployed
+# unless something new was committed.
+#
+# Emergency stop: commit an empty content/SCHEDULER_STOP file — the scheduler
+# halts before generating or publishing, so nothing new is committed or
+# deployed. Delete it to resume. To pull a bad live article:
+#   node agents/scheduler.mjs --unpublish <slug> --deploy
 
 on:
   schedule:
@@ -79,6 +93,7 @@ jobs:
           node tests/run.mjs
 
       - name: Commit published articles
+        id: commit
         if: ${{ steps.key.outputs.has == 'true' }}
         run: |
           git config user.name  "aivoxflow-bot"
@@ -86,7 +101,22 @@ jobs:
           git add site/data/articles site/assets-src/articles content/calendar.json
           if git diff --cached --quiet; then
             echo "Nothing to publish."
+            echo "published=false" >> "$GITHUB_OUTPUT"
           else
             git commit -m "content: scheduled article(s) $(date -u +%Y-%m-%d)"
             git push
+            echo "published=true" >> "$GITHUB_OUTPUT"
           fi
+
+      # deploy.mjs does its own production build (with AIVOXFLOW_SITE_URL),
+      # refuses a preview build, and smoke-tests the live URL afterwards.
+      - name: Deploy to host
+        if: ${{ steps.key.outputs.has == 'true' && steps.commit.outputs.published == 'true' }}
+        env:
+          AIVOXFLOW_SITE_URL: ${{ vars.AIVOXFLOW_SITE_URL || 'https://aivoxflow.unaux.com' }}
+          AIVOXFLOW_FTP_HOST: ${{ secrets.AIVOXFLOW_FTP_HOST }}
+          AIVOXFLOW_FTP_USER: ${{ secrets.AIVOXFLOW_FTP_USER }}
+          AIVOXFLOW_FTP_PASS: ${{ secrets.AIVOXFLOW_FTP_PASS }}
+          AIVOXFLOW_FTP_REMOTE_ROOT: ${{ secrets.AIVOXFLOW_FTP_REMOTE_ROOT || 'public_html' }}
+          AIVOXFLOW_FTP_SSL: ${{ secrets.AIVOXFLOW_FTP_SSL }}
+        run: node deploy/deploy.mjs

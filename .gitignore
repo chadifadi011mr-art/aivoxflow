@@ -40,8 +40,11 @@ Thumbs.db
 # Content-agent working state: job logs, drafts and draft artwork.
 # Only promoted articles and their images enter site/data and site/assets-src.
 # content/calendar.json IS tracked — it is the publishing queue.
+# content/SCHEDULER_STOP is tracked on purpose — committing it halts automation.
+# content/unpublished/ holds articles pulled back by --unpublish: local, private.
 content/jobs/
 content/drafts/
+content/unpublished/
 content/scheduler.log
 
 # Deployment (deploy/deploy.mjs): credentials and one-shot artefacts stay local.

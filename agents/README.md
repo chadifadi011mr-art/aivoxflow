@@ -175,12 +175,11 @@ Exit codes: `0` published/scheduled · `1` failed · `2` bad usage · `3` needs 
 `agents/.local.env` is loaded automatically by the scheduler (a CI runner's real environment
 variables always win), so an unattended `node` invocation still has the provider keys.
 
-The GitHub Actions workflow [`.github/workflows/autonomous-publish.yml`](../.github/workflows/autonomous-publish.yml)
-runs the whole loop on a schedule: generate whatever is due → run every gate → promote only
-what passes → build → upload over FTP → commit the generated articles and the calendar back to
-the repo. **No gate is relaxed**: a piece a gate refuses is recorded as `needs_human_review`,
-not published. (The separate `publish.yml` is the on-push build-and-verify CI; it does not
-generate or deploy.)
+The GitHub Actions workflow [`.github/workflows/content.yml`](../.github/workflows/content.yml)
+runs the whole loop daily: plan slots → generate whatever is due → run every gate → promote and
+commit only what passes → build → upload over FTP. **No gate is relaxed**: a piece a gate refuses
+is recorded as `needs_human_review`, not published. (The separate `ci.yml` and `publish.yml` are
+build-and-verify CI; they do not generate or deploy.)
 
 To turn it on:
 

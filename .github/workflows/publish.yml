@@ -14,7 +14,7 @@ on:
     - cron: '0 8,17 * * 2-4'   # Tue–Thu, 08:00 and 17:00 UTC
     - cron: '0 9 * * 1,5'      # Mon/Fri, 09:00 UTC
   push:
-    branches: [master]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
