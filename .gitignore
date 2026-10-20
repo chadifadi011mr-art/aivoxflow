@@ -13,6 +13,10 @@ dist.old/
 build/
 .wp-env.json
 
+# Operator status page (site/admin.mjs) — local-only snapshot of the publishing
+# state; git-ignored so it is never committed and never deployed to the host.
+admin-status.html
+
 # Generated social cards are committed (builds must not need a browser);
 # only the renderer's scratch files are ignored.
 site/assets-src/og/*.tmp.png

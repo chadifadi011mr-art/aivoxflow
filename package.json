@@ -10,6 +10,7 @@
   "scripts": {
     "build": "node site/build.mjs",
     "dev": "node site/serve.mjs 8130",
+    "admin": "node site/admin.mjs",
     "og": "node site/og/generate.mjs",
     "og:force": "node site/og/generate.mjs --force",
     "agent": "node agents/run.mjs",
