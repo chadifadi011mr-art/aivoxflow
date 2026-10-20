@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-17T14:40:05.088Z",
+  "generatedAt": "2026-10-20T15:12:23.562Z",
   "items": [
     {
       "id": "software-web-vs-desktop",
@@ -14,7 +14,7 @@
         "weight": 1,
         "label": "Mon/Fri morning"
       },
-      "status": "planned",
+      "status": "failed",
       "createdAt": "2026-10-17T14:40:05.088Z"
     },
     {
@@ -96,6 +96,118 @@
       },
       "status": "planned",
       "createdAt": "2026-10-17T14:40:05.088Z"
+    },
+    {
+      "id": "ai-tools-pricing-traps",
+      "title": "How to Compare AI Tool Pricing Without Getting Burned",
+      "category": "ai-tools",
+      "intent": "commercial-investigation",
+      "notes": "Focus on seat-based vs usage-based billing, annual lock-in, overage rules, and the second-year price. Use official pricing pages only.",
+      "slot": {
+        "at": "2026-10-21T08:00:00Z",
+        "date": "2026-10-21",
+        "hour": 8,
+        "weight": 3,
+        "label": "Tue–Thu morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-10-20T15:12:23.562Z"
+    },
+    {
+      "id": "software-web-vet-new-saas",
+      "title": "What to Check Before Trusting a New SaaS Tool",
+      "category": "software-web",
+      "intent": "commercial-investigation",
+      "notes": "Export options, uptime history, security page, company age, pricing change history. Cite what the vendor publishes.",
+      "slot": {
+        "at": "2026-10-21T17:00:00Z",
+        "date": "2026-10-21",
+        "hour": 17,
+        "weight": 2,
+        "label": "Tue–Thu afternoon"
+      },
+      "status": "planned",
+      "createdAt": "2026-10-20T15:12:23.562Z"
+    },
+    {
+      "id": "automation-never-automate",
+      "title": "Which Tasks Should Never Be Automated",
+      "category": "automation-agents",
+      "intent": "informational",
+      "notes": "Low-frequency, high-consequence, judgement-heavy, or relationship-critical work. Give a decision test, not opinions.",
+      "slot": {
+        "at": "2026-10-22T08:00:00Z",
+        "date": "2026-10-22",
+        "hour": 8,
+        "weight": 3,
+        "label": "Tue–Thu morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-10-20T15:12:23.562Z"
+    },
+    {
+      "id": "news-benchmark-vs-claim",
+      "title": "Separating an AI Benchmark from an AI Claim",
+      "category": "ai-news",
+      "intent": "informational",
+      "notes": "What a benchmark measures, who ran it, on what data, and why a headline number rarely transfers to your task.",
+      "slot": {
+        "at": "2026-10-22T17:00:00Z",
+        "date": "2026-10-22",
+        "hour": 17,
+        "weight": 2,
+        "label": "Tue–Thu afternoon"
+      },
+      "status": "planned",
+      "createdAt": "2026-10-20T15:12:23.562Z"
+    },
+    {
+      "id": "comparison-local-vs-cloud",
+      "title": "Local AI Models vs Cloud AI Models",
+      "category": "comparisons",
+      "intent": "commercial-investigation",
+      "notes": "Cost at volume, privacy, latency, capability gap, and hardware requirements. Be explicit that the gap moves monthly.",
+      "slot": {
+        "at": "2026-10-23T09:00:00Z",
+        "date": "2026-10-23",
+        "hour": 9,
+        "weight": 1,
+        "label": "Mon/Fri morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-10-20T15:12:23.562Z"
+    },
+    {
+      "id": "tutorial-research-workflow",
+      "title": "Build a Research Workflow with an AI Assistant",
+      "category": "tutorials",
+      "intent": "informational",
+      "notes": "Source collection, extraction, contradiction logging, and a final verification pass. Include a worked example with a neutral topic.",
+      "slot": {
+        "at": "2026-10-26T09:00:00Z",
+        "date": "2026-10-26",
+        "hour": 9,
+        "weight": 1,
+        "label": "Mon/Fri morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-10-20T15:12:23.562Z"
+    },
+    {
+      "id": "ai-tools-when-not-worth-it",
+      "title": "When an AI Tool Is Not Worth the Subscription",
+      "category": "ai-tools",
+      "intent": "commercial-investigation",
+      "notes": "Decision rules for cancelling: usage below a threshold, work that needs auditability, tasks where the free tier suffices.",
+      "slot": {
+        "at": "2026-10-27T08:00:00Z",
+        "date": "2026-10-27",
+        "hour": 8,
+        "weight": 3,
+        "label": "Tue–Thu morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-10-20T15:12:23.562Z"
     }
   ]
 }
