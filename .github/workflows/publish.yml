@@ -29,16 +29,16 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      AIVOXFLOW_SITE_URL: https://aivoxflow.com
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Build
         run: npm run build
+        env:
+          AIVOXFLOW_SITE_URL: https://aivoxflow.com
 
       - name: Verify
         run: |

@@ -74,7 +74,7 @@ jobs:
       - uses: actions/setup-node@v4
         if: ${{ steps.key.outputs.has == 'true' }}
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Plan the next slots
         if: ${{ steps.key.outputs.has == 'true' }}

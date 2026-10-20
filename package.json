@@ -5,7 +5,7 @@
   "type": "module",
   "description": "AIVOXFLOW — static, zero-dependency publication for AI tools, tutorials, automation and verified AI news.",
   "engines": {
-    "node": ">=20.11"
+    "node": ">=22"
   },
   "scripts": {
     "build": "node site/build.mjs",
