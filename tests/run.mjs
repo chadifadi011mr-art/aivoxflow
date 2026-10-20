@@ -73,9 +73,20 @@ for (const r of expected) ok(`route ${r}`, existsSync(path.join(dist, r)));
 const ownershipFiles = readdirSync(dist).filter((f) => /^google[0-9a-f]+\.html$/i.test(f));
 ok('search ownership file copied to dist root', ownershipFiles.length >= 1, ownershipFiles.join(', ') || 'none found');
 
+// One built page per published article that is not held back for a future slot:
+// content.mjs hides `published > today` (unless AIVOXFLOW_INCLUDE_FUTURE=1).
+// Derived from the data — never hard-coded — so this keeps passing as
+// autonomous publishing adds articles to site/data/articles/ every day.
+const todayIso = new Date().toISOString().slice(0, 10);
+const publishedDir = path.join(repo, 'site', 'data', 'articles');
+const expectedPages = readdirSync(publishedDir).filter((f) => f.endsWith('.json'))
+  .map((f) => JSON.parse(readFileSync(path.join(publishedDir, f), 'utf8')))
+  .filter((a) => a.published <= todayIso).length;
+
 const articleDirs = readdirSync(path.join(dist, 'articles')).filter((d) =>
   d !== 'page' && statSync(path.join(dist, 'articles', d)).isDirectory());
-ok('6 article pages', articleDirs.length === 6, `found ${articleDirs.length}`);
+ok('one built page per published article', articleDirs.length === expectedPages,
+  `found ${articleDirs.length}, expected ${expectedPages}`);
 
 // ------------------------------------------------------------ 3. links
 const files = htmlFiles.map((f) => ({ file: f, rel: '/' + path.relative(dist, f).replace(/\\/g, '/') }));
@@ -184,8 +195,15 @@ const artHtml = readFileSync(path.join(dist, 'articles', 'choose-an-ai-writing-t
 const ogPath = path.join(dist, 'assets', 'og');
 ok('social cards are shipped', existsSync(ogPath) && readdirSync(ogPath).length >= 7,
   existsSync(ogPath) ? `${readdirSync(ogPath).length} files` : 'missing');
-for (const slug of articleJson.map((a) => a.slug)) {
-  ok(`og card for ${slug}`, existsSync(path.join(ogPath, `${slug}.png`)));
+// Every article must expose a real social image: the dedicated branded card
+// when one was generated, otherwise its own hero (build.mjs falls back to the
+// hero, because autonomous publishing has no browser in the CI runner to
+// render cards). Either way the og:image must resolve to a file that ships.
+for (const a of articleJson) {
+  const card = existsSync(path.join(ogPath, `${a.slug}.png`));
+  const hero = Boolean(a.hero) && existsSync(
+    path.join(dist, 'assets', 'articles', a.slug, path.basename(a.hero.src)));
+  ok(`social image for ${a.slug}`, card || hero, 'no og card and no hero image file');
 }
 ok('article declares og:image + twitter:card=summary_large_image',
   /og:image" content="[^"]+\.png"/.test(artHtml) && /twitter:card" content="summary_large_image"/.test(artHtml));
@@ -232,10 +250,11 @@ ok('canonical emitted with SITE_URL', /rel="canonical" href="https:\/\/aivoxflow
 
 const feed = existsSync(path.join(dist, 'feed.xml')) ? readFileSync(path.join(dist, 'feed.xml'), 'utf8') : '';
 const jfeed = existsSync(path.join(dist, 'feed.json')) ? readFileSync(path.join(dist, 'feed.json'), 'utf8') : '';
-ok('RSS feed is valid XML shape with items', feed.startsWith('<?xml') && (feed.match(/<item>/g) || []).length === 6);
+ok('RSS feed is valid XML shape with items', feed.startsWith('<?xml') && (feed.match(/<item>/g) || []).length === expectedPages,
+  `items=${(feed.match(/<item>/g) || []).length}, expected ${expectedPages}`);
 ok('RSS items use absolute links', feed.includes('<link>https://aivoxflow.example/articles/'));
-ok('JSON Feed is valid JSON with 6 items', (() => {
-  try { return JSON.parse(jfeed).items.length === 6; } catch { return false; }
+ok(`JSON Feed is valid JSON with ${expectedPages} items`, (() => {
+  try { return JSON.parse(jfeed).items.length === expectedPages; } catch { return false; }
 })());
 
 const headersFile = readFileSync(path.join(dist, '_headers'), 'utf8');

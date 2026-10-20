@@ -146,15 +146,16 @@ function hreflangTags() {
 
 export function layout({
   title, description, currentPath, body, jsonLd = [], ogType = 'website',
-  ogImage = '', ogImageAlt = '', serifPreload = false, noindex = false,
+  ogImage = '', ogImageAlt = '', ogImageWidth = 1200, ogImageHeight = 630,
+  serifPreload = false, noindex = false,
   prevUrl = '', nextUrl = '', article = null,
 }) {
   const fullTitle = currentPath === '/' ? `${config.name} — ${config.tagline}` : `${title} — ${config.name}`;
   const canonical = config.siteUrl ? `\n  <link rel="canonical" href="${absoluteUrl(currentPath)}">` : '';
   const ogUrl = config.siteUrl ? `\n  <meta property="og:url" content="${absoluteUrl(currentPath)}">` : '';
   const img = ogImage ? `\n  <meta property="og:image" content="${abs(ogImage)}">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
+  <meta property="og:image:width" content="${ogImageWidth}">
+  <meta property="og:image:height" content="${ogImageHeight}">
   <meta property="og:image:alt" content="${esc(ogImageAlt || fullTitle)}">
   <meta name="twitter:image" content="${abs(ogImage)}">
   <meta name="twitter:image:alt" content="${esc(ogImageAlt || fullTitle)}">` : '';

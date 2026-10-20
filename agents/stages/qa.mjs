@@ -3,7 +3,7 @@
 // The pipeline never writes into site/data/articles on its own: it stops at
 // "scheduled" with a draft in content/drafts/. Promotion is a separate,
 // explicit step (--publish), matching AGENTS.md rule 7.
-import { writeFileSync, readdirSync, existsSync, mkdirSync, copyFileSync } from 'node:fs';
+import { writeFileSync, readdirSync, existsSync, mkdirSync, cpSync } from 'node:fs';
 import path from 'node:path';
 import { runGates, formatReport, loadCorpus } from '../lib/gates.mjs';
 import { note, saveDraft, repo } from '../lib/job.mjs';

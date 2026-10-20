@@ -168,17 +168,12 @@ if (existsSync(articleAssetsDir)) {
   cpSync(articleAssetsDir, path.join(tmp, 'assets', 'articles'), { recursive: true });
 }
 
-// ---------------------------------------------------------------- content
-const articles = loadArticles();
-for (const a of articles) {
-  a.categoryName = categoryBySlug[a.category].name;
-  a.dateLabel = formatDate(a.published, 'en-US');
-  a.updatedLabel = a.updated ? formatDate(a.updated, 'en-US') : '';
-}
-const newestDate = maxDate(articles.map((a) => a.modified)) || config.contentUpdated;
-
 // Image dimensions for Markdown images: look in the build output first, then
 // in the source tree, so authors never have to hand-write width/height.
+// Wired BEFORE loadArticles(): that call renders every article body
+// (site/lib/content.mjs → renderMarkdown), so setting the resolver afterwards
+// would leave every Markdown <img> (inline figures) without width/height and
+// cause avoidable layout shift.
 setImageResolver((src) => {
   const clean = src.replace(/^\//, '').split('?')[0];
   const candidates = [
@@ -198,6 +193,15 @@ setImageResolver((src) => {
   }
   return null;
 });
+
+// ---------------------------------------------------------------- content
+const articles = loadArticles();
+for (const a of articles) {
+  a.categoryName = categoryBySlug[a.category].name;
+  a.dateLabel = formatDate(a.published, 'en-US');
+  a.updatedLabel = a.updated ? formatDate(a.updated, 'en-US') : '';
+}
+const newestDate = maxDate(articles.map((a) => a.modified)) || config.contentUpdated;
 
 // Tool-card spec rows (Phase 1.5 final review): label/value pairs so the
 // free-tier answer scans in one glance; state is carried by text, not color.
@@ -351,7 +355,16 @@ for (const a of articles) {
   ];
   const related = relatedArticles(articles, a, 3);
   const toc = a.headings.filter((h) => h.level === 2);
-  const articleOg = ogFor(a.slug) || ogDefault;
+  // Social image: a dedicated branded card when one exists, otherwise the
+  // article's own hero (social platforms accept the JPG), else the site default.
+  // Autonomous publishing cannot render cards (no browser in the CI runner), so
+  // pipeline-generated articles fall back to their hero — and the og dimensions
+  // reported in the meta tags must describe whichever image is actually used.
+  const ogCard = ogFor(a.slug);
+  const useHeroOg = !ogCard && Boolean(a.hero);
+  const articleOg = ogCard || (useHeroOg ? a.hero.src : ogDefault);
+  const ogW = useHeroOg ? (a.hero.width || 1600) : 1200;
+  const ogH = useHeroOg ? (a.hero.height || 900) : 630;
   const updatedLine = a.updated
     ? ` · <time datetime="${a.updated}">Updated ${esc(a.updatedLabel)}</time>`
     : '';
@@ -379,6 +392,8 @@ for (const a of articles) {
     currentPath: a.url,
     ogType: 'article',
     ogImage: articleOg,
+    ogImageWidth: ogW,
+    ogImageHeight: ogH,
     ogImageAlt: a.title,
     serifPreload: true,
     prevUrl: '',
