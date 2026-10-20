@@ -28,9 +28,18 @@ async function launch(bin) {
   const proc = spawn(bin, [
     '--headless=new', '--disable-gpu', '--hide-scrollbars', '--no-first-run',
     '--no-default-browser-check', '--force-device-scale-factor=1',
+    // Locked-down runners (GitHub Actions, containers) can't use Chrome's
+    // sandbox and often ship a small /dev/shm; without these the browser dies
+    // before its DevTools endpoint appears.
+    '--no-sandbox', '--disable-dev-shm-usage',
     `--user-data-dir=${udd}`, `--remote-debugging-port=${port}`, '--remote-allow-origins=*',
     'about:blank',
-  ], { stdio: 'ignore', windowsHide: true });
+  ], { stdio: ['ignore', 'ignore', 'pipe'], windowsHide: true });
+
+  // Keep the browser's stderr so a failed launch reports why, not just a timeout.
+  let stderr = '';
+  proc.stderr?.on('data', (d) => { stderr = `${stderr}${d}`.slice(-1200); });
+  proc.on('error', (e) => { stderr = `${stderr}${e.message}`.slice(-1200); });
 
   const kill = () => {
     try { execFileSync('taskkill', ['/pid', String(proc.pid), '/T', '/F'], { stdio: 'ignore' }); } catch { /* unix or gone */ }
@@ -43,7 +52,11 @@ async function launch(bin) {
   for (let i = 0; i < 80 && !version; i++) {
     try { version = await (await fetch(`http://127.0.0.1:${port}/json/version`)).json(); } catch { await new Promise((r) => setTimeout(r, 150)); }
   }
-  if (!version) { kill(); throw new Error('Browser DevTools endpoint never came up.'); }
+  if (!version) {
+    const detail = stderr.trim() ? ` — browser stderr: ${stderr.trim()}` : '';
+    kill();
+    throw new Error(`Browser DevTools endpoint never came up.${detail}`);
+  }
 
   let targets = [];
   for (let i = 0; i < 30 && !targets.length; i++) {
