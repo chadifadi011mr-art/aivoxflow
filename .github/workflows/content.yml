@@ -25,7 +25,14 @@ name: Content pipeline
 
 on:
   schedule:
-    - cron: '0 4 * * *'   # 04:00 UTC daily
+    # 09:00 UTC daily — deliberately AFTER the Gemini free-tier quota resets.
+    # The free tier allows only 20 generate_content requests/day/project/model,
+    # and that daily window rolls over at midnight Pacific: 07:00 UTC during PDT
+    # (Mar–Nov) and 08:00 UTC during PST (Nov–Mar). The previous 04:00 UTC slot
+    # ran ~3h BEFORE the reset, so any exhausted prior-day quota made the run
+    # fail with HTTP 429. 09:00 UTC clears both boundaries with margin, so each
+    # run starts on a fresh daily quota.
+    - cron: '0 9 * * *'   # 09:00 UTC daily (after the free-tier quota reset)
   workflow_dispatch:
     inputs:
       slots:
