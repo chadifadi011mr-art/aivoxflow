@@ -48,19 +48,14 @@ jobs:
     # NOTE: `secrets` is not a valid context in a job-level `if` expression —
     # that form made the whole workflow invalid. The key check now runs as a
     # first step and the remaining steps read its output.
-    env:
-      AIVOXFLOW_AI_PROVIDER: ${{ vars.AIVOXFLOW_AI_PROVIDER || 'gemini' }}
-      AIVOXFLOW_AI_MODEL: ${{ vars.AIVOXFLOW_AI_MODEL || 'gemini-flash-latest' }}
-      AIVOXFLOW_AI_API_KEY: ${{ secrets.AIVOXFLOW_AI_API_KEY }}
-      AIVOXFLOW_SEARCH_PROVIDER: ${{ vars.AIVOXFLOW_SEARCH_PROVIDER || 'tavily' }}
-      AIVOXFLOW_SEARCH_API_KEY: ${{ secrets.AIVOXFLOW_SEARCH_API_KEY }}
-      # Hosted images in CI (no GPU). Use `local` if you prefer zero cost.
-      AIVOXFLOW_IMAGE_PROVIDER: ${{ vars.AIVOXFLOW_IMAGE_PROVIDER || 'pollinations' }}
-      AIVOXFLOW_IMAGE_MODEL: ${{ vars.AIVOXFLOW_IMAGE_MODEL || 'flux' }}
-      AIVOXFLOW_AI_BUDGET_USD_DAILY: ${{ vars.AIVOXFLOW_AI_BUDGET_USD_DAILY || '2' }}
     steps:
       - name: Check for a provider key
         id: key
+        # The key only gates whether to run; keeping it off the job level stops
+        # it (and the provider settings) leaking into the verify step, where the
+        # suite must run hermetically in mock mode.
+        env:
+          AIVOXFLOW_AI_API_KEY: ${{ secrets.AIVOXFLOW_AI_API_KEY }}
         run: |
           if [ -z "$AIVOXFLOW_AI_API_KEY" ]; then
             echo "has=false" >> "$GITHUB_OUTPUT"
@@ -82,6 +77,17 @@ jobs:
 
       - name: Generate what is due
         if: ${{ steps.key.outputs.has == 'true' }}
+        # Only the generate step talks to providers; verify runs hermetically.
+        env:
+          AIVOXFLOW_AI_PROVIDER: ${{ vars.AIVOXFLOW_AI_PROVIDER || 'gemini' }}
+          AIVOXFLOW_AI_MODEL: ${{ vars.AIVOXFLOW_AI_MODEL || 'gemini-flash-latest' }}
+          AIVOXFLOW_AI_API_KEY: ${{ secrets.AIVOXFLOW_AI_API_KEY }}
+          AIVOXFLOW_SEARCH_PROVIDER: ${{ vars.AIVOXFLOW_SEARCH_PROVIDER || 'tavily' }}
+          AIVOXFLOW_SEARCH_API_KEY: ${{ secrets.AIVOXFLOW_SEARCH_API_KEY }}
+          # Hosted images in CI (no GPU). Use `local` if you prefer zero cost.
+          AIVOXFLOW_IMAGE_PROVIDER: ${{ vars.AIVOXFLOW_IMAGE_PROVIDER || 'pollinations' }}
+          AIVOXFLOW_IMAGE_MODEL: ${{ vars.AIVOXFLOW_IMAGE_MODEL || 'flux' }}
+          AIVOXFLOW_AI_BUDGET_USD_DAILY: ${{ vars.AIVOXFLOW_AI_BUDGET_USD_DAILY || '2' }}
         run: node agents/scheduler.mjs --once --limit "${{ github.event.inputs.limit || 1 }}"
 
       - name: Build and verify
