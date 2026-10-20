@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-20T15:12:23.562Z",
+  "generatedAt": "2026-10-20T20:27:14.625Z",
   "items": [
     {
       "id": "software-web-vs-desktop",
@@ -30,7 +30,7 @@
         "weight": 3,
         "label": "Tue–Thu morning"
       },
-      "status": "planned",
+      "status": "failed",
       "createdAt": "2026-10-17T14:40:05.088Z"
     },
     {
@@ -208,6 +208,102 @@
       },
       "status": "planned",
       "createdAt": "2026-10-20T15:12:23.562Z"
+    },
+    {
+      "id": "software-web-vs-desktop",
+      "title": "Web App or Desktop App: The Real Trade-offs",
+      "category": "software-web",
+      "intent": "informational",
+      "notes": "Offline access, data locality, update cadence, integrations, and the failure modes of each. No product endorsements.",
+      "slot": {
+        "at": "2026-10-21T17:00:00Z",
+        "date": "2026-10-21",
+        "hour": 17,
+        "weight": 2,
+        "label": "Tue–Thu afternoon"
+      },
+      "status": "planned",
+      "createdAt": "2026-10-20T20:27:14.625Z"
+    },
+    {
+      "id": "tutorial-document-to-brief",
+      "title": "Turn a Messy Document into a Structured Brief",
+      "category": "tutorials",
+      "intent": "informational",
+      "notes": "A repeatable extraction pattern: entities, decisions, open questions, owners. Warn about hallucinated detail.",
+      "slot": {
+        "at": "2026-10-22T08:00:00Z",
+        "date": "2026-10-22",
+        "hour": 8,
+        "weight": 3,
+        "label": "Tue–Thu morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-10-20T20:27:14.625Z"
+    },
+    {
+      "id": "automation-no-code-connect",
+      "title": "Connecting Two Tools Without Writing Code",
+      "category": "automation-agents",
+      "intent": "informational",
+      "notes": "Trigger/action mapping, field matching, rate limits, and when the no-code path becomes a maintenance trap.",
+      "slot": {
+        "at": "2026-10-22T17:00:00Z",
+        "date": "2026-10-22",
+        "hour": 17,
+        "weight": 2,
+        "label": "Tue–Thu afternoon"
+      },
+      "status": "planned",
+      "createdAt": "2026-10-20T20:27:14.625Z"
+    },
+    {
+      "id": "ai-tools-data-policy",
+      "title": "Reading an AI Vendor's Data Policy in Ten Minutes",
+      "category": "ai-tools",
+      "intent": "informational",
+      "notes": "Retention, training opt-out, subprocessors, deletion on cancel. Quote the policy text; do not paraphrase legal terms loosely.",
+      "slot": {
+        "at": "2026-10-23T09:00:00Z",
+        "date": "2026-10-23",
+        "hour": 9,
+        "weight": 1,
+        "label": "Mon/Fri morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-10-20T20:27:14.625Z"
+    },
+    {
+      "id": "software-web-export-data",
+      "title": "Exporting Your Data Before You Cancel a Subscription",
+      "category": "software-web",
+      "intent": "informational",
+      "notes": "What export formats actually preserve (structure vs text), and what is usually lost. Practical, checkable steps.",
+      "slot": {
+        "at": "2026-10-26T09:00:00Z",
+        "date": "2026-10-26",
+        "hour": 9,
+        "weight": 1,
+        "label": "Mon/Fri morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-10-20T20:27:14.625Z"
+    },
+    {
+      "id": "tutorial-fact-check-ai",
+      "title": "A Repeatable Way to Fact-Check AI Output",
+      "category": "tutorials",
+      "intent": "informational",
+      "notes": "Claim extraction, primary-source matching, time-sensitivity checks, and how to record what could not be verified.",
+      "slot": {
+        "at": "2026-10-27T08:00:00Z",
+        "date": "2026-10-27",
+        "hour": 8,
+        "weight": 3,
+        "label": "Tue–Thu morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-10-20T20:27:14.625Z"
     }
   ]
 }
