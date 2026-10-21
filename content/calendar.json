@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-20T20:27:14.625Z",
+  "generatedAt": "2026-10-21T09:25:51.878Z",
   "items": [
     {
       "id": "software-web-vs-desktop",
@@ -46,7 +46,7 @@
         "weight": 2,
         "label": "Tue–Thu afternoon"
       },
-      "status": "planned",
+      "status": "failed",
       "createdAt": "2026-10-17T14:40:05.088Z"
     },
     {
@@ -304,6 +304,22 @@
       },
       "status": "planned",
       "createdAt": "2026-10-20T20:27:14.625Z"
+    },
+    {
+      "id": "automation-fail-safely",
+      "title": "Designing an Automation That Fails Safely",
+      "category": "automation-agents",
+      "intent": "informational",
+      "notes": "Idempotency, retries with backoff, dead-letter handling, alerting, and a kill switch. Include a failure checklist.",
+      "slot": {
+        "at": "2026-10-22T08:00:00Z",
+        "date": "2026-10-22",
+        "hour": 8,
+        "weight": 3,
+        "label": "Tue–Thu morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-10-21T09:25:51.878Z"
     }
   ]
 }
