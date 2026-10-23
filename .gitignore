@@ -21,6 +21,11 @@ admin-status.html
 # only the renderer's scratch files are ignored.
 site/assets-src/og/*.tmp.png
 
+# Hero renderer scratch (site/hero*.mjs). The promoted JPEGs live in
+# site/assets-src/articles/; everything the renderers emit for review is
+# disposable and must never be committed.
+docs/render/
+
 # WordPress-specific (if that stack is chosen)
 wp-config.php
 /wp-content/uploads/

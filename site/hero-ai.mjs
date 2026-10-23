@@ -36,7 +36,9 @@ import { HEROES, esc, meta } from './hero-config.mjs';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repo = path.join(here, '..');
 const artDir = path.join(repo, 'docs', 'art');
-const outDir = path.join(repo, 'docs');
+// Rendered PNGs go to docs/render/, which is git-ignored (review scratch);
+// only --publish writes into the tracked site/assets-src/ tree.
+const outDir = path.join(repo, 'docs', 'render');
 const W = 1600;
 const H = 900;
 

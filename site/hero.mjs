@@ -23,7 +23,10 @@ import path from 'node:path';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repo = path.join(here, '..');
-const outDir = path.join(repo, 'docs');
+// Rendered PNGs go to docs/render/, which is git-ignored: they are review
+// scratch, and docs/ itself is tracked documentation. Only the promoted JPEGs
+// in site/assets-src/ ever enter the repository.
+const outDir = path.join(repo, 'docs', 'render');
 const W = 1600;
 const H = 900;
 
