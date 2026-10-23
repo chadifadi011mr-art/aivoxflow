@@ -226,6 +226,16 @@ input[type="search"]:focus-visible { box-shadow: var(--ax-focus-ring); border-co
 .article-hero { margin: var(--ax-space-6) 0 var(--ax-space-8); border-radius: var(--ax-radius-lg); overflow: hidden; background: var(--ax-navy-900); }
 .article-hero img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
 
+/* Cover heroes: the artwork carries the headline, the eyebrow and the key
+   points. Rendering the same heading and kicker as HTML beside it shows the
+   reader the title twice, so both are removed from the visual layer only —
+   they stay in the document for search engines and screen readers. Applied
+   only when an article actually ships a cover; articles without one keep the
+   plain heading layout. */
+.article-hero:first-child { margin-top: 0; }
+.article-head--cover .card-kicker,
+.article-head--cover h1 { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; clip-path: inset(50%); overflow: hidden; white-space: nowrap; }
+
 /* Key takeaways: the block an answer engine is most likely to quote. */
 .takeaways { background: var(--ax-bg-subtle); border: 1px solid var(--ax-border); border-left: 4px solid var(--ax-electric-500); border-radius: var(--ax-radius-md); padding: var(--ax-space-6); margin: var(--ax-space-6) 0; }
 .takeaways h2 { font-size: var(--ax-text-lg); margin: 0 0 var(--ax-space-3); }

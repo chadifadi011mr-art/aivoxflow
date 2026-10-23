@@ -422,13 +422,13 @@ for (const a of articles) {
     body: `
 <div class="wrap wrap-narrow">${breadcrumb(crumbs)}</div>
 <article class="wrap article">
-  <header class="article-head">
+  ${heroBlock}
+  <header class="article-head${a.hero ? ' article-head--cover' : ''}">
     <p class="card-kicker"><a href="${p(`/category/${cat.slug}/`)}">${esc(cat.name)}</a></p>
     <h1>${esc(a.title)}</h1>
     <p class="article-dek">${esc(a.description)}</p>
     <p class="card-meta">By <a href="${p(`/authors/${a.authorSlug}/`)}">${esc(a.author)}</a> · <time datetime="${a.published}">Published ${esc(a.dateLabel)}</time>${updatedLine} · ${a.readingMinutes} min read · ${a.wordCount.toLocaleString('en-US')} words</p>
   </header>
-  ${heroBlock}
   ${takeawaysBlock}
   ${a.disclosure ? `<aside class="callout" aria-label="Disclosure"><strong>Disclosure:</strong> ${esc(a.disclosure)}</aside>` : ''}
   ${toc.length >= 3 ? `<nav class="toc" aria-label="Table of contents">

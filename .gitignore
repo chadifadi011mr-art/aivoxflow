@@ -28,6 +28,7 @@ wp-config.php
 
 # Backups & exports (free-phase rule 7: keep them local/private)
 backups/
+backup/
 *.sql
 *.sql.gz
 
