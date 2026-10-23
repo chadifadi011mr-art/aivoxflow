@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-22T09:26:44.991Z",
+  "generatedAt": "2026-10-23T09:25:10.552Z",
   "items": [
     {
       "id": "software-web-vs-desktop",
@@ -110,7 +110,7 @@
         "weight": 3,
         "label": "Tue–Thu morning"
       },
-      "status": "planned",
+      "status": "failed",
       "createdAt": "2026-10-20T15:12:23.562Z"
     },
     {
@@ -336,6 +336,22 @@
       },
       "status": "planned",
       "createdAt": "2026-10-22T09:26:44.991Z"
+    },
+    {
+      "id": "comparison-chatbot-vs-search",
+      "title": "Chatbot vs Search Engine for Research",
+      "category": "comparisons",
+      "intent": "commercial-investigation",
+      "notes": "Where a chatbot saves time, where it invents, and the hybrid workflow that beats both. Test criteria stated up front.",
+      "slot": {
+        "at": "2026-10-26T09:00:00Z",
+        "date": "2026-10-26",
+        "hour": 9,
+        "weight": 1,
+        "label": "Mon/Fri morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-10-23T09:25:10.552Z"
     }
   ]
 }
