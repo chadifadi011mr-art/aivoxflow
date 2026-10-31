@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-30T09:41:14.717Z",
+  "generatedAt": "2026-10-31T09:29:06.586Z",
   "items": [
     {
       "id": "software-web-vs-desktop",
@@ -318,7 +318,7 @@
         "weight": 3,
         "label": "Tue–Thu morning"
       },
-      "status": "planned",
+      "status": "failed",
       "createdAt": "2026-10-21T09:25:51.878Z"
     },
     {
@@ -448,6 +448,22 @@
       },
       "status": "planned",
       "createdAt": "2026-10-30T09:41:14.717Z"
+    },
+    {
+      "id": "tutorial-document-to-brief",
+      "title": "Turn a Messy Document into a Structured Brief",
+      "category": "tutorials",
+      "intent": "informational",
+      "notes": "A repeatable extraction pattern: entities, decisions, open questions, owners. Warn about hallucinated detail.",
+      "slot": {
+        "at": "2026-11-02T09:00:00Z",
+        "date": "2026-11-02",
+        "hour": 9,
+        "weight": 1,
+        "label": "Mon/Fri morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-10-31T09:29:06.586Z"
     }
   ]
 }
