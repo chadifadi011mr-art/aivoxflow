@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03T09:48:15.068Z",
+  "generatedAt": "2026-11-04T09:50:41.968Z",
   "items": [
     {
       "id": "software-web-vs-desktop",
@@ -270,7 +270,7 @@
         "weight": 1,
         "label": "Mon/Fri morning"
       },
-      "status": "planned",
+      "status": "failed",
       "createdAt": "2026-10-20T20:27:14.625Z"
     },
     {
@@ -512,6 +512,22 @@
       },
       "status": "planned",
       "createdAt": "2026-11-03T09:48:15.068Z"
+    },
+    {
+      "id": "comparison-local-vs-cloud",
+      "title": "Local AI Models vs Cloud AI Models",
+      "category": "comparisons",
+      "intent": "commercial-investigation",
+      "notes": "Cost at volume, privacy, latency, capability gap, and hardware requirements. Be explicit that the gap moves monthly.",
+      "slot": {
+        "at": "2026-11-05T08:00:00Z",
+        "date": "2026-11-05",
+        "hour": 8,
+        "weight": 3,
+        "label": "Tue–Thu morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-11-04T09:50:41.968Z"
     }
   ]
 }
