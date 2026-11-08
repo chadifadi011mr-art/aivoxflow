@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-07T15:24:07.197Z",
+  "generatedAt": "2026-11-08T15:46:57.246Z",
   "items": [
     {
       "id": "software-web-vs-desktop",
@@ -350,7 +350,7 @@
         "weight": 1,
         "label": "Mon/Fri morning"
       },
-      "status": "planned",
+      "status": "failed",
       "createdAt": "2026-10-23T09:25:10.552Z"
     },
     {
@@ -576,6 +576,22 @@
       },
       "status": "planned",
       "createdAt": "2026-11-07T15:24:07.197Z"
+    },
+    {
+      "id": "software-web-export-data",
+      "title": "Exporting Your Data Before You Cancel a Subscription",
+      "category": "software-web",
+      "intent": "informational",
+      "notes": "What export formats actually preserve (structure vs text), and what is usually lost. Practical, checkable steps.",
+      "slot": {
+        "at": "2026-11-09T09:00:00Z",
+        "date": "2026-11-09",
+        "hour": 9,
+        "weight": 1,
+        "label": "Mon/Fri morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-11-08T15:46:57.246Z"
     }
   ]
 }
