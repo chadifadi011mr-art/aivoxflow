@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-09T19:28:29.836Z",
+  "generatedAt": "2026-11-10T16:46:10.603Z",
   "items": [
     {
       "id": "software-web-vs-desktop",
@@ -382,7 +382,7 @@
         "weight": 1,
         "label": "Mon/Fri morning"
       },
-      "status": "planned",
+      "status": "failed",
       "createdAt": "2026-10-25T09:19:47.794Z"
     },
     {
@@ -608,6 +608,22 @@
       },
       "status": "planned",
       "createdAt": "2026-11-09T19:28:29.836Z"
+    },
+    {
+      "id": "ai-tools-pricing-traps",
+      "title": "How to Compare AI Tool Pricing Without Getting Burned",
+      "category": "ai-tools",
+      "intent": "commercial-investigation",
+      "notes": "Focus on seat-based vs usage-based billing, annual lock-in, overage rules, and the second-year price. Use official pricing pages only.",
+      "slot": {
+        "at": "2026-11-11T08:00:00Z",
+        "date": "2026-11-11",
+        "hour": 8,
+        "weight": 3,
+        "label": "Tue–Thu morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-11-10T16:46:10.603Z"
     }
   ]
 }
