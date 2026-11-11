@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-10T16:46:10.603Z",
+  "generatedAt": "2026-11-11T16:52:01.033Z",
   "items": [
     {
       "id": "software-web-vs-desktop",
@@ -206,7 +206,7 @@
         "weight": 3,
         "label": "Tue–Thu morning"
       },
-      "status": "planned",
+      "status": "failed",
       "createdAt": "2026-10-20T15:12:23.562Z"
     },
     {
@@ -624,6 +624,22 @@
       },
       "status": "planned",
       "createdAt": "2026-11-10T16:46:10.603Z"
+    },
+    {
+      "id": "ai-tools-free-tier-limits",
+      "title": "AI Tool Free Tiers: What the Limits Actually Mean",
+      "category": "ai-tools",
+      "intent": "informational",
+      "notes": "Translate vague 'limited' claims into concrete caps where the vendor documents them. Where they do not, say so plainly.",
+      "slot": {
+        "at": "2026-11-12T08:00:00Z",
+        "date": "2026-11-12",
+        "hour": 8,
+        "weight": 3,
+        "label": "Tue–Thu morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-11-11T16:52:01.033Z"
     }
   ]
 }
