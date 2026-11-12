@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-11T16:52:01.033Z",
+  "generatedAt": "2026-11-12T17:20:47.063Z",
   "items": [
     {
       "id": "software-web-vs-desktop",
@@ -302,7 +302,7 @@
         "weight": 3,
         "label": "Tue–Thu morning"
       },
-      "status": "planned",
+      "status": "failed",
       "createdAt": "2026-10-20T20:27:14.625Z"
     },
     {
@@ -640,6 +640,22 @@
       },
       "status": "planned",
       "createdAt": "2026-11-11T16:52:01.033Z"
+    },
+    {
+      "id": "ai-tools-when-not-worth-it",
+      "title": "When an AI Tool Is Not Worth the Subscription",
+      "category": "ai-tools",
+      "intent": "commercial-investigation",
+      "notes": "Decision rules for cancelling: usage below a threshold, work that needs auditability, tasks where the free tier suffices.",
+      "slot": {
+        "at": "2026-11-13T09:00:00Z",
+        "date": "2026-11-13",
+        "hour": 9,
+        "weight": 1,
+        "label": "Mon/Fri morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-11-12T17:20:47.063Z"
     }
   ]
 }
