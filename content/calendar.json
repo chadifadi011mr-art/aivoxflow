@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-13T16:56:14.457Z",
+  "generatedAt": "2026-11-14T15:32:16.019Z",
   "items": [
     {
       "id": "software-web-vs-desktop",
@@ -414,7 +414,7 @@
         "weight": 3,
         "label": "Tue–Thu morning"
       },
-      "status": "planned",
+      "status": "failed",
       "createdAt": "2026-10-27T09:30:53.375Z"
     },
     {
@@ -672,6 +672,22 @@
       },
       "status": "planned",
       "createdAt": "2026-11-13T16:56:14.457Z"
+    },
+    {
+      "id": "software-web-vet-new-saas",
+      "title": "What to Check Before Trusting a New SaaS Tool",
+      "category": "software-web",
+      "intent": "commercial-investigation",
+      "notes": "Export options, uptime history, security page, company age, pricing change history. Cite what the vendor publishes.",
+      "slot": {
+        "at": "2026-11-16T09:00:00Z",
+        "date": "2026-11-16",
+        "hour": 9,
+        "weight": 1,
+        "label": "Mon/Fri morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-11-14T15:32:16.019Z"
     }
   ]
 }
