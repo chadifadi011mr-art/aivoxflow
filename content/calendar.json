@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-14T15:32:16.019Z",
+  "generatedAt": "2026-11-15T16:03:38.551Z",
   "items": [
     {
       "id": "software-web-vs-desktop",
@@ -430,7 +430,7 @@
         "weight": 1,
         "label": "Mon/Fri morning"
       },
-      "status": "planned",
+      "status": "failed",
       "createdAt": "2026-10-29T09:40:41.992Z"
     },
     {
@@ -688,6 +688,22 @@
       },
       "status": "planned",
       "createdAt": "2026-11-14T15:32:16.019Z"
+    },
+    {
+      "id": "software-web-vs-desktop",
+      "title": "Web App or Desktop App: The Real Trade-offs",
+      "category": "software-web",
+      "intent": "informational",
+      "notes": "Offline access, data locality, update cadence, integrations, and the failure modes of each. No product endorsements.",
+      "slot": {
+        "at": "2026-11-16T09:00:00Z",
+        "date": "2026-11-16",
+        "hour": 9,
+        "weight": 1,
+        "label": "Mon/Fri morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-11-15T16:03:38.551Z"
     }
   ]
 }
