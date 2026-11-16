@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-15T16:03:38.551Z",
+  "generatedAt": "2026-11-16T19:15:03.118Z",
   "items": [
     {
       "id": "software-web-vs-desktop",
@@ -446,7 +446,7 @@
         "weight": 1,
         "label": "Mon/Fri morning"
       },
-      "status": "planned",
+      "status": "failed",
       "createdAt": "2026-10-30T09:41:14.717Z"
     },
     {
@@ -704,6 +704,22 @@
       },
       "status": "planned",
       "createdAt": "2026-11-15T16:03:38.551Z"
+    },
+    {
+      "id": "tutorial-prompts-that-survive-upgrades",
+      "title": "Writing Prompts That Survive a Model Upgrade",
+      "category": "tutorials",
+      "intent": "informational",
+      "notes": "Why brittle prompts break, what to pin (constraints, format, examples), and how to test a prompt against two models.",
+      "slot": {
+        "at": "2026-11-17T08:00:00Z",
+        "date": "2026-11-17",
+        "hour": 8,
+        "weight": 3,
+        "label": "Tue–Thu morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-11-16T19:15:03.118Z"
     }
   ]
 }
