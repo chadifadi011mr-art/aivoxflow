@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-16T19:15:03.118Z",
+  "generatedAt": "2026-11-17T18:08:00.889Z",
   "items": [
     {
       "id": "software-web-vs-desktop",
@@ -462,7 +462,7 @@
         "weight": 1,
         "label": "Mon/Fri morning"
       },
-      "status": "planned",
+      "status": "failed",
       "createdAt": "2026-10-31T09:29:06.586Z"
     },
     {
@@ -720,6 +720,22 @@
       },
       "status": "planned",
       "createdAt": "2026-11-16T19:15:03.118Z"
+    },
+    {
+      "id": "automation-never-automate",
+      "title": "Which Tasks Should Never Be Automated",
+      "category": "automation-agents",
+      "intent": "informational",
+      "notes": "Low-frequency, high-consequence, judgement-heavy, or relationship-critical work. Give a decision test, not opinions.",
+      "slot": {
+        "at": "2026-11-18T08:00:00Z",
+        "date": "2026-11-18",
+        "hour": 8,
+        "weight": 3,
+        "label": "Tue–Thu morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-11-17T18:08:00.889Z"
     }
   ]
 }
