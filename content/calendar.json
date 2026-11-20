@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-19T17:57:18.611Z",
+  "generatedAt": "2026-11-20T17:31:41.729Z",
   "items": [
     {
       "id": "software-web-vs-desktop",
@@ -510,7 +510,7 @@
         "weight": 3,
         "label": "Tue–Thu morning"
       },
-      "status": "planned",
+      "status": "failed",
       "createdAt": "2026-11-03T09:48:15.068Z"
     },
     {
@@ -768,6 +768,22 @@
       },
       "status": "planned",
       "createdAt": "2026-11-19T17:57:18.611Z"
+    },
+    {
+      "id": "news-benchmark-vs-claim",
+      "title": "Separating an AI Benchmark from an AI Claim",
+      "category": "ai-news",
+      "intent": "informational",
+      "notes": "What a benchmark measures, who ran it, on what data, and why a headline number rarely transfers to your task.",
+      "slot": {
+        "at": "2026-11-23T09:00:00Z",
+        "date": "2026-11-23",
+        "hour": 9,
+        "weight": 1,
+        "label": "Mon/Fri morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-11-20T17:31:41.729Z"
     }
   ]
 }
