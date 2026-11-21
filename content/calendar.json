@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-20T17:31:41.729Z",
+  "generatedAt": "2026-11-21T16:35:49.828Z",
   "items": [
     {
       "id": "software-web-vs-desktop",
@@ -526,7 +526,7 @@
         "weight": 3,
         "label": "Tue–Thu morning"
       },
-      "status": "planned",
+      "status": "failed",
       "createdAt": "2026-11-04T09:50:41.968Z"
     },
     {
@@ -784,6 +784,22 @@
       },
       "status": "planned",
       "createdAt": "2026-11-20T17:31:41.729Z"
+    },
+    {
+      "id": "automation-no-code-connect",
+      "title": "Connecting Two Tools Without Writing Code",
+      "category": "automation-agents",
+      "intent": "informational",
+      "notes": "Trigger/action mapping, field matching, rate limits, and when the no-code path becomes a maintenance trap.",
+      "slot": {
+        "at": "2026-11-23T09:00:00Z",
+        "date": "2026-11-23",
+        "hour": 9,
+        "weight": 1,
+        "label": "Mon/Fri morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-11-21T16:35:49.828Z"
     }
   ]
 }
