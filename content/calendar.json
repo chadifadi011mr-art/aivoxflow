@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-25T18:57:56.648Z",
+  "generatedAt": "2026-11-26T18:48:27.376Z",
   "items": [
     {
       "id": "software-web-vs-desktop",
@@ -590,7 +590,7 @@
         "weight": 1,
         "label": "Mon/Fri morning"
       },
-      "status": "planned",
+      "status": "failed",
       "createdAt": "2026-11-08T15:46:57.246Z"
     },
     {
@@ -848,6 +848,22 @@
       },
       "status": "planned",
       "createdAt": "2026-11-25T18:57:56.648Z"
+    },
+    {
+      "id": "tutorial-research-workflow",
+      "title": "Build a Research Workflow with an AI Assistant",
+      "category": "tutorials",
+      "intent": "informational",
+      "notes": "Source collection, extraction, contradiction logging, and a final verification pass. Include a worked example with a neutral topic.",
+      "slot": {
+        "at": "2026-11-27T09:00:00Z",
+        "date": "2026-11-27",
+        "hour": 9,
+        "weight": 1,
+        "label": "Mon/Fri morning"
+      },
+      "status": "planned",
+      "createdAt": "2026-11-26T18:48:27.376Z"
     }
   ]
 }
